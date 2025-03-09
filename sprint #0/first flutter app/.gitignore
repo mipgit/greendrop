@@ -1,0 +1,6 @@
+# intellij
+.idea/
+
+# flutter/dart
+.dart_tool/
+build/
