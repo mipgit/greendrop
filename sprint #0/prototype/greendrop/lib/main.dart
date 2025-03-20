@@ -13,10 +13,17 @@ class DropletApp extends StatefulWidget {
 
 class _DropletAppState extends State<DropletApp> {
   int dropletCount = 30;
+  int dropletsUsed = 0; // New persistent counter
 
   void updateDroplets(int newCount) {
     setState(() {
       dropletCount = newCount;
+    });
+  }
+
+  void updateDropletsUsed(int newCount) {
+    setState(() {
+      dropletsUsed = newCount;
     });
   }
 
@@ -25,9 +32,11 @@ class _DropletAppState extends State<DropletApp> {
     return DropletProvider(
       dropletCount: dropletCount,
       updateDroplets: updateDroplets,
+      dropletsUsed: dropletsUsed, // Provide this to the app
+      updateDropletsUsed: updateDropletsUsed,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: HomePage(),  // HomePage should be the starting widget
+        home: HomePage(),
       ),
     );
   }
