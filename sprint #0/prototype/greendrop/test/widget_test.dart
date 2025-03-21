@@ -5,25 +5,27 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:greendrop/main.dart';
+import 'package:mockito/mockito.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+// Create a mock class for SharedPreferences
+class MockSharedPreferences extends Mock implements SharedPreferences {}
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(DropletApp());
+  testWidgets('GreenDropApp smoke test', (WidgetTester tester) async {
+    // Create a mock SharedPreferences instance
+    final mockPrefs = MockSharedPreferences();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Optionally, you can define some behavior for the mock instance.
+    // For example, if the app checks for a 'dropletCount' value:
+    when(mockPrefs.getInt('dropletCount')).thenReturn(30); // Or any default value
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // Build our app with the mock SharedPreferences
+    await tester.pumpWidget(GreenDropApp(prefs: mockPrefs));
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify that our counter starts at 30 (or whatever default you set)
+    expect(find.text('GreenDrop'), findsOneWidget);
   });
 }

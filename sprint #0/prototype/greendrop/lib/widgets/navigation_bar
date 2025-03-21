@@ -1,0 +1,68 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart'; // Add this dependency to pubspec.yaml
+
+class BottomNavBar extends StatelessWidget {
+  final int currentIndex;
+  final Function(int) onTap;
+
+  const BottomNavBar({Key? key, required this.currentIndex, required this.onTap}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    // Get the current background color based on the route
+    Color backgroundColor;
+    switch (currentIndex) {
+      case 0: // Garden
+        backgroundColor = Colors.green.shade100; // Or your Garden's background color
+        break;
+      case 1: // Home
+        backgroundColor = Colors.white; // Or your Home's background color
+        break;
+      case 2: // Tasks
+        backgroundColor = Colors.green.shade100; // Or your Tasks' background color
+        break;
+      default:
+        backgroundColor = Colors.white; // Default color
+    }
+
+    return Container(
+      color: backgroundColor, // Set the background color of the outer container
+      padding: const EdgeInsets.all(16),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.green.shade300,
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 8,
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(30),
+          child: BottomNavigationBar(
+            currentIndex: currentIndex,
+            backgroundColor: Colors.transparent,
+            selectedItemColor: Colors.white,
+            unselectedItemColor: Colors.white70,
+            onTap: onTap,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.grass),
+                label: 'Garden',
+              ),
+              BottomNavigationBarItem(icon: Icon(Icons.star), label: 'Home'),
+              BottomNavigationBarItem(icon: Icon(Icons.check_box), label: 'Tasks'),
+            ],
+            type: BottomNavigationBarType.fixed,
+            showSelectedLabels: true,
+            showUnselectedLabels: true,
+            elevation: 0,
+          ),
+        ),
+      ),
+    );
+  }
+}
