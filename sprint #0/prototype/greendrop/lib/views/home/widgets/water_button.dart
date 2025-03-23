@@ -13,10 +13,10 @@ class WaterButton extends StatelessWidget {
         backgroundColor: Colors.green.shade200,
         padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 14),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(25),
         ),
       ),
-      child: const Text('Water Me!', style: TextStyle(color: Colors.black, fontSize: 18)),
+      child: Text('Water Me!', style: TextStyle(color: Colors.lightGreen.shade900, fontSize: 18)),
     );
   }
 }

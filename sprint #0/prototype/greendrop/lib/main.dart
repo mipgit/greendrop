@@ -3,7 +3,7 @@ import 'package:greendrop/view_model/droplet_provider.dart';
 import 'package:greendrop/views/garden/garden_page.dart';
 import 'package:greendrop/views/home/home_page.dart';
 import 'package:greendrop/views/tasks/todo_screen.dart';
-import 'package:greendrop/widgets/navigation_bar';
+import 'package:greendrop/widgets/navigation_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {

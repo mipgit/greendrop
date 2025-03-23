@@ -27,7 +27,7 @@ class TreeBox extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start, // Align to top
         children: [
           const Text(
-            "Eucalypto",
+            "Eucalyptus",
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green),
           ),
           const SizedBox(height: 5),

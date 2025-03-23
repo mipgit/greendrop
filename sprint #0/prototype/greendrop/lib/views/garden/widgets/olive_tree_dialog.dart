@@ -18,7 +18,7 @@ class OliveTreeDialog extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             const Text(
-              "Oliveira",
+              "Olive Tree",
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,

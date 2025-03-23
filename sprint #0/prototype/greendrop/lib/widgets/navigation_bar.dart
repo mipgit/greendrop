@@ -13,13 +13,13 @@ class BottomNavBar extends StatelessWidget {
     Color backgroundColor;
     switch (currentIndex) {
       case 0: // Garden
-        backgroundColor = Colors.green.shade100; // Or your Garden's background color
+        backgroundColor = Colors.green.shade50; // Or your Garden's background color
         break;
       case 1: // Home
         backgroundColor = Colors.white; // Or your Home's background color
         break;
       case 2: // Tasks
-        backgroundColor = Colors.green.shade100; // Or your Tasks' background color
+        backgroundColor = Colors.green.shade50; // Or your Tasks' background color
         break;
       default:
         backgroundColor = Colors.white; // Default color
@@ -27,10 +27,10 @@ class BottomNavBar extends StatelessWidget {
 
     return Container(
       color: backgroundColor, // Set the background color of the outer container
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.green.shade300,
+          color: Colors.green.shade300, // Or your BottomNavBar's background color
           borderRadius: BorderRadius.circular(30),
           boxShadow: [
             BoxShadow(
@@ -50,10 +50,10 @@ class BottomNavBar extends StatelessWidget {
             onTap: onTap,
             items: const [
               BottomNavigationBarItem(
-                icon: Icon(Icons.grass),
+                icon: Icon(Icons.sunny),
                 label: 'Garden',
               ),
-              BottomNavigationBarItem(icon: Icon(Icons.star), label: 'Home'),
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
               BottomNavigationBarItem(icon: Icon(Icons.check_box), label: 'Tasks'),
             ],
             type: BottomNavigationBarType.fixed,

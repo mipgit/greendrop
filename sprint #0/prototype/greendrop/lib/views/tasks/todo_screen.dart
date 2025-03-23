@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:greendrop/view_model/droplet_provider.dart';
+import 'package:greendrop/views/droplet_counter.dart';
 import 'widgets/task_list';
 
 class TaskScreen extends StatelessWidget {
@@ -10,7 +11,7 @@ class TaskScreen extends StatelessWidget {
     "Turn off lights when not in use.",
     "Recycle paper and plastics.",
     "Use public transportation or bike.",
-    "Reduce food waste."
+    "Reduce food waste.",
   ];
 
   @override
@@ -19,20 +20,23 @@ class TaskScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Daily Eco Tasks', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-        backgroundColor: Colors.green.shade300,
+        title: Text(
+          'Daily Eco Tasks',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.lightGreen.shade900,
+          ),
+        ),
+        backgroundColor: Colors.green.shade50,
         centerTitle: true,
       ),
       body: Container(
-        color: Colors.green.shade100,
+        color: Colors.green.shade50,
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Text(
-              "Droplet Count: ${provider?.dropletCount ?? 0}",
-              style: TextStyle(fontSize: 18.0, color: Colors.green.shade900, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
+            DropletCounter(dropletCount: provider?.dropletCount ?? 0),
+            const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
                 itemCount: tasks.length,
@@ -45,16 +49,21 @@ class TaskScreen extends StatelessWidget {
                         provider.updateTaskCompletion(index, value);
                         // Update droplets as needed
                         int dropletChange = value ? 1 : -1;
-                        provider.updateDroplets(provider.dropletCount + dropletChange);
+                        provider.updateDroplets(
+                          provider.dropletCount + dropletChange,
+                        );
                       }
                     },
                   );
                 },
               ),
             ),
-            ElevatedButton(  // Test button
+            ElevatedButton(
+              // Test button
               onPressed: () {
-                provider?.updateDroplets((provider.dropletCount + 1)); // Increment droplets
+                provider?.updateDroplets(
+                  (provider.dropletCount + 1),
+                ); // Increment droplets
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green.shade400,
