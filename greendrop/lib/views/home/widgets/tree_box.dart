@@ -14,37 +14,51 @@ class TreeBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Container(
-      margin: const EdgeInsets.all(16.0),
-      padding: const EdgeInsets.all(16.0),
+      margin: EdgeInsets.all(screenWidth * 0.04),
+      padding: EdgeInsets.all(screenWidth * 0.04),
       decoration: BoxDecoration(
         color: Colors.green.shade50,
         borderRadius: BorderRadius.circular(15),
       ),
       width: double.infinity,
-      height: 400, // Fixed height for the box
+      height: screenHeight * 0.50,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start, // Align to top
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Text(
             "Eucalyptus",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green),
+            style: TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              color: Colors.green,
+            ),
           ),
           const SizedBox(height: 5),
           Text(
             !treeGrown
                 ? 'Remaining droplets until grown: $dropletsUntilGrowth'
                 : 'Droplets used: $dropletsUsed',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green.shade800),
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.green.shade800,
+            ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 15),
           Expanded(
             child: Align(
               alignment: Alignment.bottomCenter, // Always align to bottom
               child: Image.asset(
                 treeGrown ? 'assets/tree.png' : 'assets/sprout.png',
                 height: treeGrown ? 300 : 100, // Adjusted image heights
-                fit: BoxFit.contain, // Ensure the image fits within the available space
+                fit:
+                    BoxFit
+                        .contain, // Ensure the image fits within the available space
               ),
             ),
           ),

@@ -243,9 +243,10 @@ class _HomeScreenState extends State<HomeScreen>
         ],
       ),
       body: Container(
-        color: Colors.white,
+        color: Colors.green.shade50,
         child: Column(
           children: [
+            const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 16.0,

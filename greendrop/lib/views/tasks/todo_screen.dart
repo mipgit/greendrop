@@ -66,8 +66,8 @@ class TaskScreen extends StatelessWidget {
                 ); // Increment droplets
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green.shade400,
-                foregroundColor: Colors.white,
+                backgroundColor: Colors.yellow,
+                foregroundColor: Colors.orange,
               ),
               child: const Text("Add Droplet (Test)"),
             ),

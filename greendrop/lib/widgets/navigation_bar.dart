@@ -5,7 +5,11 @@ class BottomNavBar extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
 
-  const BottomNavBar({Key? key, required this.currentIndex, required this.onTap}) : super(key: key);
+  const BottomNavBar({
+    Key? key,
+    required this.currentIndex,
+    required this.onTap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -13,16 +17,18 @@ class BottomNavBar extends StatelessWidget {
     Color backgroundColor;
     switch (currentIndex) {
       case 0: // Garden
-        backgroundColor = Colors.green.shade50; // Or your Garden's background color
+        backgroundColor =
+            Colors.green.shade50; // Or your Garden's background color
         break;
       case 1: // Home
-        backgroundColor = Colors.white; // Or your Home's background color
+        backgroundColor = Colors.green.shade50; // Or your Home's background color
         break;
       case 2: // Tasks
-        backgroundColor = Colors.green.shade50; // Or your Tasks' background color
+        backgroundColor =
+            Colors.green.shade50; // Or your Tasks' background color
         break;
       default:
-        backgroundColor = Colors.white; // Default color
+        backgroundColor = Colors.green.shade50; // Default color
     }
 
     return Container(
@@ -30,14 +36,11 @@ class BottomNavBar extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.green.shade300, // Or your BottomNavBar's background color
+          color:
+              Colors.green.shade300, // Or your BottomNavBar's background color
           borderRadius: BorderRadius.circular(30),
           boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              spreadRadius: 2,
-              blurRadius: 8,
-            ),
+            BoxShadow(color: Colors.grey, spreadRadius: 2, blurRadius: 8),
           ],
         ),
         child: ClipRRect(
@@ -46,15 +49,15 @@ class BottomNavBar extends StatelessWidget {
             currentIndex: currentIndex,
             backgroundColor: Colors.transparent,
             selectedItemColor: Colors.white,
-            unselectedItemColor: Colors.white70,
+            unselectedItemColor: Colors.white54,
             onTap: onTap,
             items: const [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.sunny),
-                label: 'Garden',
-              ),
+              BottomNavigationBarItem(icon: Icon(Icons.sunny), label: 'Garden'),
               BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-              BottomNavigationBarItem(icon: Icon(Icons.check_box), label: 'Tasks'),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.check_box),
+                label: 'Tasks',
+              ),
             ],
             type: BottomNavigationBarType.fixed,
             showSelectedLabels: true,

@@ -48,7 +48,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     title: Text('Location'),
                     subtitle: Text('Portugal, PT'),
                   ),
-                  ListTile(title: Text('Eco Score'), subtitle: Text('100')),
                 ],
               ),
             ),
