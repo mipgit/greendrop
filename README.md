@@ -38,7 +38,7 @@ Thank you!
 * Francisco Tomaz (up202309456@up.pt)
 * Maria Inês Pinho (up202306659@up.pt)
 * Narciso Barroso (up202305431@up.pt)
-
+> 2LEIC03T3 - ES 2024/25
 ---
 ## Business Modelling
 
@@ -64,6 +64,10 @@ To learn more about how to write a good product vision, please see:
 * [How to write a vision, by dummies.com](https://www.dummies.com/business/marketing/branding/how-to-write-vision-and-mission-statements-for-your-brand/)
 * [20 Inspiring Vision Statement Examples (2019 Updated), by lifehack.org](https://www.lifehack.org/articles/work/20-sample-vision-statement-for-the-new-startup.html)
 -->
+
+
+Our app promotes the completion of eco-friendly tasks - such as recycling, taking shorter showers, using less electricity, and more - so that users earn water droplets used to maintain and grow their own virtual trees.
+<br>In _GreenDrop_, every small action counts. Watch your tree flourish as you build healthier habits for yourself and a brighter future for the planet!
 
 
 ### Features and Assumptions
@@ -128,6 +132,13 @@ Example:
   <img src="https://github.com/FEUP-LEIC-ES-2022-23/templates/blob/main/images/DomainModel.png"/>
 </p>
 -->
+
+TO DO: description
+
+
+<p align="center" justify="center">
+  <img src="docs/diagrams/domain-model.png" width=600/>
+</p>
 
 
 ## Architecture and Design
