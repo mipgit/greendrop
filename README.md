@@ -66,8 +66,7 @@ To learn more about how to write a good product vision, please see:
 -->
 
 
-Our app promotes the completion of eco-friendly tasks - such as recycling, taking shorter showers, using less electricity, and more - so that users earn water droplets used to maintain and grow their own virtual trees.
-<br>In _GreenDrop_, every small action counts. Watch your tree flourish as you build healthier habits for yourself and a brighter future for the planet!
+Our app promotes the completion of eco-friendly tasks so that users earn water droplets used to maintain and grow their own virtual trees.
 
 
 ### Features and Assumptions
@@ -89,6 +88,14 @@ Take a look at the following links to learn some techniques:
 * [The Best Elevator Pitch Examples, Templates, and Tactics - A Guide to Writing an Unforgettable Elevator Speech, by strategypeak.com](https://strategypeak.com/elevator-pitch-examples/)
 * [Top 7 Killer Elevator Pitch Examples, by toggl.com](https://blog.toggl.com/elevator-pitch-examples/)
 -->
+
+Imagine turning your everyday green actions into a fun, rewarding experience.
+
+With GreenDrop, the app that makes sustainability engaging and interactive, it is possible. Every time you recycle, reduce waste, save water and more, you earn water droplets. Use them to grow and nurture virtual trees, building your own lush forest while making a real-world impact.
+
+With challenges, rewards, and a community of eco-conscious users, GreenDrop transforms small daily habits into a movement for a greener future.
+In GreenDrop, every small action counts. Watch your tree flourish as you build healthier habits for yourself and a brighter future for the planet!
+
 
 ## Requirements
 
@@ -133,12 +140,17 @@ Example:
 </p>
 -->
 
-TO DO: description
-
-
 <p align="center" justify="center">
   <img src="docs/diagrams/domain-model.png" width=600/>
 </p>
+
+Our app gives users the opportunity to grow their own virtual garden by doing eco-friendly activities. Each activity earns them droplets that can be used to grow and buy trees.
+
+User - Stores user information (username, password and email).<br>
+Task - User's daily goal is to complete tasks so they can earn droplets. Each task, when markchecked provides one to many droplets.<br>
+Tree - Stores the name and type of the trees the user owns. Each user can have many trees in addition to the one he starts with.<br>
+Level - Keeps track of the current level of a tree and stores the visual representation of it in that specific level<br>
+Droplet - It's the "currency" of the app, allows the user to upgrade and buy trees
 
 
 ## Architecture and Design
@@ -164,6 +176,10 @@ Example of _UML package diagram_ showing a _logical view_ of the Eletronic Ticke
 ![LogicalView](https://user-images.githubusercontent.com/9655877/160585416-b1278ad7-18d7-463c-b8c6-afa4f7ac7639.png)
 -->
 
+<p align="center" justify="center">
+  <img src="docs/diagrams/logical-view.jpeg" width=600/>
+</p>
+
 
 ### Physical architecture
 <!--
@@ -175,6 +191,10 @@ Example of _UML deployment diagram_ showing a _deployment view_ of the Eletronic
 
 ![DeploymentView](https://user-images.githubusercontent.com/9655877/160592491-20e85af9-0758-4e1e-a704-0db1be3ee65d.png)
 -->
+
+<p align="center" justify="center">
+  <img src="docs/diagrams/physical-view.jpeg" width=600/>
+</p>
 
 
 ### Vertical prototype

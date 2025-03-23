@@ -4,7 +4,7 @@
             "outputFile": "com.example.namer_app-mergeDebugResources-24:/values-night-v8/values-night-v8.xml",
             "map": [
                 {
-                    "source": "/home/cuca/Documents/2ano/esof/1/namer_app/android/app/src/main/res/values-night/styles.xml",
+                    "source": "/home/carolina/Desktop/FEUP/2ano/2semestre/ES/project/2LEIC03T3/sprint #0/first flutter app/android/app/src/main/res/values-night/styles.xml",
                     "from": {
                         "startLines": "3,14",
                         "startColumns": "4,4",

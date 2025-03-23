@@ -1,8 +1,8 @@
-#Thu Mar 06 17:53:14 WET 2025
-base.0=/home/cuca/Documents/2ano/esof/1/namer_app/build/app/intermediates/dex/debug/mergeExtDexDebug/classes.dex
-base.1=/home/cuca/Documents/2ano/esof/1/namer_app/build/app/intermediates/dex/debug/mergeProjectDexDebug/0/classes.dex
-base.2=/home/cuca/Documents/2ano/esof/1/namer_app/build/app/intermediates/dex/debug/mergeProjectDexDebug/1/classes.dex
-base.3=/home/cuca/Documents/2ano/esof/1/namer_app/build/app/intermediates/dex/debug/mergeProjectDexDebug/14/classes.dex
+#Wed Mar 19 14:20:11 WET 2025
+base.0=/home/carolina/Desktop/FEUP/2ano/2semestre/ES/project/2LEIC03T3/sprint \#0/first flutter app/build/app/intermediates/dex/debug/mergeExtDexDebug/classes.dex
+base.1=/home/carolina/Desktop/FEUP/2ano/2semestre/ES/project/2LEIC03T3/sprint \#0/first flutter app/build/app/intermediates/dex/debug/mergeProjectDexDebug/0/classes.dex
+base.2=/home/carolina/Desktop/FEUP/2ano/2semestre/ES/project/2LEIC03T3/sprint \#0/first flutter app/build/app/intermediates/dex/debug/mergeProjectDexDebug/1/classes.dex
+base.3=/home/carolina/Desktop/FEUP/2ano/2semestre/ES/project/2LEIC03T3/sprint \#0/first flutter app/build/app/intermediates/dex/debug/mergeProjectDexDebug/14/classes.dex
 path.0=classes.dex
 path.1=0/classes.dex
 path.2=1/classes.dex
