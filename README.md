@@ -128,22 +128,29 @@ At the end, it is good to add a rough indication of the value of the user story 
 
 -->
 
-
+<code>
 <a href="https://github.com/LEIC-ES-2024-25/2LEIC03T3/issues/3#issue-2905574560" style="color: white;">
   As a User I want to be able to access a set of eco-friendly tasks/goals for the day so that I try to lead a greener lifestyle.
 </a>
+</code>
 <br>
+<code>
 <a href="https://github.com/LEIC-ES-2024-25/2LEIC03T3/issues/4#issue-2905605119" style="color:white;">
   As a User I want to be able to checkmark which tasks I have completed so that I can earn droplets for each fulfilled task.
 </a>
+</code>
 <br>
+<code>
 <a href="https://github.com/LEIC-ES-2024-25/2LEIC03T3/issues/2#issue-2905572703" style="color: white;">
   As a User I want to be able to see how many droplets of water I have so that I can water my tree.
 </a>
+</code>
 <br>
+<code>
 <a href="https://github.com/LEIC-ES-2024-25/2LEIC03T3/issues/1#issue-2905572272" style="color: white;">
   As a User I want to be able to water my virtual tree so that it doesn't perish.
 </a>
+</code>
 <br>
 <a href=https://github.com/orgs/LEIC-ES-2024-25/projects/64/views/1>
   read more...
