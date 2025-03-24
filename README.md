@@ -128,9 +128,24 @@ At the end, it is good to add a rough indication of the value of the user story 
 
 -->
 
-[As a User I want to be able to water my virtual tree so that it doesn't perish.](https://github.com/LEIC-ES-2024-25/2LEIC03T3/issues/1#issue-2905572272)
 
+<a href="https://github.com/LEIC-ES-2024-25/2LEIC03T3/issues/3#issue-2905574560" style="color: white;">
+  As a User I want to be able to access a set of eco-friendly tasks/goals for the day so that I try to lead a greener lifestyle.
+</a>
 
+<a href="https://github.com/LEIC-ES-2024-25/2LEIC03T3/issues/4#issue-2905605119" style="color:white;">
+  As a User I want to be able to checkmark which tasks I have completed so that I can earn droplets for each fulfilled task.
+</a>
+
+<a href="https://github.com/LEIC-ES-2024-25/2LEIC03T3/issues/2#issue-2905572703" style="color: white;">
+  As a User I want to be able to see how many droplets of water I have so that I can water my tree.
+</a>
+
+<a href="https://github.com/LEIC-ES-2024-25/2LEIC03T3/issues/1#issue-2905572272" style="color: white;">
+  As a User I want to be able to water my virtual tree so that it doesn't perish.
+</a>
+
+[read more...](https://github.com/orgs/LEIC-ES-2024-25/projects/64/views/1)
 
 ### Domain model
 
@@ -202,7 +217,8 @@ Example of _UML deployment diagram_ showing a _deployment view_ of the Eletronic
   <img src="docs/diagrams/physical-view.jpeg" width=600/>
 </p>
 
-Following the Logical Architecture, maintaining the same dependencies, we can develop the Physical Architecture. The Mobile Device contains the Flutter Application, Logic and Local Storage. The Firebase Service not only contains the Firebase (API), but also allows storage of user’s information with Google Authentication.
+Following the Logical Architecture, maintaining the same dependencies, we can develop the Physical Architecture. The Mobile Device contains the Flutter Application, Logic and Local Storage. The Firebase Service contains the Firebase (API).
+<!--The Firebase Service not only contains the Firebase (API), but also allows storage of user’s information with Google Authentication.-->
 
 
 ### Vertical prototype
