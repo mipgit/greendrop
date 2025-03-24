@@ -231,7 +231,7 @@ At this phase, instead of a complete user story, you can simply implement a smal
 -->
 
 <p align="center" justify="center">
-  <img src="docs/mockups/prototype.gif" width=50/>
+  <img src="docs/mockups/prototype.gif" height=50/>
 </p>
 
 
