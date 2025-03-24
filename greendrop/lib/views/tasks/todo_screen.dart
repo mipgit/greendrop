@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:greendrop/view_model/droplet_provider.dart';
 import 'package:greendrop/views/droplet_counter.dart';
-import 'widgets/task_list';
+import 'widgets/task_list.dart';
 
 class TaskScreen extends StatelessWidget {
   const TaskScreen({Key? key}) : super(key: key);
