@@ -180,6 +180,8 @@ Example of _UML package diagram_ showing a _logical view_ of the Eletronic Ticke
   <img src="docs/diagrams/logical-view.jpeg" width=600/>
 </p>
 
+The application contains the User Interface, the pages the user interacts with. Which communicates with the Business Logic, that manipulates and manages user Data. The Firebase Database stores information about the app. Google Account is used to log into the application.
+
 
 ### Physical architecture
 <!--
@@ -195,6 +197,8 @@ Example of _UML deployment diagram_ showing a _deployment view_ of the Eletronic
 <p align="center" justify="center">
   <img src="docs/diagrams/physical-view.jpeg" width=600/>
 </p>
+
+Following the Logical Architecture, maintaining the same dependencies, we can develop the Physical Architecture. The Mobile Device contains the Flutter Application, Logic and Local Storage. The Firebase Service not only contains the Firebase (API), but also allows storage of user’s information with Google Authentication.
 
 
 ### Vertical prototype
