@@ -128,8 +128,8 @@ At the end, it is good to add a rough indication of the value of the user story 
 
 -->
 
-<a href="https://github.com/LEIC-ES-2024-25/2LEIC03T3/issues/3#issue-2905574560" style="color: white;">
-  As a User I want to be able to access a set of eco-friendly tasks/goals for the day so that I try to lead a greener lifestyle.
+<a href="https://github.com/LEIC-ES-2024-25/2LEIC03T3/issues/3#issue-2905574560" >
+  <span style="color: white;">As a User I want to be able to access a set of eco-friendly tasks/goals for the day so that I try to lead a greener lifestyle.</span>
 </a>
 <br>
 <a href="https://github.com/LEIC-ES-2024-25/2LEIC03T3/issues/4#issue-2905605119" style="color:white;">
@@ -218,8 +218,7 @@ Example of _UML deployment diagram_ showing a _deployment view_ of the Eletronic
   <img src="docs/diagrams/physical-view.jpeg" width=600/>
 </p>
 
-Following the Logical Architecture, maintaining the same dependencies, we can develop the Physical Architecture. The Mobile Device contains the Flutter Application, Logic and Local Storage. The Firebase Service contains the Firebase (API).
-<!--The Firebase Service not only contains the Firebase (API), but also allows storage of user’s information with Google Authentication.-->
+Following the Logical Architecture, maintaining the same dependencies, we can develop the Physical Architecture. The Mobile Device contains the Flutter Application, Logic and Local Storage. The Firebase Service not only contains the Firebase (API), but also allows storage of user’s information with Google Authentication.
 
 
 ### Vertical prototype
