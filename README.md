@@ -145,7 +145,9 @@ At the end, it is good to add a rough indication of the value of the user story 
   As a User I want to be able to water my virtual tree so that it doesn't perish.
 </a>
 <br>
-[read more...](https://github.com/orgs/LEIC-ES-2024-25/projects/64/views/1)
+<a href=https://github.com/orgs/LEIC-ES-2024-25/projects/64/views/1>
+  read more...
+</a>
 
 ### Domain model
 
