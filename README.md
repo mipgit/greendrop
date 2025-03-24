@@ -128,6 +128,10 @@ At the end, it is good to add a rough indication of the value of the user story 
 
 -->
 
+[As a User I want to be able to water my virtual tree so that it doesn't perish.](https://github.com/LEIC-ES-2024-25/2LEIC03T3/issues/1#issue-2905572272)
+
+
+
 ### Domain model
 
 <!-- 
@@ -209,6 +213,11 @@ In this subsection please describe which feature, or part of it, you have implem
 
 At this phase, instead of a complete user story, you can simply implement a small part of a feature that demonstrates thay you can use the technology, for example, show a screen with the app credits (name and authors).
 -->
+
+<p align="center" justify="center">
+  <img src="docs/mockups/prototype.gif" width=200/>
+</p>
+
 
 ## Project management
 <!--
