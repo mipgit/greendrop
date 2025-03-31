@@ -5,11 +5,11 @@ void main() {
 
   //firebase things before running App
 
-  runApp(const MyApp());
+  runApp(const GreenDropApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class GreenDropApp extends StatelessWidget {
+  const GreenDropApp({super.key});
 
   @override
   Widget build(BuildContext context) {
