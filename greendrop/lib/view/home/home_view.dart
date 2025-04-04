@@ -1,21 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:greendrop/view-model/user_provider.dart';
+import 'package:greendrop/view/home/tree_home_card.dart';
+import 'package:provider/provider.dart';
 
-class HomeView extends StatefulWidget {
+class HomeView extends StatelessWidget {
   const HomeView({super.key});
 
-  @override
-  State<HomeView> createState() => _HomeViewState();
-}
+  //FALTA ORGANIZAR ISTO :D
 
-class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [Text("home")],
-        ),
+      body: Consumer<UserProvider>(
+        builder: (context, userProvider, child) {
+          return Column(
+            children: [
+              Expanded(
+                child: PageView.builder(
+                  itemCount: userProvider.treeProviders.length,
+                  itemBuilder: (context, index) {
+                    final treeProvider = userProvider.treeProviders[index]; // Get TreeProvider once
+                    return ChangeNotifierProvider.value(
+                      value: treeProvider,
+                      child: Column(
+                        children: [
+                          TreeHomeCard(
+                            onWater: () {
+                              treeProvider.waterTree(); // use the treeProvider that was already retrieved.
+                            },
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              treeProvider.waterTree(); // use the treeProvider that was already retrieved.
+                            },
+                            child: const Text("Water Me!"),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

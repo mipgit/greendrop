@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:greendrop/view-model/user_provider.dart';
 import 'package:greendrop/view/navigation_view.dart';
+import 'package:provider/provider.dart';
 
 void main() {
 
   //firebase things before running App
 
-  runApp(const GreenDropApp());
+  runApp(
+    ChangeNotifierProvider( // wrap the app in the user provider
+      create: (context) => UserProvider(),
+      child: const GreenDropApp(),
+    ),
+  );
 }
 
 class GreenDropApp extends StatelessWidget {
