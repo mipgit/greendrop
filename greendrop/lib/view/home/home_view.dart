@@ -3,47 +3,83 @@ import 'package:greendrop/view-model/user_provider.dart';
 import 'package:greendrop/view/home/tree_home_card.dart';
 import 'package:provider/provider.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key});
 
-  //FALTA ORGANIZAR ISTO :D
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  late PageController _pageController;
+  int _currentPageIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: 0);
+    _pageController.addListener(() {
+      setState(() {
+        _currentPageIndex = _pageController.page?.round() ?? 0;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+
     return Scaffold(
-      body: Consumer<UserProvider>(
-        builder: (context, userProvider, child) {
-          return Column(
-            children: [
-              Expanded(
-                child: PageView.builder(
-                  itemCount: userProvider.treeProviders.length,
-                  itemBuilder: (context, index) {
-                    final treeProvider = userProvider.treeProviders[index]; // Get TreeProvider once
-                    return ChangeNotifierProvider.value(
-                      value: treeProvider,
-                      child: Column(
-                        children: [
-                          TreeHomeCard(
-                            onWater: () {
-                              treeProvider.waterTree(); // use the treeProvider that was already retrieved.
-                            },
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              treeProvider.waterTree(); // use the treeProvider that was already retrieved.
-                            },
-                            child: const Text("Water Me!"),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+      body: Column(
+        children: [
+          Expanded(
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: userProvider.treeProviders.length,
+              itemBuilder: (context, index) {
+                final treeProvider = userProvider.treeProviders[index];
+                return ChangeNotifierProvider.value(
+                  value: treeProvider,
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: TreeHomeCard(),
+                  ),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              bottom: 25.0,
+              top: 8.0,
+            ), 
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue.shade200,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12.0,
+                  horizontal: 25.0,
                 ),
               ),
-            ],
-          );
-        },
+              onPressed: () {
+                if (userProvider.treeProviders.isNotEmpty &&
+                    _currentPageIndex < userProvider.treeProviders.length) {
+                  userProvider.treeProviders[_currentPageIndex].waterTree();
+                }
+              },
+              child: const Text(
+                "Water Me!",
+                style: TextStyle(color: Colors.white, fontSize: 18.0),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

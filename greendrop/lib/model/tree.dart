@@ -5,7 +5,7 @@ class Tree {
   Tree({
     required this.id,
     required this.name,
-    required this.type,
+    required this.species,
     required this.description,
     //required this.user,
     required this.levels,
@@ -18,7 +18,7 @@ class Tree {
 
   final int id;
   String name;
-  final String type;
+  final String species;
   final String description;
   //final String user;
   final List<Level> levels;
@@ -31,11 +31,11 @@ class Tree {
 
   void waterTree() {
     dropletsUsed ++;
-    _checkLevelProgression();
+    _checkLevelUp();
   }
 
-  void _checkLevelProgression() {
-    if (curLevel < levels.length && dropletsUsed >= levels[curLevel].requiredDroplets) {
+  void _checkLevelUp() {
+    if (curLevel < levels.length-1 && dropletsUsed >= levels[curLevel+1].requiredDroplets) {
       curLevel++;
     }
   }
