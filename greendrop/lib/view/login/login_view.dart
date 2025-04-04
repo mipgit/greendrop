@@ -8,44 +8,59 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthenticationService>(context);
+    final Color googleButtonBackgroundColor = Colors.grey[100] ?? const Color(0xFFF5F5F5);
+    final Color screenBackgroundColor = const Color(0xFFF0F7EF);
+    final Color darkPastelGreen = Colors.green[800]!; // Using a darker shade from Material palette
 
     return Scaffold(
-      body: SafeArea( // Use SafeArea to avoid notches/status bars
+      backgroundColor: screenBackgroundColor,
+      body: SafeArea(
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0), // Add horizontal padding
+            padding: const EdgeInsets.symmetric(horizontal: 32.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center, // Center the column vertically
-              crossAxisAlignment: CrossAxisAlignment.center, // Center items horizontally within the column
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                // 1. App Name
+                // App Logo
+                Image.asset(
+                  'assets/icon/greendrop.png',
+                  height: 200,
+                ),
+                const SizedBox(height: 24),
+
+                // App Name (with Dark Pastel Green color)
                 Text(
-                  'GreenDrop', // Your App Name
+                  'GreenDrop',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary, // Use theme color
+                        color: darkPastelGreen,
                       ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 24), // Spacing between name and icon
+                const SizedBox(height: 72),
 
-                // 2. App Icon
-                Image.asset(
-                  'assets/icon/greendrop.png', // Path to your icon
-                  height: 120, // Adjust height as needed
-                  // Optional: Add width if needed, or let height control aspect ratio
-                  // width: 120,
-                ),
-                const SizedBox(height: 48), // Spacing between icon and button
-
-                // 3. Sign-in Button
-                ElevatedButton.icon( // Using .icon for a cleaner look with text+icon
+                // Google Sign-in Button
+                ElevatedButton.icon(
                   onPressed: authService.signIn,
-                  icon: const Icon(Icons.login), // Or use a Google specific icon if you have one
-                  label: const Text('Sign in with Google.'),
+                  icon: Image.asset(
+                    'assets/icon/google.png',
+                    height: 22.0,
+                  ),
+                  label: Text(
+                    'Sign in with Google',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey[800],
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                   style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 48), // Make button wider
-                    textStyle: const TextStyle(fontSize: 16),
+                    shape: const StadiumBorder(),
+                    elevation: 1,
+                    backgroundColor: googleButtonBackgroundColor,
+                    foregroundColor: Colors.grey[800],
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   ),
                 ),
               ],
