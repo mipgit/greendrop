@@ -55,10 +55,7 @@ class _HomeViewState extends State<HomeView> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(
-              bottom: 25.0,
-              top: 8.0,
-            ), 
+            padding: const EdgeInsets.only(bottom: 25.0, top: 8.0),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue.shade200,
@@ -70,7 +67,19 @@ class _HomeViewState extends State<HomeView> {
               onPressed: () {
                 if (userProvider.treeProviders.isNotEmpty &&
                     _currentPageIndex < userProvider.treeProviders.length) {
-                  userProvider.treeProviders[_currentPageIndex].waterTree();
+                  final treeProvider =
+                      userProvider.treeProviders[_currentPageIndex];
+                  if (userProvider.user.droplets > 0) {
+                    treeProvider.waterTree(userProvider);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("You don't have enough droplets."),
+                        duration: Duration(seconds: 2),
+                        backgroundColor: Color.fromARGB(255, 9, 60, 128),
+                      ),
+                    );
+                  }
                 }
               },
               child: const Text(

@@ -34,17 +34,28 @@ class UserProvider with ChangeNotifier {
         ],
 
         tasks: [],
-        droplets: 20,
+        droplets: 32,
 
       ) {
     userTrees = user.trees; 
-    treeProviders = userTrees.map((tree) => TreeProvider(tree, user)).toList();
+    treeProviders = userTrees.map((tree) => TreeProvider(tree)).toList();
   }
 
 
-  //adding methods to update user's trees and TreeProviders as needed
+  //adding methods to update user's info and TreeProviders as needed
   void updateTrees() {
-    treeProviders = userTrees.map((tree) => TreeProvider(tree, user)).toList();
+    treeProviders = userTrees.map((tree) => TreeProvider(tree)).toList();
     notifyListeners();
   }
+
+  void addDroplets(int amount) {
+    user.addDroplets(amount); //this needs fixing but i dont want to change user class yet
+    notifyListeners(); 
+  }
+
+  void takeDroplets(int amount) {
+    user.takeDroplets(amount);
+    notifyListeners(); 
+  }
+
 }

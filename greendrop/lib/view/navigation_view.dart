@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:greendrop/view-model/user_provider.dart';
 import 'package:greendrop/view/garden/garden_view.dart';
 import 'package:greendrop/view/home/home_view.dart';
 import 'package:greendrop/view/tasks/tasks_view.dart';
+import 'package:provider/provider.dart';
 
 class NavigationView extends StatefulWidget {
   const NavigationView({super.key});
@@ -27,22 +29,55 @@ class _NavigationViewState extends State<NavigationView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('GreenDrop'), centerTitle: true),
-      body: Center(child: _widgetOptions.elementAt(_selectedIndex)),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: _onItemTapped,
-
-        destinations: [
-          NavigationDestination(icon: Icon(Icons.sunny), label: 'Garden'),
-          NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-          NavigationDestination(
-            icon: Icon(Icons.task_alt_outlined),
-            label: 'Tasks',
+    return Consumer<UserProvider>(
+      builder: (context, userProvider, child) {
+        final dropletCount = userProvider.user.droplets;
+        return Scaffold(
+          appBar: AppBar(title: const Text('GreenDrop'), centerTitle: true),
+          body: Stack(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: 40.0),
+                child: Center(child: _widgetOptions.elementAt(_selectedIndex)),
+              ),
+              Positioned(
+                top: 10.0,
+                left: 25.0,
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.water_drop,
+                      size: 30,
+                      color: Colors.blue.shade700,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '$dropletCount',
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 37, 145, 196),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+          bottomNavigationBar: NavigationBar(
+            selectedIndex: _selectedIndex,
+            onDestinationSelected: _onItemTapped,
+            destinations: const [
+              NavigationDestination(icon: Icon(Icons.sunny), label: 'Garden'),
+              NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
+              NavigationDestination(
+                icon: Icon(Icons.task_alt_outlined),
+                label: 'Tasks',
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

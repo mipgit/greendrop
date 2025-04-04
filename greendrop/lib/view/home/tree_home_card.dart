@@ -33,7 +33,7 @@ class TreeHomeCard extends StatelessWidget {
             Text('Droplets Used: ${tree.dropletsUsed}'),
             if (curLevel != null)
               Container(
-                height: 330,
+                height: 290, //this needs fixing
                 width: double.infinity,
                 padding: EdgeInsets.all(4),
                 //decoration: BoxDecoration(color: Colors.grey[200]),
