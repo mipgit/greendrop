@@ -21,9 +21,12 @@ class TreeGardenCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final isOwned = userProvider.user.ownedTrees.contains(tree.id);
+
     return Card(
       margin: const EdgeInsets.all(8.0),
-      color: tree.isBought ? null : const Color.fromARGB(255, 216, 214, 214),
+      color: isOwned ? null : const Color.fromARGB(255, 216, 214, 214),
       child: SizedBox(
         height: 100.0,
         child: Row(
@@ -36,48 +39,55 @@ class TreeGardenCard extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        name,
-                        style: const TextStyle(
-                          fontSize: 25.0,
-                        ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      name,
+                      style: const TextStyle(
+                        fontSize: 25.0,
                       ),
-                      Text(
-                        '${price} coins',
-                        style: const TextStyle(
-                          fontSize: 12.0,
-                        ),
+                    ),
+                    Text(
+                      '${price} coins',
+                      style: const TextStyle(
+                        fontSize: 12.0,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-              GestureDetector( 
+            ),
+            GestureDetector(
               onTap: () {
-                final userProvider = Provider.of<UserProvider>(context, listen: false);
-                if (!tree.isBought) {
+                if (isOwned) {
+                  // We're not doing anything when clicking the checkmark for now
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("You already own this tree!")),
+                  );
+                } else {
                   if (userProvider.user.droplets >= tree.price) {
-                    userProvider.user.droplets -= tree.price;
-                    final index = userProvider.user.ownedTrees.indexOf(tree.id);
-                    if (index != -1) {
-                      //userProvider.user.ownedTrees[index].isBought = true; -> SOLVING NEEDED
-                      userProvider.updateTrees(); 
-                    }
+                    userProvider.buyTree(context, tree.id);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("${tree.name} bought!")),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Not enough droplets!")),
+                    );
                   }
                 }
               },
               child: Padding(
                 padding: const EdgeInsets.only(right: 16.0),
                 child: Icon(
-                  tree.isBought ? Icons.check : Icons.add,
-                  color: tree.isBought ? Colors.green : const Color.fromARGB(255, 0, 0, 0),
+                  isOwned ? Icons.check : Icons.add,
+                  color: isOwned ? Colors.green : const Color.fromARGB(255, 0, 0, 0),
+                  size: 30.0,
                 ),
               ),
             ),
