@@ -17,9 +17,9 @@ class _NavigationViewState extends State<NavigationView> {
   int _selectedIndex = 1;
 
   static final List<Widget> _widgetOptions = <Widget>[
-    const GardenView(), // Use GardenPage for index 0
-    const HomeView(), // Use HomePage for index 1
-    const TasksView(), // Use TasksPage for index 2
+    const GardenView(),
+    const HomeView(),
+    const TasksView(),
   ];
 
   void _onItemTapped(int index) {
@@ -33,11 +33,24 @@ class _NavigationViewState extends State<NavigationView> {
     return Consumer<UserProvider>(
       builder: (context, userProvider, child) {
         return Scaffold(
-          appBar: AppBar(title: const Text('GreenDrop'), centerTitle: true),
+          appBar: AppBar(
+            title: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _selectedIndex = 1; // Index 1 is where your HomeView is in _widgetOptions
+                });
+              },
+              child: const Text(
+                'GreenDrop',
+                style: TextStyle(fontSize: 30.0),
+              ),
+            ),
+            centerTitle: false,
+          ),
           body: Stack(
             children: [
               Padding(
-                padding: EdgeInsets.only(top: 40.0),
+                padding: const EdgeInsets.only(top: 40.0),
                 child: Center(child: _widgetOptions.elementAt(_selectedIndex)),
               ),
               Positioned(
@@ -53,7 +66,10 @@ class _NavigationViewState extends State<NavigationView> {
             destinations: const [
               NavigationDestination(icon: Icon(Icons.sunny), label: 'Garden'),
               NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-              NavigationDestination(icon: Icon(Icons.task_alt_outlined), label: 'Tasks',),
+              NavigationDestination(
+                icon: Icon(Icons.task_alt_outlined),
+                label: 'Tasks',
+              ),
             ],
           ),
         );
