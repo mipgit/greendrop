@@ -37,7 +37,7 @@ class _NavigationViewState extends State<NavigationView> {
             title: GestureDetector(
               onTap: () {
                 setState(() {
-                  _selectedIndex = 1; // Index 1 is where your HomeView is in _widgetOptions
+                  _selectedIndex = 1; 
                 });
               },
               child: const Text(
@@ -46,19 +46,16 @@ class _NavigationViewState extends State<NavigationView> {
               ),
             ),
             centerTitle: false,
-          ),
-          body: Stack(
-            children: [
+            actions: const [ 
               Padding(
-                padding: const EdgeInsets.only(top: 40.0),
-                child: Center(child: _widgetOptions.elementAt(_selectedIndex)),
-              ),
-              Positioned(
-                top: 10.0,
-                right: 25.0,
-                child: const DropletCounter(),
+                padding: EdgeInsets.only(right: 16.0),
+                child: DropletCounter(),
               ),
             ],
+          ),
+          body: Padding( // Add padding to the top of the body
+            padding: const EdgeInsets.only(top: 10.0), // Adjust this value as needed
+            child: Center(child: _widgetOptions.elementAt(_selectedIndex)),
           ),
           bottomNavigationBar: NavigationBar(
             selectedIndex: _selectedIndex,
