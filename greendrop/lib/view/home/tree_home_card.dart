@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 class TreeHomeCard extends StatelessWidget {
   final VoidCallback onWater;
 
-  TreeHomeCard({required this.onWater});
+  const TreeHomeCard({super.key, required this.onWater});
 
   @override
   Widget build(BuildContext context) {
