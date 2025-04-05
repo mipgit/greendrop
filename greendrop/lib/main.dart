@@ -10,14 +10,14 @@ import 'package:greendrop/view/navbar/navigation_view.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
-  //WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
 
-  //await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
     MultiProvider(
       providers: [
-        //ChangeNotifierProvider(create: (_) => AuthenticationService()),
+        ChangeNotifierProvider(create: (_) => AuthenticationService()),
         ChangeNotifierProvider(create: (context) => GardenProvider()), 
         ChangeNotifierProvider(create: (context) => UserProvider(context)),
       ],
@@ -26,7 +26,7 @@ void main() async {
   );
 }
 
-/*
+
 class GreenDropApp extends StatelessWidget {
   const GreenDropApp({super.key});
 
@@ -53,25 +53,6 @@ class GreenDropApp extends StatelessWidget {
           }
         },
       ),
-    );
-  }
-}
-
-*/
-
-class GreenDropApp extends StatelessWidget {
-  const GreenDropApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'GreenDrop',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.lightGreen.shade600,
-        ),
-      ),
-      home: const NavigationView(),
     );
   }
 }
