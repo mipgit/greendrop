@@ -34,6 +34,7 @@ class _NavigationViewState extends State<NavigationView> {
       builder: (context, userProvider, child) {
         return Scaffold(
           appBar: AppBar(
+            backgroundColor: Colors.transparent,
             title: GestureDetector(
               onTap: () {
                 setState(() {
@@ -57,18 +58,30 @@ class _NavigationViewState extends State<NavigationView> {
             padding: const EdgeInsets.only(top: 10.0), // Adjust this value as needed
             child: Center(child: _widgetOptions.elementAt(_selectedIndex)),
           ),
-          bottomNavigationBar: NavigationBar(
-            selectedIndex: _selectedIndex,
-            onDestinationSelected: _onItemTapped,
-            destinations: const [
-              NavigationDestination(icon: Icon(Icons.sunny), label: 'Garden'),
-              NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-              NavigationDestination(
-                icon: Icon(Icons.task_alt_outlined),
-                label: 'Tasks',
+          bottomNavigationBar: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Material(
+              elevation: 3.0,
+              borderRadius: BorderRadius.circular(30.0),
+              color: null, // Or any background color you prefer
+              clipBehavior: Clip.antiAlias,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: NavigationBar(
+                  backgroundColor: Colors.transparent, // Make the NavigationBar transparent
+                  selectedIndex: _selectedIndex,
+                  onDestinationSelected: _onItemTapped,
+                  indicatorColor: Theme.of(context).colorScheme.primaryContainer,
+                  destinations: const [
+                    NavigationDestination(icon: Icon(Icons.sunny), label: 'Garden'),
+                    NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
+                    NavigationDestination(icon: Icon(Icons.task_alt_outlined), label: 'Tasks'),
+                  ],
+                ),
               ),
-            ],
+            ),
           ),
+          
         );
       },
     );
