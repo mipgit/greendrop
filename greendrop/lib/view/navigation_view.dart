@@ -42,21 +42,16 @@ class _NavigationViewState extends State<NavigationView> {
               ),
               Positioned(
                 top: 10.0,
-                left: 25.0,
+                right: 25.0,
                 child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      Icons.water_drop,
-                      size: 30,
-                      color: Colors.blue.shade700,
-                    ),
-                    const SizedBox(width: 4),
+                    Icon(Icons.water_drop_rounded, color: Colors.blue),
+                    const SizedBox(width: 2.0),
                     Text(
                       '$dropletCount',
                       style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(255, 37, 145, 196),
+                        fontSize: 20,
                       ),
                     ),
                   ],
@@ -70,10 +65,7 @@ class _NavigationViewState extends State<NavigationView> {
             destinations: const [
               NavigationDestination(icon: Icon(Icons.sunny), label: 'Garden'),
               NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-              NavigationDestination(
-                icon: Icon(Icons.task_alt_outlined),
-                label: 'Tasks',
-              ),
+              NavigationDestination(icon: Icon(Icons.task_alt_outlined), label: 'Tasks',),
             ],
           ),
         );
