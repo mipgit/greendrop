@@ -32,20 +32,20 @@ class TreeHomeCard extends StatelessWidget {
             SizedBox(height: 8),
             Text('Droplets Used: ${tree.dropletsUsed}'),
             if (curLevel != null)
-              Container(
-                height: 290, //this needs fixing
-                width: double.infinity,
-                padding: EdgeInsets.all(4),
-                //decoration: BoxDecoration(color: Colors.grey[200]),
-                alignment: Alignment.bottomCenter,
-                child: SizedBox(
-                  width: 150,
-                  child: Image.asset(
-                    curLevel.levelPicture,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ),
+  Expanded( // Use Expanded so it takes up available vertical space
+    child: Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(4),
+      alignment: Alignment.bottomCenter,
+      child: SizedBox(
+        width: 150,
+        child: Image.asset(
+          curLevel.levelPicture,
+          fit: BoxFit.contain, // Keep BoxFit.contain
+        ),
+      ),
+    ),
+  ),
           ],
         ),
       ),
