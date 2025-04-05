@@ -26,7 +26,7 @@ class TreeGardenCard extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.all(8.0),
-      color: isOwned ? null : const Color.fromARGB(255, 216, 214, 214),
+      color: isOwned ? null : const Color.fromARGB(204, 219, 217, 217),
       child: SizedBox(
         height: 100.0,
         child: Row(
@@ -65,7 +65,6 @@ class TreeGardenCard extends StatelessWidget {
             GestureDetector(
               onTap: () {
                 if (isOwned) {
-                  // We're not doing anything when clicking the checkmark for now
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("You already own this tree!")),
                   );
