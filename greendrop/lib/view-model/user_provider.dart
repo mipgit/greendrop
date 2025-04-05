@@ -21,7 +21,7 @@ class UserProvider with ChangeNotifier {
         email: "johndoe@email.com",
         ownedTrees: [1,2],
         tasks: [],
-        droplets: 54,
+        droplets: 100,
 
       ) {
     _initializeUserTrees(context);
