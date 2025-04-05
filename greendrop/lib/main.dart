@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:greendrop/view-model/garden_provider.dart';
 import 'package:greendrop/view-model/user_provider.dart';
 import 'package:greendrop/view/navigation_view.dart';
 import 'package:provider/provider.dart';
@@ -8,9 +9,12 @@ void main() {
   //firebase things before running App
 
   runApp(
-    ChangeNotifierProvider( // wrap the app in the user provider
-      create: (context) => UserProvider(),
-      child: const GreenDropApp(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => GardenProvider()), 
+        ChangeNotifierProvider(create: (context) => UserProvider(context)),
+      ],
+      child: GreenDropApp(),
     ),
   );
 }

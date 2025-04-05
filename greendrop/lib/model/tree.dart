@@ -7,12 +7,11 @@ class Tree {
     required this.name,
     required this.species,
     required this.description,
-    //required this.user,
     required this.levels,
     required this.price,
     this.curLevel = 0, //para ser mais facil lidar c/ lista de levels
     this.dropletsUsed = 0,
-    this.isBought = false
+    //this.isBought = false
   });
 
 
@@ -20,12 +19,11 @@ class Tree {
   String name;
   final String species;
   final String description;
-  //final String user;
   final List<Level> levels;
   int curLevel;
   int dropletsUsed;
   final int price;
-  bool isBought;
+  //bool isBought;
 
 
 
