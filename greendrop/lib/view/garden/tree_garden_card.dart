@@ -19,40 +19,46 @@ class TreeGardenCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.all(8.0),
       child: SizedBox(
-        height: 100.0, 
+        height: 100.0,
         child: Row(
           children: [
+            SizedBox(
+              width: 100.0,
+              height: double.infinity,
+              child: Image.asset(
+                imagePath,
+                fit: BoxFit.cover,
+              ),
+            ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(10.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center, 
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       name,
                       style: const TextStyle(
-                        fontSize: 25.0,
+                        fontSize: 25.0, 
                       ),
                     ),
                     Text(
                       '${price} coins',
                       style: const TextStyle(
-                        fontSize: 12.0,
+                        fontSize: 12.0, 
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
             ),
-            SizedBox( 
-              width: 100.0, 
-              height: double.infinity,
-              child: Image.asset(
-                  imagePath,
-                  fit: BoxFit.cover,
-                ),
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Icon(
+                Icons.add, 
               ),
+            ),
           ],
         ),
       ),
