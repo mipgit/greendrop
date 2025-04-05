@@ -4,6 +4,7 @@ import 'package:greendrop/view/garden/garden_view.dart';
 import 'package:greendrop/view/home/home_view.dart';
 import 'package:greendrop/view/tasks/tasks_view.dart';
 import 'package:provider/provider.dart';
+import 'package:greendrop/view/navbar/droplet_counter.dart';
 
 class NavigationView extends StatefulWidget {
   const NavigationView({super.key});
@@ -31,7 +32,6 @@ class _NavigationViewState extends State<NavigationView> {
   Widget build(BuildContext context) {
     return Consumer<UserProvider>(
       builder: (context, userProvider, child) {
-        final dropletCount = userProvider.user.droplets;
         return Scaffold(
           appBar: AppBar(title: const Text('GreenDrop'), centerTitle: true),
           body: Stack(
@@ -43,19 +43,7 @@ class _NavigationViewState extends State<NavigationView> {
               Positioned(
                 top: 10.0,
                 right: 25.0,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.water_drop_rounded, color: Colors.blue),
-                    const SizedBox(width: 2.0),
-                    Text(
-                      '$dropletCount',
-                      style: const TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
-                  ],
-                ),
+                child: const DropletCounter(),
               ),
             ],
           ),
