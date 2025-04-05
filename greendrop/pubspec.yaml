@@ -10,9 +10,13 @@ dependencies:
   provider: ^6.0.5
   flutter:
     sdk: flutter
-  shared_preferences: ^2.5.2
   flutter_svg: ^2.0.17
   mockito: ^5.4.5
+  change_app_package_name: ^1.5.0
+  firebase_core: ^3.13.0
+  firebase_auth: ^5.5.2
+  google_sign_in: ^6.3.0
+  flutter_animate: ^4.5.2
 
 dev_dependencies:
   flutter_test:
@@ -29,10 +33,11 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/oak.png
-    - assets/olive-tree.png
-    - assets/palms.png
-    - assets/pine-tree.png
     - assets/sprout.png
     - assets/tree.png
-
+    - assets/palms.png
+    - assets/oak.png
+    - assets/pine-tree.png
+    - assets/olive-tree.png
+    - assets/icon/greendrop.png
+    - assets/icon/google.png
