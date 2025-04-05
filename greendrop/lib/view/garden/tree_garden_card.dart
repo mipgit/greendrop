@@ -65,9 +65,9 @@ class TreeGardenCard extends StatelessWidget {
                 if (!tree.isBought) {
                   if (userProvider.user.droplets >= tree.price) {
                     userProvider.user.droplets -= tree.price;
-                    final index = userProvider.user.trees.indexOf(tree);
+                    final index = userProvider.user.ownedTrees.indexOf(tree.id);
                     if (index != -1) {
-                      userProvider.user.trees[index].isBought = true;
+                      //userProvider.user.ownedTrees[index].isBought = true; -> SOLVING NEEDED
                       userProvider.updateTrees(); 
                     }
                   }

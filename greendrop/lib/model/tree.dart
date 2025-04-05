@@ -11,7 +11,7 @@ class Tree {
     required this.price,
     this.curLevel = 0, //para ser mais facil lidar c/ lista de levels
     this.dropletsUsed = 0,
-    //this.isBought = false
+    this.isBought = false
   });
 
 
@@ -23,7 +23,7 @@ class Tree {
   int curLevel;
   int dropletsUsed;
   final int price;
-  //bool isBought;
+  bool isBought;
 
 
 
