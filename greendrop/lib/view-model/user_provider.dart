@@ -16,25 +16,36 @@ class UserProvider with ChangeNotifier {
         email: "johndoe@email.com",
         trees: [
           Tree(
-            id: 1, name: 'Pine Tree', description: 'A tall pine.', species: 'Pine', price: 0, isBought: true,
+            id: 1, name: 'Pine Tree', description: 'A tall pine.', species: 'Pine', price: 30, isBought: true,
             levels: [
               Level(levelNumber: 0, requiredDroplets: 0, levelPicture: 'assets/sprout.png',),
               Level(levelNumber: 1, requiredDroplets: 10, levelPicture: 'assets/tree.png',),
             ],
             dropletsUsed: 0, curLevel: 0,
           ),
+
           Tree(
-            id: 2, name: 'Palm Tree', description: 'A carefree palm.', species: 'Palm', price: 0, isBought: true,
+            id: 2, name: 'Palm Tree', description: 'A carefree palm.', species: 'Palm', price: 45, isBought: true,
             levels: [
               Level(levelNumber: 0, requiredDroplets: 0, levelPicture: 'assets/sprout.png',),
               Level(levelNumber: 1, requiredDroplets: 20, levelPicture: 'assets/palms.png',),
             ],
             dropletsUsed: 0, curLevel: 0,
           ),
+
+          Tree(
+            id: 3, name: 'Oak Tree', description: 'A sturdy oak.', species: 'Oak', price: 60, isBought: true,
+            levels: [
+              Level(levelNumber: 0, requiredDroplets: 0, levelPicture: 'assets/sprout.png',),
+              Level(levelNumber: 1, requiredDroplets: 30, levelPicture: 'assets/oak.png',),
+            ],
+            dropletsUsed: 0, curLevel: 0,
+          ),
+          
         ],
 
         tasks: [],
-        droplets: 32,
+        droplets: 54,
 
       ) {
     userTrees = user.trees; 

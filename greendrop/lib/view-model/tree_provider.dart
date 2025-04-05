@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:greendrop/model/level.dart';
 import 'package:greendrop/model/tree.dart';
-import 'package:greendrop/model/user.dart';
 import 'package:greendrop/view-model/user_provider.dart';
 
 

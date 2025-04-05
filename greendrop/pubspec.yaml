@@ -29,7 +29,10 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/tree.png
-    - assets/olive-tree.png
     - assets/sprout.png
+    - assets/tree.png
     - assets/palms.png
+    - assets/oak.png
+    - assets/pine-tree.png
+    - assets/olive-tree.png
+
