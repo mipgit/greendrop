@@ -18,32 +18,41 @@ class TreeGardenCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.all(8.0),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
+      child: SizedBox(
+        height: 100.0, 
         child: Row(
           children: [
-            Image.asset(
-              imagePath,
-              height: 50,
-            ),
-            const SizedBox(width: 16.0),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.0,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center, 
+                  children: [
+                    Text(
+                      name,
+                      style: const TextStyle(
+                        fontSize: 25.0,
+                      ),
                     ),
-                  ),
-                  Text('${price} coins'),
-                ],
+                    Text(
+                      '${price} coins',
+                      style: const TextStyle(
+                        fontSize: 12.0,
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
-            if (isLocked)
-              const Icon(Icons.lock),
+            SizedBox( 
+              width: 100.0, 
+              height: double.infinity,
+              child: Image.asset(
+                  imagePath,
+                  fit: BoxFit.cover,
+                ),
+              ),
           ],
         ),
       ),
