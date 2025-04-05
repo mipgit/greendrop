@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:greendrop/view-model/garden_provider.dart';
 import 'package:greendrop/firebase_options.dart';
 import 'package:greendrop/services/authentication_service.dart';
 import 'package:greendrop/view-model/user_provider.dart';
@@ -17,7 +18,8 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthenticationService()),
-        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (context) => GardenProvider()), 
+        ChangeNotifierProvider(create: (context) => UserProvider(context)),
       ],
       child: const GreenDropApp(),
     ),
