@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "968136753248",
+    "firebase_url": "https://greendrop-esof-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "greendrop-esof",
+    "storage_bucket": "greendrop-esof.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:968136753248:android:7d3a65b1962a1a68f58305",
+        "android_client_info": {
+          "package_name": "com.esof.greendrop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "968136753248-82amrkgvnm3bcp9dglr8tqmekl94bous.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.esof.greendrop",
+            "certificate_hash": "7fa95d459334a5ef18c774f930c4d58f047452a2"
+          }
+        },
+        {
+          "client_id": "968136753248-n5ss62ma7dscrjngcr4235od667ubs94.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBp5IfqdxQTrW7bHi7Xcsk8q0_JSXSXUgY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "968136753248-n5ss62ma7dscrjngcr4235od667ubs94.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "968136753248-n99d55tjnkgbji0v89n4biicpa4j66f2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.esof.greendrop"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
