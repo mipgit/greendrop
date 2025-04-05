@@ -47,6 +47,7 @@ class GardenView extends StatelessWidget {
                         price: tree.price,
                         imagePath: imagePath,
                         isLocked: false,
+                        tree: tree,
                       );
                     },
                   ),

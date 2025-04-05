@@ -16,7 +16,7 @@ class UserProvider with ChangeNotifier {
         email: "johndoe@email.com",
         trees: [
           Tree(
-            id: 1, name: 'Pine Tree', description: 'A tall pine.', type: 'Pine', price: 30, isBought: true,
+            id: 1, name: 'Pine Tree', description: 'A tall pine.', type: 'Pine', price: 10, isBought: false,
             levels: [
               Level(levelNumber: 0, requiredDroplets: 0, levelPicture: 'assets/sprout.png',),
               Level(levelNumber: 1, requiredDroplets: 10, levelPicture: 'assets/tree.png',),
@@ -24,7 +24,7 @@ class UserProvider with ChangeNotifier {
             dropletsUsed: 0, curLevel: 0,
           ),
           Tree(
-            id: 2, name: 'Oak Tree', description: 'A sturdy oak.', type: 'Oak', price: 60, isBought: true,
+            id: 2, name: 'Oak Tree', description: 'A sturdy oak.', type: 'Oak', price: 60, isBought: false,
             levels: [
               Level(levelNumber: 0, requiredDroplets: 0, levelPicture: 'assets/sprout.png',),
               Level(levelNumber: 1, requiredDroplets: 20, levelPicture: 'assets/oak.png',),
@@ -34,7 +34,7 @@ class UserProvider with ChangeNotifier {
         ],
 
         tasks: [],
-        droplets: 20,
+        droplets: 100,
 
       ) {
     userTrees = user.trees; 
