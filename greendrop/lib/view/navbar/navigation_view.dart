@@ -73,9 +73,9 @@ class _NavigationViewState extends State<NavigationView> {
                   onDestinationSelected: _onItemTapped,
                   indicatorColor: Theme.of(context).colorScheme.primaryContainer,
                   destinations: const [
-                    NavigationDestination(icon: Icon(Icons.sunny), label: 'Garden'),
-                    NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-                    NavigationDestination(icon: Icon(Icons.task_alt_outlined), label: 'Tasks'),
+                    NavigationDestination(icon: Icon(Icons.local_florist_rounded), label: 'Garden'),
+                    NavigationDestination(icon: Icon(Icons.home_rounded), label: 'Home'),
+                    NavigationDestination(icon: Icon(Icons.check_box), label: 'Tasks'),
                   ],
                 ),
               ),

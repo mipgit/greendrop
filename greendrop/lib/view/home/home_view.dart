@@ -58,7 +58,7 @@ class _HomeViewState extends State<HomeView> {
             padding: const EdgeInsets.only(bottom: 25.0, top: 8.0),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue.shade200,
+                backgroundColor: const Color.fromARGB(255, 146, 169, 187),
                 padding: const EdgeInsets.symmetric(
                   vertical: 12.0,
                   horizontal: 25.0,
@@ -75,16 +75,14 @@ class _HomeViewState extends State<HomeView> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text("You don't have enough droplets."),
-                        duration: Duration(seconds: 2),
-                        backgroundColor: Color.fromARGB(255, 9, 60, 128),
                       ),
                     );
                   }
                 }
               },
               child: const Text(
-                "Water Me!",
-                style: TextStyle(color: Colors.white, fontSize: 18.0),
+                "     Water Me!     ",
+                style: TextStyle(color: Colors.white, fontSize: 16.0),
               ),
             ),
           ),
