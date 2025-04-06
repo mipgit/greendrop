@@ -6,7 +6,7 @@ import 'package:greendrop/firebase_options.dart';
 import 'package:greendrop/services/authentication_service.dart';
 import 'package:greendrop/view-model/user_provider.dart';
 import 'package:greendrop/view/login/login_view.dart';
-import 'package:greendrop/view/navigation_view.dart';
+import 'package:greendrop/view/navbar/navigation_view.dart';
 import 'package:provider/provider.dart';
 
 void main() async {

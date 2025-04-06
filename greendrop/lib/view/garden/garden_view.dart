@@ -3,7 +3,7 @@ import 'package:greendrop/view-model/garden_provider.dart';
 import 'package:greendrop/view-model/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:greendrop/view/garden/tree_garden_card.dart';
-import 'package:greendrop/view/droplet_counter.dart';
+//import 'package:greendrop/view/droplet_counter.dart';
 
 class GardenView extends StatelessWidget {
   const GardenView({super.key});
