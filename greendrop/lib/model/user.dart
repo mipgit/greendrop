@@ -1,4 +1,6 @@
-class User {
+import 'package:flutter/material.dart';
+
+class User extends ChangeNotifier {
 
   User({
     required this.id,
@@ -22,11 +24,29 @@ class User {
 
 
   void addDroplets(int amount) {
-    droplets += amount;
+    addDroplets(amount);
+    notifyListeners();
   }
- 
+
   void takeDroplets(int amount) {
-    droplets -= amount;
+    takeDroplets(amount);
+    notifyListeners();
+  }
+
+  void completeTask(int taskId) {
+    if (!tasks.contains(taskId)) {
+      tasks.add(taskId);
+      notifyListeners();
+    }
+  }
+
+  void unCompleteTask(int taskId) {
+    tasks.remove(taskId);
+    notifyListeners();
+  }
+
+  bool isTaskCompleted(int taskId) {
+    return tasks.contains(taskId);
   }
 
 }
