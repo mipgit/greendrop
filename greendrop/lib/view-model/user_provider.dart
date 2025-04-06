@@ -14,6 +14,9 @@ class UserProvider with ChangeNotifier {
   List<TreeProvider> get treeProviders => _treeProviders;
 
 
+  List<int> tasks = [];
+
+
   UserProvider(BuildContext context)
     : user = User(
         id: 1,
@@ -82,6 +85,22 @@ class UserProvider with ChangeNotifier {
   void takeDroplets(int amount) {
     user.droplets -= amount;
     notifyListeners(); 
+  }
+
+  void completeTask(int taskId) {
+    if (!tasks.contains(taskId)) {
+      tasks.add(taskId);
+      notifyListeners();
+    }
+  }
+
+  void unCompleteTask(int taskId) {
+    tasks.remove(taskId);
+    notifyListeners();
+  }
+
+  bool isTaskCompleted(int taskId) {
+    return tasks.contains(taskId);
   }
 
 }

@@ -12,11 +12,11 @@ class TasksCard extends StatelessWidget {
   void _toggleTaskCompletion(BuildContext context, Task task) {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
-    if (!userProvider.user.isTaskCompleted(task.id)) {
-      userProvider.user.completeTask(task.id);
+    if (!userProvider.isTaskCompleted(task.id)) {
+      userProvider.completeTask(task.id);
       userProvider.addDroplets(task.dropletReward);
     } else {
-      userProvider.user.unCompleteTask(task.id);
+      userProvider.unCompleteTask(task.id);
       userProvider.takeDroplets(task.dropletReward);
     }
 
@@ -26,7 +26,7 @@ class TasksCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
-    final isCompleted = userProvider.user.isTaskCompleted(task.id); // Check if the task is completed
+    final isCompleted = userProvider.isTaskCompleted(task.id); // Check if the task is completed
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
