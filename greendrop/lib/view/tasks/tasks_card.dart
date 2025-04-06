@@ -16,10 +16,11 @@ class TasksCard extends StatelessWidget {
     if (!task.isCompleted) {
       userProvider.completeTask(task);
       userProvider.addDroplets(task.dropletReward);
-    } else {
+    } /* else {
       userProvider.unCompleteTask(task);
       userProvider.takeDroplets(task.dropletReward);
     }
+    */
 
     if (onStateChanged != null) {
       onStateChanged!(); // Call the callback if it's provided
@@ -38,16 +39,22 @@ class TasksCard extends StatelessWidget {
     );
 
     return Card(
+      color: const Color.fromARGB(255, 220, 236, 202),
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: ListTile(
-        leading: Checkbox(
-          value: currentTaskState.isCompleted,
-          onChanged: (_) => _toggleTaskCompletion(context, task),
+        title: Text(
+          task.description,
+          style: const TextStyle(
+            fontSize: 16.0,
+          ),
         ),
-        title: Text(task.description),
         subtitle: Text(
           "Reward: ${task.dropletReward} droplets",
           style: const TextStyle(fontSize: 12),
+        ),
+        trailing: Checkbox(
+          value: currentTaskState.isCompleted,
+          onChanged: (_) => _toggleTaskCompletion(context, task),
         ),
       ),
     );

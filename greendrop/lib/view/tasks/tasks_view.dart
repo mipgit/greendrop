@@ -11,9 +11,10 @@ class TasksView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Tasks",
+          "Tasks to do today :)",
           style: TextStyle(
-            fontWeight: FontWeight.bold, // Make the text bold
+            fontSize: 22.0,
+            fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
