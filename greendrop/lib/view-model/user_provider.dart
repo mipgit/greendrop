@@ -19,7 +19,7 @@ class UserProvider with ChangeNotifier {
         id: 1,
         username: "johndoe",
         email: "johndoe@email.com",
-        ownedTrees: [1,2],
+        ownedTrees: [1],
         tasks: [],
         droplets: 100,
 

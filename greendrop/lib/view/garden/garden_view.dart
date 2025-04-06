@@ -9,7 +9,11 @@ import 'tree_detail_dialog.dart';
 class GardenView extends StatelessWidget {
   const GardenView({super.key});
 
-  void _showTreeDetailDialog(BuildContext context, Tree tree, String imagePath) {
+  void _showTreeDetailDialog(
+    BuildContext context,
+    Tree tree,
+    String imagePath,
+  ) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -23,14 +27,17 @@ class GardenView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<GardenProvider, UserProvider>( // Still need UserProvider for isOwned check indirectly
-      builder: (context, gardenProvider, userProvider, child) { // Keep userProvider parameter
+    return Consumer2<GardenProvider, UserProvider>(
+      // Still need UserProvider for isOwned check indirectly
+      builder: (context, gardenProvider, userProvider, child) {
+        // Keep userProvider parameter
         final allTrees = gardenProvider.allAvailableTrees;
 
         return Scaffold(
           body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-            child: Column( // Keep Column structure if you have other elements, or remove if just the list
+            child: Column(
+              // Keep Column structure if you have other elements, or remove if just the list
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // REMOVED: Droplet count display
@@ -47,13 +54,14 @@ class GardenView extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final tree = allTrees[index];
                       String imagePath = 'assets/tree.png';
-                       try {
-                        final level1 = tree.levels.firstWhere(
-                          (level) => level.levelNumber == 1,
-                        );
-                         imagePath = level1.levelPicture;
+                      try {
+                        if (tree.levels.isNotEmpty) {
+                          imagePath = tree.levels.last.levelPicture;
+                        }
                       } catch (e) {
-                        print("Warning: Could not find level 1 image for ${tree.name}. Using default.");
+                        print(
+                          "Warning: Could not find last level image for ${tree.name}. Using default.",
+                        );
                       }
 
                       return TreeGardenCard(
