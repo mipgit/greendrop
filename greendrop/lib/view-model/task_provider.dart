@@ -11,25 +11,25 @@ class TaskProvider with ChangeNotifier {
     ),
     Task(
       id: 2,
-      description: "Turn off lights when not being used",
+      description: "Turned off lights when not being used",
       dropletReward: 1,
       creationDate: DateTime.now(),
     ),Task(
       id: 4,
-      description: "Use public transportation, walk or ride the bike",
+      description: "Used public transportation, walked or rode the bike",
       dropletReward: 2,
       creationDate: DateTime.now(),
     ),
     Task(
       id: 3,
-      description: "Reduce food waste",
+      description: "Reduced food waste",
       dropletReward: 1,
       creationDate: DateTime.now(),
     ),
     
     Task(
       id: 5,
-      description: "Volunteer for community clean-ups",
+      description: "Volunteered for community clean-ups",
       dropletReward: 3,
       creationDate: DateTime.now(),
     ),
