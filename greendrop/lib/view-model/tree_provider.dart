@@ -8,7 +8,6 @@ import 'package:greendrop/view-model/user_provider.dart';
 class TreeProvider with ChangeNotifier {
 
   Tree tree;
-  //User user;
 
   TreeProvider(this.tree);
 
@@ -25,10 +24,19 @@ class TreeProvider with ChangeNotifier {
       userProvider.takeDroplets(1);
       notifyListeners();
     } else {
-      print("Not enough droplets to water the tree."); //isto é meio desnessesário agora não?
+      print("Not enough droplets to water the tree."); //isto é meio desnecessário agora não?
     }
 
   }
 
+  // method to get the droplets needed for the next level
+  int getDropletsNeededForNextLevel() {
+    final currentLevelIndex = tree.curLevel;
+    if (currentLevelIndex < tree.levels.length - 1) {
+      return tree.levels[currentLevelIndex + 1].requiredDroplets;
+    }
+    // if the tree is at the maximum level, it doesn't need more droplets
+    return 0;
+  }
 
 }

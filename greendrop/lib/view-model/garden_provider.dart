@@ -31,15 +31,16 @@ class GardenProvider with ChangeNotifier{
         // por agora, hardcoded
         _allAvailableTrees = [
           Tree(
-            id: 1, name: 'Pine Tree', description: 'A tall pine.', species: 'Pine', price: 30, isBought: false,
+            id: 1, name: 'Oli', description: 'A happy olive tree.', species: 'Olive Tree', price: 30, isBought: false,
             levels: [
               Level(levelNumber: 0, requiredDroplets: 0, levelPicture: 'assets/sprout.png'),
-              Level(levelNumber: 1, requiredDroplets: 10, levelPicture: 'assets/tree.png'),
+              Level(levelNumber: 1, requiredDroplets: 10, levelPicture: 'assets/olive-tree.png'),
+              Level(levelNumber: 2, requiredDroplets: 30, levelPicture: 'assets/tree.png')
             ],
             dropletsUsed: 0, curLevel: 0,
           ),
           Tree(
-            id: 2, name: 'Palm Tree', description: 'A carefree palm.', species: 'Palm', price: 45, isBought: false,
+            id: 2, name: 'Palm', description: 'A carefree palm.', species: 'Palm Tree', price: 45, isBought: false,
             levels: [
               Level(levelNumber: 0, requiredDroplets: 0, levelPicture: 'assets/sprout.png'),
               Level(levelNumber: 1, requiredDroplets: 20, levelPicture: 'assets/palms.png'),
@@ -47,7 +48,7 @@ class GardenProvider with ChangeNotifier{
             dropletsUsed: 0, curLevel: 0,
           ),
           Tree(
-            id: 3, name: 'Oak Tree', description: 'A sturdy oak.', species: 'Oak', price: 60, isBought: false,
+            id: 3, name: 'Oak', description: 'A sturdy oak.', species: 'Oak Tree', price: 60, isBought: false,
             levels: [
               Level(levelNumber: 0, requiredDroplets: 0, levelPicture: 'assets/sprout.png'),
               Level(levelNumber: 1, requiredDroplets: 30, levelPicture: 'assets/oak.png'),

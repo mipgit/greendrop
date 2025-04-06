@@ -34,6 +34,15 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    final pagePadding = screenWidth * 0.05; 
+    final buttonVerticalPadding = screenHeight * 0.018; 
+    final buttonHorizontalPadding = screenWidth * 0.06; 
+    final buttonFontSize = screenWidth * 0.045;
+    final bottomButtonPaddingBottom = screenHeight * 0.03; 
+    final bottomButtonPaddingTop = screenHeight * 0.01; 
 
     return Scaffold(
       body: Column(
@@ -47,7 +56,7 @@ class _HomeViewState extends State<HomeView> {
                 return ChangeNotifierProvider.value(
                   value: treeProvider,
                   child: Padding(
-                    padding: EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(pagePadding),
                     child: TreeHomeCard(),
                   ),
                 );
@@ -55,13 +64,13 @@ class _HomeViewState extends State<HomeView> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(bottom: 25.0, top: 8.0),
+            padding: EdgeInsets.only(bottom: bottomButtonPaddingBottom, top: bottomButtonPaddingTop),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 146, 169, 187),
-                padding: const EdgeInsets.symmetric(
-                  vertical: 12.0,
-                  horizontal: 25.0,
+                padding:  EdgeInsets.symmetric(
+                  vertical: buttonVerticalPadding,
+                  horizontal: buttonHorizontalPadding,
                 ),
               ),
               onPressed: () {
@@ -80,9 +89,9 @@ class _HomeViewState extends State<HomeView> {
                   }
                 }
               },
-              child: const Text(
+              child: Text(
                 "     Water Me!     ",
-                style: TextStyle(color: Colors.white, fontSize: 16.0),
+                style: TextStyle(color: Colors.white, fontSize: buttonFontSize),
               ),
             ),
           ),

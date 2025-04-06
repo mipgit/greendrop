@@ -57,7 +57,7 @@ class GardenView extends StatelessWidget {
                       }
 
                       return TreeGardenCard(
-                        name: tree.name,
+                        name: tree.species,
                         price: tree.price,
                         imagePath: imagePath,
                         tree: tree,
