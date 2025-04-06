@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:greendrop/model/task.dart';
 import 'package:provider/provider.dart';
-import 'package:greendrop/view-model/task_provider.dart';
 import 'package:greendrop/view-model/user_provider.dart';
 
 class TasksCard extends StatelessWidget {
@@ -11,14 +10,14 @@ class TasksCard extends StatelessWidget {
   const TasksCard({super.key, required this.task, required this.onStateChanged});
 
   void _toggleTaskCompletion(BuildContext context, Task task) {
-    final taskProvider = Provider.of<TaskProvider>(context, listen: false);
+    //final taskProvider = Provider.of<TaskProvider>(context, listen: false);
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
     if (!task.isCompleted) {
-      taskProvider.completeTask(task.id);
+      userProvider.completeTask(task);
       userProvider.addDroplets(task.dropletReward);
     } else {
-      taskProvider.unCompleteTask(task.id);
+      userProvider.unCompleteTask(task);
       userProvider.takeDroplets(task.dropletReward);
     }
 
@@ -29,11 +28,20 @@ class TasksCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final userProvider = Provider.of<UserProvider>(context); 
+
+    // Find the current state of this specific task from the user's task list
+    final currentTaskState = userProvider.userTasks.firstWhere(
+      (t) => t.id == task.id,
+      orElse: () => task, // Fallback to the passed task if not found (shouldn't happen)
+    );
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: ListTile(
         leading: Checkbox(
-          value: task.isCompleted,
+          value: currentTaskState.isCompleted,
           onChanged: (_) => _toggleTaskCompletion(context, task),
         ),
         title: Text(task.description),

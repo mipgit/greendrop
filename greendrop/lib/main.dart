@@ -10,7 +10,6 @@ import 'package:greendrop/view/navbar/navigation_view.dart';
 import 'package:provider/provider.dart';
 
 import 'package:greendrop/view-model/task_provider.dart';
-import 'package:greendrop/view/tasks/tasks_view.dart';
 
 
 void main() async {
@@ -23,8 +22,8 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthenticationService()),
         ChangeNotifierProvider(create: (context) => GardenProvider()), 
-        ChangeNotifierProvider(create: (context) => UserProvider(context)),
         ChangeNotifierProvider(create: (context) => TaskProvider()),
+        ChangeNotifierProvider(create: (context) => UserProvider(context)),
       ],
       child: const GreenDropApp(),
     ),

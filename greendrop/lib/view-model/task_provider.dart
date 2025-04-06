@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:greendrop/model/task.dart';
 
 class TaskProvider with ChangeNotifier {
-  final List<Task> _tasks = [
+  final List<Task> _allAvailableTasks = [
     Task(
       id: 1,
       description: "Recycled",
@@ -35,17 +35,6 @@ class TaskProvider with ChangeNotifier {
     ),
   ];
 
-  List<Task> get tasks => _tasks;
+  List<Task> get allAvailableTasks => _allAvailableTasks;
 
-  void completeTask(int taskId) {
-    final task = _tasks.firstWhere((task) => task.id == taskId);
-    task.completeTask();
-    notifyListeners();
-  }
-
-  void unCompleteTask(int taskId) {
-    final task = _tasks.firstWhere((task) => task.id == taskId);
-    task.unCompleteTask();
-    notifyListeners();
-  }
 }

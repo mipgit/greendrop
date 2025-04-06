@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:greendrop/view-model/task_provider.dart';
+import 'package:greendrop/view-model/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:greendrop/view/tasks/tasks_card.dart';
 
@@ -18,14 +18,14 @@ class TasksView extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: Consumer<TaskProvider>(
-        builder: (context, taskProvider, child) {
-          final tasks = taskProvider.tasks;
+      body: Consumer<UserProvider>(
+        builder: (context, userProvider, child) {
+          final userTasks = userProvider.userTasks;
 
           return ListView.builder(
-            itemCount: tasks.length,
+            itemCount: userTasks.length,
             itemBuilder: (context, index) {
-              final task = tasks[index];
+              final task = userTasks[index];
               return TasksCard(
                 task: task,
                 onStateChanged: () {
