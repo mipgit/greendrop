@@ -247,7 +247,7 @@ Common practices of managing agile software development with Scrum are: backlog 
 You can find below information and references related with the project management: 
 
 * Backlog management: Product backlog and Sprint backlog in a [Github Projects board](https://github.com/orgs/LEIC-ES-2024-25/projects/64/views/1);
-* Release management: [v0](https://github.com/LEIC-ES-2024-25/2LEIC03T3/releases/tag/v0), [v0.1](#)
+* Release management: [v0](https://github.com/LEIC-ES-2024-25/2LEIC03T3/releases/tag/v0), [v0.1](https://github.com/LEIC-ES-2024-25/2LEIC03T3/releases)
 
 <!--
 * Sprint planning and retrospectives: 
