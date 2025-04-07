@@ -24,7 +24,6 @@ This Software Development Report, tailored for LEIC-ES-2024-25, provides compreh
   * [Sprint 1](#Sprint-1)
   * [Sprint 2](#Sprint-2)
   * [Sprint 3](#Sprint-3)
-  * [Sprint 4](#Sprint-4)
   * [Final Release](#Final-Release)
 
 Contributions are expected to be made exclusively by the initial team, but we may open them to the community, after the course, in all areas and topics: requirements, technologies, development, experimentation, testing, etc.
@@ -231,7 +230,7 @@ At this phase, instead of a complete user story, you can simply implement a smal
 -->
 
 <p align="center" justify="center">
-  <img src="docs/mockups/prototype.gif" height=200/>
+  <img src="docs/mockups/prototype.gif" height=300/>
 </p>
 
 
@@ -242,11 +241,15 @@ Software project management is the art and science of planning and leading softw
 In the context of ESOF, we recommend each team to adopt a set of project management practices and tools capable of registering tasks, assigning tasks to team members, adding estimations to tasks, monitor tasks progress, and therefore being able to track their projects.
 
 Common practices of managing agile software development with Scrum are: backlog management, release management, estimation, Sprint planning, Sprint development, acceptance tests, and Sprint retrospectives.
+-->
+
 
 You can find below information and references related with the project management: 
 
-* Backlog management: Product backlog and Sprint backlog in a [Github Projects board](https://github.com/orgs/FEUP-LEIC-ES-2023-24/projects/64);
-* Release management: [v0](#), v1, v2, v3, ...;
+* Backlog management: Product backlog and Sprint backlog in a [Github Projects board](https://github.com/orgs/LEIC-ES-2024-25/projects/64/views/1);
+* Release management: [v0](https://github.com/LEIC-ES-2024-25/2LEIC03T3/releases/tag/v0), [v0.1](#)
+
+<!--
 * Sprint planning and retrospectives: 
   * plans: screenshots of Github Projects board at begin and end of each Sprint;
   * retrospectives: meeting notes in a document in the repository, addressing the following questions:
@@ -254,17 +257,49 @@ You can find below information and references related with the project managemen
     * Do differently: things we should do differently and how;
     * Puzzles: things we don’t know yet if they are right or wrong… 
     * list of a few improvements to implement next Sprint;
-
 -->
 
 ### Sprint 0
 
+> **Goal:** Lay the foundation for the project by setting up the structure and initial design elements.
+
+
 ### Sprint 1
+
+> **Goal:** Start implementing core app features and lay the groundwork for backend services.
+
+#### Project Board
+
+<p align="center" justify="center">
+  <b>Start of Sprint 1</b>
+  <img src="docs/sprints/sprint1_start.png"/>
+  <b>End of Sprint 1</b>
+  <img src="docs/sprints/sprint1_end.png"/>
+</p>
+
+#### Sprint Retrospective
+
+##### What went right
+
+  - We organized the work equally between the team and each member completed their assigned tasks
+  - We managed our time well and were able to reach our goal for this sprint
+
+
+##### What went wrong
+
+  - We are behind schedule regarding the testing of our features, more focus is needed on that part
+
+
+##### What should start
+
+  - We need to start thinking on a larger scale - build an app that people want to buy 
+  - Manage our data more effectively
+
+
+
 
 ### Sprint 2
 
 ### Sprint 3
-
-### Sprint 4
 
 ### Final Release
