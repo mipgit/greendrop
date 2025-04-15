@@ -1,7 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:greendrop/model/task.dart';
 import 'package:greendrop/model/tree.dart';
-import 'package:greendrop/model/user.dart';
+import 'package:greendrop/model/user.dart' as app;
 import 'package:greendrop/view-model/garden_provider.dart';
 import 'package:greendrop/view-model/task_provider.dart';
 import 'package:greendrop/view-model/tree_provider.dart';
@@ -13,7 +14,8 @@ class UserProvider with ChangeNotifier {
   List<TreeProvider> _treeProviders = []; // list of TreeProviders
   List<TaskProvider> _taskProviders = []; // list of TaskProviders
 
-  User user;
+  app.User _user;
+  app.User get user => _user;
 
   List<Tree> get userTrees => _userTrees;
     List<Task> get userTasks => _userTasks;
@@ -22,18 +24,93 @@ class UserProvider with ChangeNotifier {
 
 
   UserProvider(BuildContext context)
-    : user = User(
-        id: 1,
-        username: "johndoe",
-        email: "johndoe@email.com",
-        ownedTrees: [1],
-        ownedTasks: [1,2,3,4],
-        droplets: 100,
+      : _user = _createEmptyUser() {
+    _initializeUser(context);
+  }
 
-      ) {
+
+  static app.User _createEmptyUser() {
+    return app.User(
+      id: '',
+      username: 'Guest',
+      email: '',
+      profilePicture: null,
+      ownedTrees: [],
+      ownedTasks: [],
+      droplets: 0,
+    );
+  }
+
+
+  void _initializeUser(BuildContext context) async {
+    final auth = FirebaseAuth.instance;
+    final user = auth.currentUser;
+    if (user != null) {
+      _user = await _fetchUserDataFromFirestore(user);
+    } else {
+      _user = _createEmptyUser();
+    }
+
     _initializeUserTrees(context);
     _initializeUserTasks(context);
+    notifyListeners();
   }
+
+
+  Future<app.User> _fetchUserDataFromFirestore(User? authUser) async {
+    if (authUser == null) {
+      return _createEmptyUser();
+    }
+    //  Firestore logic to fetch user-specific data (e.g., from a 'users' collection)
+    //  Example:
+    // final userDoc = await FirebaseFirestore.instance.collection('users').doc(authUser.uid).get();
+    // if (userDoc.exists) {
+    //   final userData = userDoc.data();
+    //   return User(
+    //     id: authUser.uid,
+    //     username: userData?['username'] ?? authUser.displayName ?? "Anonymous",
+    //     email: userData?['email'] ?? authUser.email ?? "",
+    //     ownedTrees: (userData?['ownedTrees'] as List<dynamic>?)?.cast<int>() ??
+    //         [],
+    //     ownedTasks: (userData?['ownedTasks'] as List<dynamic>?)?.cast<int>() ??
+    //         [],
+    //     droplets: userData?['droplets'] as int? ?? 0,
+    //     // ... other fields
+    //   );
+    // }
+    // If user data doesn't exist in Firestore, you might want to create it:
+    // else {
+    //   //  Create user document in Firestore
+    //   await FirebaseFirestore.instance.collection('users').doc(authUser.uid).set({
+    //     'username': authUser.displayName ?? "Anonymous",
+    //     'email': authUser.email ?? "",
+    //     'ownedTrees': [],
+    //     'ownedTasks': [],
+    //     'droplets': 0,
+    //   });
+    //     return User(
+    //     id: authUser.uid,
+    //     username:  authUser.displayName ?? "Anonymous",
+    //     email:  authUser.email ?? "",
+    //     ownedTrees: [],
+    //     ownedTasks: [],
+    //     droplets: 0,
+    //   );
+    // }
+
+    // For now, return a dummy user for testing purposes
+    return app.User(
+      id: authUser.uid,
+      username: authUser.displayName ?? "John Doe",
+      email: authUser.email ?? "johndoe@gmail.com",
+      profilePicture: authUser.photoURL,
+      ownedTrees: [1],
+      ownedTasks: [1,2],
+      droplets: 100,
+    );
+
+  }
+
 
 
 

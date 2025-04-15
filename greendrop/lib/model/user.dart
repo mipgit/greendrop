@@ -4,7 +4,7 @@ class User {
     required this.id,
     required this.username,
     required this.email,
-    //required this.profilePicture,
+    this.profilePicture,
     required this.ownedTrees,
     required this.ownedTasks,
     this.droplets = 0
@@ -12,10 +12,10 @@ class User {
   });
 
 
-  final int id;
+  final String id;
   final String username;
   final String email;
-  //final String profilePicture;
+  final String? profilePicture;
   List<int> ownedTrees;
   List<int> ownedTasks;
   int droplets;
