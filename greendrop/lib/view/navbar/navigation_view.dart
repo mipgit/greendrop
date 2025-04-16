@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:greendrop/view-model/user_provider.dart';
 import 'package:greendrop/view/garden/garden_view.dart';
 import 'package:greendrop/view/home/home_view.dart';
+import 'package:greendrop/view/profile_view.dart';
 import 'package:greendrop/view/tasks/tasks_view.dart';
 import 'package:provider/provider.dart';
 import 'package:greendrop/view/navbar/droplet_counter.dart';
@@ -47,10 +48,34 @@ class _NavigationViewState extends State<NavigationView> {
               ),
             ),
             centerTitle: false,
-            actions: const [ 
+            actions: [
               Padding(
-                padding: EdgeInsets.only(right: 16.0),
-                child: DropletCounter(),
+                padding: const EdgeInsets.only(right: 8.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const ProfilePage(), 
+                          ),
+                        );
+                      },
+                      child: CircleAvatar(
+                        radius: 20,
+                        backgroundImage: userProvider.user.profilePicture != null
+                            ? NetworkImage(userProvider.user.profilePicture!)
+                            : null,
+                        child: userProvider.user.profilePicture == null
+                            ? const Icon(Icons.person) 
+                            : null,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    const DropletCounter(),
+                  ],
+                ),
               ),
             ],
           ),

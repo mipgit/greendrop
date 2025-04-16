@@ -8,7 +8,7 @@ class TreeGardenCard extends StatelessWidget {
   final int price;
   final String imagePath;
   final Tree tree;
-  final VoidCallback onCardTap; // Callback function when the card is tapped
+  final VoidCallback onCardTap; 
 
   const TreeGardenCard({
     super.key,
@@ -16,22 +16,21 @@ class TreeGardenCard extends StatelessWidget {
     required this.price,
     required this.imagePath,
     required this.tree,
-    required this.onCardTap, // Require the callback
+    required this.onCardTap, 
   });
 
   @override
   Widget build(BuildContext context) {
-    // Listen to UserProvider changes to update the 'Owned!' status
-    final isOwned = context.watch<UserProvider>().user.ownedTrees.contains(tree.id);
+    final isOwned = context.watch<UserProvider>().user.ownedTrees.any((ownedTree) => ownedTree['treeId'] == tree.id);
 
     return Card(
       margin: const EdgeInsets.all(8.0),
       // Optional: Slightly change background if owned, or keep it consistent
       // color: isOwned ? Colors.green.withOpacity(0.1) : const Color.fromARGB(204, 219, 217, 217),
-       color: const Color.fromARGB(204, 219, 217, 217), // Keep color consistent
-      clipBehavior: Clip.antiAlias, // Ensures InkWell ripple stays within card bounds
-      child: InkWell( // Make the whole card tappable
-        onTap: onCardTap, // Use the passed callback
+      color: const Color.fromARGB(204, 219, 217, 217), 
+      clipBehavior: Clip.antiAlias, 
+      child: InkWell( 
+        onTap: onCardTap,
         child: SizedBox(
           height: 100.0,
           child: Row(
@@ -42,12 +41,12 @@ class TreeGardenCard extends StatelessWidget {
                 child: Image.asset(
                   imagePath,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.error), // Handle image load errors
+                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.error), 
                 ),
               ),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), // Adjusted padding
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), 
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -55,14 +54,14 @@ class TreeGardenCard extends StatelessWidget {
                       Text(
                         name,
                         style: const TextStyle(
-                          fontSize: 22.0, // Slightly smaller font
+                          fontSize: 22.0, 
                           fontWeight: FontWeight.bold,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 4), // Add spacing
+                      const SizedBox(height: 4), 
                       Text(
-                        '${price} droplets', // Use 'droplets' for consistency
+                        '${price} droplets', 
                         style: const TextStyle(
                           fontSize: 14.0,
                           color: Colors.black54,

@@ -35,6 +35,14 @@ class AuthenticationService with ChangeNotifier {
 
   Future<void> signIn() async {
     try {
+      print('Signing out any existing user...');
+      try {
+        await _googleSignIn.disconnect();
+      } catch (e) {
+        print('Failed to disconnect: $e');
+        // Ignore the error if disconnect fails
+      }
+
       print('Attempting Google sign-in...');
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {

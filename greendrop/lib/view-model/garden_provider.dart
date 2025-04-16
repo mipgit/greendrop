@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'package:greendrop/model/level.dart';
 import 'package:greendrop/model/tree.dart';
@@ -5,22 +8,68 @@ import 'package:greendrop/model/tree.dart';
 class GardenProvider with ChangeNotifier{
 
   List<Tree> _allAvailableTrees = [];
-  //bool _isLoading = true; //when we have database
-  //String? _error; //when we have database
+  bool _isLoading = true; 
+  String? _error; 
+  Completer<void> _dataLoadedCompleter = Completer<void>(); // Add a Completer
+
 
   List<Tree> get allAvailableTrees => _allAvailableTrees;
-  //bool get isLoading => _isLoading;
-  //String? get error => _error;
+  bool get isLoading => _isLoading;
+  String? get error => _error;
 
 
   GardenProvider() {
-   _loadTreesFromFirebase();
+   _loadTreesFromFirestore();
   }
 
 
+  Future<void> _loadTreesFromFirestore() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final snapshot = await FirebaseFirestore.instance.collection('trees').get();
+      _allAvailableTrees = snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        final levelsData = data['levels'] as List<dynamic>? ?? [];
+        final levels = levelsData.map((levelData) {
+          return Level(
+            levelNumber: levelData['levelNumber'] as int? ?? 0,
+            requiredDroplets: levelData['requiredDroplets'] as int? ?? 0,
+            levelPicture: levelData['levelPicture'] as String? ?? '',
+          );
+        }).toList();
+
+        return Tree(
+          id: doc.id, 
+          name: data['name'] as String? ?? '',
+          description: data['description'] as String? ?? '',
+          species: data['species'] as String? ?? '',
+          price: data['price'] as int? ?? 0,
+          levels: levels,
+          dropletsUsed: 0,
+          curLevel: 0, 
+        );
+      }).toList();
+      print('GardenProvider: Successfully loaded ${_allAvailableTrees.length} trees.');
+       _dataLoadedCompleter.complete();
+    } catch (e) {
+       _error = e.toString();
+      print('GardenProvider: Error loading trees: $e');
+      _dataLoadedCompleter.completeError(e);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    } 
+  }
 
 
-  Future<void> _loadTreesFromFirebase() async {
+  Future<void> get dataLoaded => _dataLoadedCompleter.future; // Expose the Future
+
+
+
+  void _oldLoader()  {
 
       //_isLoading = true;
       notifyListeners();
@@ -31,7 +80,7 @@ class GardenProvider with ChangeNotifier{
         // por agora, hardcoded
         _allAvailableTrees = [
           Tree(
-            id: 1, name: 'Oli', description: 'A happy olive tree.', species: 'Olive Tree', price: 30, isBought: false,
+            id: 'a', name: 'Oli', description: 'A happy olive tree.', species: 'Olive Tree', price: 30, 
             levels: [
               Level(levelNumber: 0, requiredDroplets: 0, levelPicture: 'assets/sprout.png'),
               Level(levelNumber: 1, requiredDroplets: 10, levelPicture: 'assets/olive-tree.png'),
@@ -40,7 +89,7 @@ class GardenProvider with ChangeNotifier{
             dropletsUsed: 0, curLevel: 0,
           ),
           Tree(
-            id: 2, name: 'Palm', description: 'A carefree palm.', species: 'Palm Tree', price: 45, isBought: false,
+            id: 'b', name: 'Palm', description: 'A carefree palm.', species: 'Palm Tree', price: 45,
             levels: [
               Level(levelNumber: 0, requiredDroplets: 0, levelPicture: 'assets/sprout.png'),
               Level(levelNumber: 1, requiredDroplets: 20, levelPicture: 'assets/palms.png'),
@@ -48,7 +97,7 @@ class GardenProvider with ChangeNotifier{
             dropletsUsed: 0, curLevel: 0,
           ),
           Tree(
-            id: 3, name: 'Oak', description: 'A sturdy oak.', species: 'Oak Tree', price: 60, isBought: false,
+            id: 'c', name: 'Oak', description: 'A sturdy oak.', species: 'Oak Tree', price: 60, 
             levels: [
               Level(levelNumber: 0, requiredDroplets: 0, levelPicture: 'assets/sprout.png'),
               Level(levelNumber: 1, requiredDroplets: 30, levelPicture: 'assets/oak.png'),

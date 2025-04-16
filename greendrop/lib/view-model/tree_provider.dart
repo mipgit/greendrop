@@ -23,6 +23,7 @@ class TreeProvider with ChangeNotifier {
       tree.waterTree();
       userProvider.takeDroplets(1);
       notifyListeners();
+      userProvider.updateUserTreeInFirestore(tree);
     } else {
       print("Not enough droplets to water the tree."); //isto é meio desnecessário agora não?
     }
