@@ -1,40 +1,94 @@
+import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'package:greendrop/model/task.dart';
 
 class TaskProvider with ChangeNotifier {
-  final List<Task> _allAvailableTasks = [
-    Task(
-      id: 1,
-      description: "Recycled",
-      dropletReward: 1,
-      creationDate: DateTime.now(),
-    ),
-    Task(
-      id: 2,
-      description: "Turned off lights when not being used",
-      dropletReward: 1,
-      creationDate: DateTime.now(),
-    ),Task(
-      id: 4,
-      description: "Used public transportation, walked or rode the bike",
-      dropletReward: 2,
-      creationDate: DateTime.now(),
-    ),
-    Task(
-      id: 3,
-      description: "Reduced food waste",
-      dropletReward: 1,
-      creationDate: DateTime.now(),
-    ),
-    
-    Task(
-      id: 5,
-      description: "Volunteered for community clean-ups",
-      dropletReward: 3,
-      creationDate: DateTime.now(),
-    ),
-  ];
+  List<Task> _allAvailableTasks = [];
+  bool _isLoading = true;
+  String? _error;
+  Completer<void> _dataLoadedCompleter = Completer<void>();
 
   List<Task> get allAvailableTasks => _allAvailableTasks;
+  bool get isLoading => _isLoading;
+  String? get error => _error;
+
+  TaskProvider() {
+    _loadTasksFromFirestore();
+  }
+
+  Future<void> _loadTasksFromFirestore() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final snapshot =
+          await FirebaseFirestore.instance.collection('tasks').get();
+      _allAvailableTasks =
+          snapshot.docs.map((doc) {
+            final data = doc.data() as Map<String, dynamic>;
+            return Task(
+              id: doc.id,
+              description: data['description'] as String? ?? '',
+              dropletReward: data['dropletReward'] as int? ?? 0,
+              creationDate:
+                  (data['creationDate'] as Timestamp?)?.toDate() ??
+                  DateTime.now(),
+            );
+          }).toList();
+      _dataLoadedCompleter.complete();
+    } catch (e) {
+      _isLoading = false;
+      _error = 'Failed to load tasks: $e';
+      _dataLoadedCompleter.completeError(e);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+
+  Future<void> get dataLoaded => _dataLoadedCompleter.future; 
+
+
+
+
+
+  void _oldLoader() {
+    _allAvailableTasks = [
+      Task(
+        id: '1',
+        description: "Recycled",
+        dropletReward: 1,
+        creationDate: DateTime.now(),
+      ),
+      Task(
+        id: '2',
+        description: "Turned off lights when not being used",
+        dropletReward: 1,
+        creationDate: DateTime.now(),
+      ),
+      Task(
+        id: '4',
+        description: "Used public transportation, walked or rode the bike",
+        dropletReward: 2,
+        creationDate: DateTime.now(),
+      ),
+      Task(
+        id: '3',
+        description: "Reduced food waste",
+        dropletReward: 1,
+        creationDate: DateTime.now(),
+      ),
+
+      Task(
+        id: '5',
+        description: "Volunteered for community clean-ups",
+        dropletReward: 3,
+        creationDate: DateTime.now(),
+      ),
+    ];
+  }
 
 }

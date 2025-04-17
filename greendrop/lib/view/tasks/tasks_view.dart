@@ -9,33 +9,51 @@ class TasksView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Tasks to do today :)",
-          style: TextStyle(
-            fontSize: 22.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-      ),
       body: Consumer<UserProvider>(
         builder: (context, userProvider, child) {
           final userTasks = userProvider.userTasks;
+          final timeLeft = userProvider.timeUntilNextReset;
 
-          return ListView.builder(
-            itemCount: userTasks.length,
-            itemBuilder: (context, index) {
-              final task = userTasks[index];
-              return TasksCard(
-                task: task,
-                onStateChanged: () {
-                },
-              );
-            },
+          if (userTasks.isEmpty) {
+            return const Center(
+              child: Text("No tasks available at the moment."),
+            );
+          }
+
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  'Tasks refresh in: ${formatDuration(timeLeft)}',
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: userTasks.length,
+                  itemBuilder: (context, index) {
+                    final task = userTasks[index];
+                    return TasksCard(
+                      task: task, 
+                      onStateChanged: () {});
+                  },
+                ),
+              ),
+            ],
           );
         },
       ),
     );
   }
+
+
+  String formatDuration(Duration duration) {
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes % 60;
+    final seconds = duration.inSeconds % 60;
+    return '$hours hours, $minutes minutes, $seconds seconds';
+  }
+
 }

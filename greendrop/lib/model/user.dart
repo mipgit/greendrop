@@ -6,9 +6,8 @@ class User {
     required this.email,
     this.profilePicture,
     required this.ownedTrees,
-    //required this.dailyTasks,
+    required this.dailyTasks,
     this.droplets = 0
-
   });
 
 
@@ -17,7 +16,7 @@ class User {
   final String email;
   final String? profilePicture;
   List<Map<String, dynamic>> ownedTrees;
-  //List<String> dailyTasks;
+  List<String> dailyTasks;
   int droplets;
 
 

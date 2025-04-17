@@ -1,6 +1,5 @@
 class Task {
 
-
   Task({
     required this.id,
     required this.description,
@@ -11,7 +10,7 @@ class Task {
   });
 
 
-  final int id;
+  final String id;
   final String description;
   final int dropletReward;
   bool isCompleted;

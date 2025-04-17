@@ -15,12 +15,10 @@ class TasksCard extends StatelessWidget {
 
     if (!task.isCompleted) {
       userProvider.completeTask(task);
-      userProvider.addDroplets(task.dropletReward);
-    } /* else {
+    }  else {
       userProvider.unCompleteTask(task);
-      userProvider.takeDroplets(task.dropletReward);
     }
-    */
+    
 
     if (onStateChanged != null) {
       onStateChanged!(); // Call the callback if it's provided
