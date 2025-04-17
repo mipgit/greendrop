@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:greendrop/view-model/garden_provider.dart';
 import 'package:greendrop/view-model/user_provider.dart';
 import 'package:greendrop/view/home/tree_home_card.dart';
 import 'package:provider/provider.dart';

@@ -252,7 +252,7 @@ class UserProvider with ChangeNotifier {
       final userDocRef = FirebaseFirestore.instance
           .collection('users')
           .doc(_user.id);
-      final userData = (await userDocRef.get()).data() as Map<String, dynamic>?;
+      final userData = (await userDocRef.get()).data();
       if (userData != null && userData.containsKey('ownedTrees')) {
         final List<dynamic> ownedTreesData = List<dynamic>.from(
           userData['ownedTrees'] ?? [],
@@ -445,7 +445,7 @@ class UserProvider with ChangeNotifier {
     // reset on next midnight
     final now = DateTime.now();
     final nextReset = DateTime(now.year, now.month, now.day + 1);
-    final nextMidnight = DateTime(now.year, now.month, now.day + 1);
+    //final nextMidnight = DateTime(now.year, now.month, now.day + 1);
     _timeUntilNextReset = nextReset.difference(now);
 
     // Start the timer

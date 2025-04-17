@@ -31,7 +31,7 @@ class GardenProvider with ChangeNotifier{
     try {
       final snapshot = await FirebaseFirestore.instance.collection('trees').get();
       _allAvailableTrees = snapshot.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>;
+        final data = doc.data();
         final levelsData = data['levels'] as List<dynamic>? ?? [];
         final levels = levelsData.map((levelData) {
           return Level(
@@ -68,51 +68,4 @@ class GardenProvider with ChangeNotifier{
   Future<void> get dataLoaded => _dataLoadedCompleter.future; // Expose the Future
 
 
-
-  void _oldLoader()  {
-
-      //_isLoading = true;
-      notifyListeners();
-
-      try {
-        // TO DO: firebase database connection
-
-        // por agora, hardcoded
-        _allAvailableTrees = [
-          Tree(
-            id: 'a', name: 'Oli', description: 'A happy olive tree.', species: 'Olive Tree', price: 30, 
-            levels: [
-              Level(levelNumber: 0, requiredDroplets: 0, levelPicture: 'assets/sprout.png'),
-              Level(levelNumber: 1, requiredDroplets: 10, levelPicture: 'assets/olive-tree.png'),
-              Level(levelNumber: 2, requiredDroplets: 30, levelPicture: 'assets/tree.png')
-            ],
-            dropletsUsed: 0, curLevel: 0,
-          ),
-          Tree(
-            id: 'b', name: 'Palm', description: 'A carefree palm.', species: 'Palm Tree', price: 45,
-            levels: [
-              Level(levelNumber: 0, requiredDroplets: 0, levelPicture: 'assets/sprout.png'),
-              Level(levelNumber: 1, requiredDroplets: 20, levelPicture: 'assets/palms.png'),
-            ],
-            dropletsUsed: 0, curLevel: 0,
-          ),
-          Tree(
-            id: 'c', name: 'Oak', description: 'A sturdy oak.', species: 'Oak Tree', price: 60, 
-            levels: [
-              Level(levelNumber: 0, requiredDroplets: 0, levelPicture: 'assets/sprout.png'),
-              Level(levelNumber: 1, requiredDroplets: 30, levelPicture: 'assets/oak.png'),
-            ],
-            dropletsUsed: 0, curLevel: 0,
-          ),
-        ];
-        //_isLoading = false;
-        notifyListeners();
-      } catch (e) {
-        //_isLoading = false;
-        //_error = 'Failed to load tree data: $e';
-        notifyListeners();
-      }
-  }
-
-  // fot later : optional methods for filtering, sorting, searching
 }

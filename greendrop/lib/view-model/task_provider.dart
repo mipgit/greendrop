@@ -27,7 +27,7 @@ class TaskProvider with ChangeNotifier {
           await FirebaseFirestore.instance.collection('tasks').get();
       _allAvailableTasks =
           snapshot.docs.map((doc) {
-            final data = doc.data() as Map<String, dynamic>;
+            final data = doc.data();
             return Task(
               id: doc.id,
               description: data['description'] as String? ?? '',
@@ -50,45 +50,5 @@ class TaskProvider with ChangeNotifier {
 
 
   Future<void> get dataLoaded => _dataLoadedCompleter.future; 
-
-
-
-
-
-  void _oldLoader() {
-    _allAvailableTasks = [
-      Task(
-        id: '1',
-        description: "Recycled",
-        dropletReward: 1,
-        creationDate: DateTime.now(),
-      ),
-      Task(
-        id: '2',
-        description: "Turned off lights when not being used",
-        dropletReward: 1,
-        creationDate: DateTime.now(),
-      ),
-      Task(
-        id: '4',
-        description: "Used public transportation, walked or rode the bike",
-        dropletReward: 2,
-        creationDate: DateTime.now(),
-      ),
-      Task(
-        id: '3',
-        description: "Reduced food waste",
-        dropletReward: 1,
-        creationDate: DateTime.now(),
-      ),
-
-      Task(
-        id: '5',
-        description: "Volunteered for community clean-ups",
-        dropletReward: 3,
-        creationDate: DateTime.now(),
-      ),
-    ];
-  }
 
 }
