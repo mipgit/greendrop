@@ -31,34 +31,133 @@ class UserProvider with ChangeNotifier {
   Duration get timeUntilNextReset => _timeUntilNextReset;
 
   UserProvider(BuildContext context) : _user = _createEmptyUser() {
-    _initializeUser(context);
+    _initialize(context);
   }
 
   static app.User _createEmptyUser() {
     return app.User(
-      id: '',
+      id: 'guest',
       username: 'Guest',
       email: '',
       profilePicture: null,
       ownedTrees: [],
       dailyTasks: [],
-      droplets: 100,
+      droplets: 300,
     );
   }
 
-  void _initializeUser(BuildContext context) async {
+
+  //starting point for initialization
+  Future<void> _initialize(BuildContext context) async {
+    await _fetchInitialUser(context);
+    await _initializeRelatedData(context);
+    _startTaskResetTimer(context);
+  }
+
+
+  //we need to fetch user data
+  Future<void> _fetchInitialUser(BuildContext context) async {
     final authUser = FirebaseAuth.instance.currentUser;
     if (authUser != null) {
       _user = await _fetchUserDataFromFirestore(authUser);
     } else {
       _user = _createEmptyUser();
     }
-
-    await _initializeUserTrees(context);
-    await _initializeUserTasks(context);
-    _startTaskResetTimer(context);
     notifyListeners();
   }
+
+  
+  //we will handle the fetch (in Firestore) depending on the existence of the user or not
+  Future<app.User> _fetchUserDataFromFirestore(User? authUser) async {
+    if (authUser == null || authUser.isAnonymous ) {
+      return _createEmptyUser();
+    }
+
+    final userDoc = await FirebaseFirestore.instance.collection('users').doc(authUser.uid).get();
+
+    if (userDoc.exists) {
+      return _createUserFromFirestore(authUser, userDoc); //if the user exists we create the user from Firestore
+    } else {
+      return _createNewUserInFirestore(authUser); //if the user does not exist we create a new one
+    }
+  }
+
+
+  //we create the user from Firestore (only fetching data)
+  Future<app.User> _createUserFromFirestore(User? authUser, DocumentSnapshot<Map<String, dynamic>> userDoc) async {
+    final userData = userDoc.data()!;
+    final dailyTasksDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(authUser!.uid)
+        .collection('daily_tasks')
+        .doc('current')
+        .get();
+
+    List<String> taskIds = [];
+    if (dailyTasksDoc.exists && dailyTasksDoc.data() != null) {
+      taskIds = List<String>.from(dailyTasksDoc.data()!['tasks'] ?? []);
+    }
+
+    return app.User(
+      id: authUser.uid,
+      username: userData['username'] ?? authUser.displayName ?? "Anonymous",
+      email: userData['email'] ?? authUser.email ?? "",
+      profilePicture: userData['profilePicture'],
+      ownedTrees: (userData['ownedTrees'] as List<dynamic>?)?.cast<Map<String, dynamic>>() ?? [],
+      dailyTasks: taskIds,
+      droplets: userData['droplets'] ?? 0,
+    );
+  }
+
+
+  //we create a new user in Firestore (with default values)
+  Future<app.User> _createNewUserInFirestore(User? authUser) async {
+    final newUser = app.User(
+      id: authUser!.uid,
+      username: authUser.displayName ?? "Anonymous",
+      email: authUser.email ?? "",
+      profilePicture: authUser.photoURL,
+      ownedTrees: [],
+      dailyTasks: [],
+      droplets: 100,
+    );
+    await FirebaseFirestore.instance.collection('users').doc(authUser.uid).set({
+      'username': newUser.username,
+      'email': newUser.email,
+      'profilePicture': newUser.profilePicture,
+      'ownedTrees': newUser.ownedTrees,
+      'dailyTasks': newUser.dailyTasks,
+      'droplets': newUser.droplets,
+    });
+    return newUser;
+  }
+
+
+
+  //we initialize the trees and the tasks of the user
+  Future<void> _initializeRelatedData(BuildContext context) async {
+    await _initializeUserTrees(context);
+    await _initializeUserTasks(context);
+    _listenToAuthChanges(context);
+  }
+
+
+  //listener for authentication changes (when we sign out bla bla bla)
+  void _listenToAuthChanges(BuildContext context) {
+    FirebaseAuth.instance.authStateChanges().listen((firebaseUser) async {
+      if (firebaseUser != null) {
+        _user = await _fetchUserDataFromFirestore(firebaseUser);
+      } else {
+        _user = _createEmptyUser();
+      }
+      await _initializeUserTrees(context);
+      await _initializeUserTasks(context);
+      _startTaskResetTimer(context);
+      notifyListeners();
+    });
+  }
+
+
 
   @override
   void dispose() {
@@ -67,71 +166,6 @@ class UserProvider with ChangeNotifier {
   }
 
 
-
-  Future<app.User> _fetchUserDataFromFirestore(User? authUser) async {
-    if (authUser == null) {
-      return _createEmptyUser();
-    }
-
-    final userDoc =
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(authUser.uid)
-            .get();
-
-    if (userDoc.exists) {
-      final userData = userDoc.data() as Map<String, dynamic>;
-      final dailyTasksDoc =
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(authUser.uid)
-              .collection('daily_tasks')
-              .doc('current')
-              .get();
-
-      List<String> taskIds = [];
-      if (dailyTasksDoc.exists && dailyTasksDoc.data() != null) {
-        taskIds = List<String>.from(dailyTasksDoc.data()!['tasks'] ?? []);
-      }
-
-      return app.User(
-        id: authUser.uid,
-        username: userData['username'] ?? authUser.displayName ?? "Anonymous",
-        email: userData['email'] ?? authUser.email ?? "",
-        profilePicture: userData['profilePicture'],
-        ownedTrees:
-            (userData['ownedTrees'] as List<dynamic>?)
-                ?.cast<Map<String, dynamic>>() ??
-            [],
-        dailyTasks: taskIds,
-        droplets: userData['droplets'] ?? 0,
-      );
-
-    } else {
-      final newUser = app.User(
-        id: authUser.uid,
-        username: authUser.displayName ?? "Anonymous",
-        email: authUser.email ?? "",
-        profilePicture: authUser.photoURL,
-        ownedTrees: [],
-        dailyTasks: [],
-        droplets: 100,
-      );
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(authUser.uid)
-          .set({
-            'username': newUser.username,
-            'email': newUser.email,
-            'profilePicture': newUser.profilePicture,
-            'ownedTrees': newUser.ownedTrees,
-            'dailyTasks': newUser.dailyTasks,
-            'droplets': newUser.droplets,
-          });
-
-      return newUser;
-    }
-  }
 
 
 
@@ -198,7 +232,6 @@ class UserProvider with ChangeNotifier {
     );
 
     if (_user.droplets >= treeToBuy.price && !alreadyOwned) {
-      try {
         // take drops
         user.takeDroplets(treeToBuy.price);
 
@@ -217,27 +250,28 @@ class UserProvider with ChangeNotifier {
         _treeProviders.add(TreeProvider(boughtTree));
         notifyListeners();
 
-        // update firestore
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.id)
-            .update({
+        // update firestore ONLY if the user is not a guest
+        if (_user.id != 'guest') {
+          try {
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc(user.id)
+                .update({
               'droplets': user.droplets,
               'ownedTrees': FieldValue.arrayUnion([newOwnedTree]),
             });
-
-      } catch (e) {
-        // handling potential Firestore errors
-        print('Error buying tree: $e');
-        // revert local state changes if Firestore update fails ?
-        _user.addDroplets(treeToBuy.price);
-        _user.ownedTrees.removeWhere(
-          (ownedTree) => ownedTree['treeId'] == treeId,
-        );
-        _userTrees.removeWhere((tree) => tree.id == treeId);
-        _treeProviders.removeWhere((provider) => provider.tree.id == treeId);
-        notifyListeners();
-      }
+          } catch (e) {
+            print('Error buying tree (Firestore): $e');
+            // revert local changes if Firestore update fails ? need to discuss this
+            _user.addDroplets(treeToBuy.price);
+            _user.ownedTrees.removeWhere((ownedTree) => ownedTree['treeId'] == treeId);
+            _userTrees.removeWhere((tree) => tree.id == treeId);
+            _treeProviders.removeWhere((provider) => provider.tree.id == treeId);
+            notifyListeners();
+          }
+        } else {
+          print('Guest user: Not updating Firestore for tree purchase.');
+        }
 
     } else if (alreadyOwned) {
       print('You already own ${treeToBuy.name}.');
@@ -246,7 +280,7 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-
+  //we need to update things on the cloud too
   Future<void> updateUserTreeInFirestore(Tree updatedTree) async {
     if (_user.id.isNotEmpty) {
       final userDocRef = FirebaseFirestore.instance
@@ -376,8 +410,7 @@ class UserProvider with ChangeNotifier {
 
 
   Future<void> completeTask(Task task) async {
-    if (!_dailyUserTasks.any((t) => t.id == task.id))
-      return; // Ensure task belongs to user
+    if (!_dailyUserTasks.any((t) => t.id == task.id)) {return;} 
     addDroplets(task.dropletReward);
     final index = _dailyUserTasks.indexWhere((t) => t.id == task.id);
     if (index != -1 && !_dailyUserTasks[index].isCompleted) {
@@ -385,20 +418,23 @@ class UserProvider with ChangeNotifier {
       notifyListeners();
     }
 
-    final dailyTasksDocRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(_user.id)
-        .collection('daily_tasks')
-        .doc('current');
+    if (_user.id != 'guest') { 
+      final dailyTasksDocRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(_user.id)
+          .collection('daily_tasks')
+          .doc('current');
 
-    await dailyTasksDocRef.update({
-      'completedTasks': FieldValue.arrayUnion([task.id,]), 
-    });
+      await dailyTasksDocRef.update({
+        'completedTasks': FieldValue.arrayUnion([task.id,]),
+      });
+    } else {
+      print('Guest user: Task completed locally.');
+    }
   }
 
   Future<void> unCompleteTask(Task task) async {
-    if (!_dailyUserTasks.any((t) => t.id == task.id))
-      return; // Ensure task belongs to user
+    if (!_dailyUserTasks.any((t) => t.id == task.id)) {return;} 
     takeDroplets(task.dropletReward);
     final index = _dailyUserTasks.indexWhere((t) => t.id == task.id);
 
@@ -407,15 +443,19 @@ class UserProvider with ChangeNotifier {
       notifyListeners();
     }
 
-    final dailyTasksDocRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(_user.id)
-        .collection('daily_tasks')
-        .doc('current');
+    if (_user.id != 'guest') { 
+      final dailyTasksDocRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(_user.id)
+          .collection('daily_tasks')
+          .doc('current');
 
-    await dailyTasksDocRef.update({
-      'completedTasks': FieldValue.arrayRemove([task.id,]), 
-    });
+      await dailyTasksDocRef.update({
+        'completedTasks': FieldValue.arrayRemove([task.id,]),
+      });
+    } else {
+      print('Guest user: Task un-completed locally.');
+    }
   }
 
 
@@ -439,8 +479,10 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+
+
   void _startTaskResetTimer(BuildContext context) {
-    _taskResetTimer?.cancel(); // Cancel any existing timer
+    _taskResetTimer?.cancel(); // cancel any existing timer
 
     // reset on next midnight
     final now = DateTime.now();
@@ -448,7 +490,7 @@ class UserProvider with ChangeNotifier {
     //final nextMidnight = DateTime(now.year, now.month, now.day + 1);
     _timeUntilNextReset = nextReset.difference(now);
 
-    // Start the timer
+    // we start the timer
     _taskResetTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       if (_timeUntilNextReset.inSeconds <= 0) {
         timer.cancel();
@@ -473,8 +515,7 @@ class UserProvider with ChangeNotifier {
   /*GENERAL*/
 
   void addDroplets(int amount) {
-    _user.droplets +=
-        amount; //this needs fixing but i dont want to change user class yet
+    _user.droplets += amount; //this needs fixing but i dont want to change user class yet
     notifyListeners();
     _updateUserFirestore({'droplets': _user.droplets});
   }
@@ -486,7 +527,7 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<void> _updateUserFirestore(Map<String, dynamic> data) async {
-    if (_user.id.isNotEmpty) {
+    if (_user.id.isNotEmpty && _user.id != 'guest') {
       try {
         await FirebaseFirestore.instance
             .collection('users')

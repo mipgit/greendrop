@@ -13,36 +13,93 @@ class AuthenticationService with ChangeNotifier {
   String? get displayName => _auth.currentUser?.displayName;
   String? get email => _auth.currentUser?.email;
 
+
+
   AuthenticationService({
     FirebaseAuth? firebaseAuth,
     GoogleSignIn? googleSignIn,
   }) : _auth = firebaseAuth ?? FirebaseAuth.instance,
        _googleSignIn = googleSignIn ?? GoogleSignIn() {
-
     print('AuthenticationService initialized');
+    _listenToAuthChanges(); 
+  }
+
+
+  //we need this to listen to account/user/auth changes
+  void _listenToAuthChanges() {
     _auth.authStateChanges().listen((User? user) {
       print('authStateChanges triggered: user = $user');
-      if (user != null) {
-        _currentUser = _googleSignIn.currentUser;
-        print('User signed in: $_currentUser');
-      } else {
-        _currentUser = null;
-        print('User signed out');
-      }
+      _updateCurrentUser(user);
       notifyListeners();
     });
+
+    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount? account) {
+      print('Google onCurrentUserChanged triggered: account = $account');
+      _currentUser = account;
+      notifyListeners();
+      if (account != null && _auth.currentUser != null) {
+        _reauthenticateWithGoogle(account);
+      }
+    });
+
+    _googleSignIn.signInSilently(); // Try to sign in silently on startup (?? need to clarify this)
   }
+
+
+
+  Future<void> _reauthenticateWithGoogle(GoogleSignInAccount account) async {
+    try {
+      final GoogleSignInAuthentication googleAuth = await account.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      await _auth.currentUser?.reauthenticateWithCredential(credential);
+      print('Firebase re-authenticated with Google.');
+    } catch (e) {
+      print('Error re-authenticating with Google: $e');
+      // handle this appropriately
+    }
+  }
+
+
+
+  void _updateCurrentUser(User? firebaseUser) async {
+    if (firebaseUser != null && _googleSignIn.currentUser == null) {
+      _currentUser = await _googleSignIn.signInSilently();
+      notifyListeners();
+    } else if (firebaseUser == null) {
+      _currentUser = null;
+      notifyListeners();
+    } else if (_googleSignIn.currentUser != null && _googleSignIn.currentUser?.id != firebaseUser.uid) {
+      print('Warning: Firebase user ID does not match Google user ID.');
+      _currentUser = _googleSignIn.currentUser;
+      notifyListeners();
+    } else if (_googleSignIn.currentUser != null) {
+      _currentUser = _googleSignIn.currentUser;
+      notifyListeners();
+    }
+  }
+
+
+
+  //to experiment locally only, without database connection
+  Future<void> signInAnonymously() async {
+    try {
+      print('Attempting anonymous/guest sign-in...');
+      await _auth.signInAnonymously();
+      print('Anonymous sign-in successful. User UID: ${_auth.currentUser?.uid}');
+      // The authStateChanges listener will trigger and update the user state
+    } catch (e) {
+      print('Error during anonymous sign-in: $e');
+      // Handle error appropriately
+    }
+  }
+
+
 
   Future<void> signIn() async {
     try {
-      print('Signing out any existing user...');
-      try {
-        await _googleSignIn.disconnect();
-      } catch (e) {
-        print('Failed to disconnect: $e');
-        // Ignore the error if disconnect fails
-      }
-
       print('Attempting Google sign-in...');
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {

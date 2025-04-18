@@ -84,6 +84,30 @@ class LoginView extends StatelessWidget {
                 .animate() // Apply animations
                 .fadeIn(delay: initialDelay + buttonDelay, duration: buttonDuration, curve: Curves.easeIn) // Staggered fade in
                 .slideY(begin: slideAmount, end: 0, duration: buttonDuration, curve: Curves.easeOut), // Staggered slide up
+              
+              const SizedBox(height: 16), 
+
+                // Guest Sign-in Button with Animation
+                ElevatedButton(
+                  onPressed: authService.signInAnonymously,
+                  style: ElevatedButton.styleFrom(
+                    shape: const StadiumBorder(),
+                    elevation: 1,
+                    backgroundColor: Colors.green[100],
+                    foregroundColor: Colors.green[800],
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  ),
+                  child: const Text(
+                    'Sign in as Guest',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                )
+                .animate() 
+                .fadeIn(delay: initialDelay + buttonDelay, duration: buttonDuration, curve: Curves.easeIn) // Staggered fade in
+                .slideY(begin: slideAmount, end: 0, duration: buttonDuration, curve: Curves.easeOut), // Staggered slide up
               ],
             ),
           ),

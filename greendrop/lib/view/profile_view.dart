@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:greendrop/services/authentication_service.dart';
 import 'package:provider/provider.dart';
 import 'package:greendrop/view-model/user_provider.dart'; 
 
@@ -10,6 +10,7 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
+    final authService = Provider.of<AuthenticationService>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -38,7 +39,7 @@ class ProfilePage extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 onPressed: () async {
-                  await FirebaseAuth.instance.signOut();
+                  await authService.signOut();
                   Navigator.of(context).pop();
                 },
                 child: const Text('Sign Out'),
