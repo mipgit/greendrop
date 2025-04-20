@@ -3,6 +3,8 @@ import 'package:greendrop/view-model/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:greendrop/view/tasks/tasks_card.dart';
 
+import 'package:greendrop/view/tasks/create_task_view.dart';
+
 class TasksView extends StatelessWidget {
   const TasksView({super.key});
 
@@ -32,6 +34,7 @@ class TasksView extends StatelessWidget {
               const SizedBox(height: 10),
               Expanded(
                 child: ListView.builder(
+                  padding: const EdgeInsets.only(bottom: 80.0),
                   itemCount: userTasks.length,
                   itemBuilder: (context, index) {
                     final task = userTasks[index];
@@ -44,6 +47,16 @@ class TasksView extends StatelessWidget {
             ],
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const CreateTaskView()),
+          );
+        },
+        child: const Icon(Icons.add),
+        backgroundColor: Colors.lightGreen,
       ),
     );
   }

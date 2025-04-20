@@ -47,6 +47,25 @@ class UserProvider with ChangeNotifier {
   }
 
 
+  // Add a new task to the user's daily tasks
+  void addTask(Task task) {
+    _dailyUserTasks.add(task);
+    notifyListeners();
+
+    // Update Firestore if the user is not a guest
+    if (_user.id != 'guest') {
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(_user.id)
+          .collection('daily_tasks')
+          .doc('current')
+          .update({
+        'tasks': FieldValue.arrayUnion([task.id]),
+      });
+    }
+  }
+
+
   //starting point for initialization
   Future<void> _initialize(BuildContext context) async {
     await _fetchInitialUser(context);
@@ -479,8 +498,34 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+  void _startTaskResetTimer(BuildContext context) {
+  _taskResetTimer?.cancel(); // Cancel any existing timer
 
+  // Reset every minute
+  final now = DateTime.now();
+  final nextReset = now.add(const Duration(minutes: 1)); // Set reset to one minute from now
+  _timeUntilNextReset = nextReset.difference(now);
 
+  // Start the timer
+  _taskResetTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+    if (_timeUntilNextReset.inSeconds <= 0) {
+      timer.cancel();
+      _tasksNeedReset = true;
+      _clearCompletedTasks(context);
+      _assignDailyTasks(context);
+      _startTaskResetTimer(context); // Restart the timer
+    } else {
+      _timeUntilNextReset = nextReset.difference(DateTime.now());
+      notifyListeners();
+    }
+  });
+
+  print(
+    'Task reset timer started. Tasks will reset in ${_timeUntilNextReset.inSeconds} seconds.',
+  );
+}
+
+/*
   void _startTaskResetTimer(BuildContext context) {
     _taskResetTimer?.cancel(); // cancel any existing timer
 
@@ -508,6 +553,7 @@ class UserProvider with ChangeNotifier {
       'Task reset timer started. Tasks will reset in ${_timeUntilNextReset}',
     );
   }
+  */
 
 
 
