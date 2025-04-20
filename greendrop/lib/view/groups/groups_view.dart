@@ -1,5 +1,8 @@
+// lib/views/groups_view.dart
 import 'package:flutter/material.dart';
-import 'package:greendrop/model/group.dart'; 
+import 'package:greendrop/model/group.dart';
+import 'package:greendrop/services/group_service.dart';
+import 'package:provider/provider.dart';
 
 class GroupsView extends StatefulWidget {
   const GroupsView({super.key});
@@ -9,7 +12,36 @@ class GroupsView extends StatefulWidget {
 }
 
 class _GroupsViewState extends State<GroupsView> {
-  final List<Group> _groups = [];
+  List<Group> _groups = [];
+  bool _isLoading = true;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadGroups();
+  }
+
+  Future<void> _loadGroups() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+    try {
+      final groupService = Provider.of<GroupService>(context, listen: false);
+      final groups = await groupService.fetchUserGroups(context);
+      setState(() {
+        _groups = groups;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Failed to load groups: $e';
+        _isLoading = false;
+      });
+      print('Error loading groups: $e');
+    }
+  }
 
   void _showAddChatOptions(BuildContext context) {
     showModalBottomSheet(
@@ -62,17 +94,7 @@ class _GroupsViewState extends State<GroupsView> {
               child: const Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: () {
-                String groupName = _groupNameController.text.trim();
-                if (groupName.isNotEmpty) {
-                  _createGroup(context, groupName);
-                  Navigator.pop(context);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Group name cannot be empty')),
-                  );
-                }
-              },
+              onPressed: () => _createGroup(context, _groupNameController.text.trim()),
               child: const Text('Create'),
             ),
           ],
@@ -81,49 +103,104 @@ class _GroupsViewState extends State<GroupsView> {
     );
   }
 
-  void _createGroup(BuildContext context, String groupName) {
-    // In a real application, you would:
-    // 1. Get the current user's ID.
-    // 2. Generate a unique ID for the new group.
-    // 3. Create a new Group object using the imported Group class.
-    // 4. Save the new group to your database/backend.
-    // 5. Update the current user's groupIds list.
-    // 6. Fetch the updated list of groups (or the new group) and update the UI.
-
-    // For this example, we'll simulate creating a group locally:
-    final newGroupId = DateTime.now().millisecondsSinceEpoch.toString(); // Simple unique ID
-    const creatorId = 'user123'; // Replace with the actual current user's ID
-    final newGroup = Group(
-      id: newGroupId,
-      name: groupName,
-      creatorId: creatorId,
-      creationDate: DateTime.now(),
-      memberIds: [creatorId], // Add the creator as the first member
-    );
-
-    setState(() {
-      _groups.add(newGroup); // Update the local UI list
-    });
-
-    // You would also need to update the user's groupIds:
-    // (This depends on how you manage your user data)
-    // Example (if you have access to a User object):
-    // currentUser.joinGroup(newGroupId);
-    // Also, you'd likely want to persist this change to the user in your database.
-
-    print('Created group: ${newGroup.name} with ID: ${newGroup.id}');
+  Future<void> _createGroup(BuildContext context, String groupName) async {
+    print('Attempting to create group with name: $groupName');
+    if (groupName.isNotEmpty) {
+      try {
+        final groupService = Provider.of<GroupService>(context, listen: false);
+        print('Calling groupService.createGroup...');
+        final newGroup = await groupService.createGroup(context, groupName);
+        print('groupService.createGroup returned: $newGroup');
+        if (newGroup != null) {
+          setState(() {
+            _groups.add(newGroup);
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Group created successfully!')),
+          );
+          print('Calling Navigator.pop(context) on success');
+          Navigator.pop(context);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to create group.')),
+          );
+          print('Group creation failed, NOT calling Navigator.pop(context)');
+          // Optionally, you might want to log the reason for failure here
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error creating group: $e')),
+        );
+        print('Error creating group: $e, NOT calling Navigator.pop(context)');
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Group name cannot be empty')),
+      );
+      print('Group name empty, NOT calling Navigator.pop(context)');
+    }
   }
 
   void _showJoinGroupDialog(BuildContext context) {
+    final TextEditingController _groupIdController = TextEditingController();
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return const AlertDialog(
-          title: Text('Join Group'),
-          content: Text('Join group functionality will be implemented here.'),
+        return AlertDialog(
+          title: const Text('Join Group'),
+          content: TextField(
+            controller: _groupIdController,
+            decoration: const InputDecoration(
+              labelText: 'Group ID',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () => _joinGroup(context, _groupIdController.text.trim()),
+              child: const Text('Join'),
+            ),
+          ],
         );
       },
     );
+  }
+
+  Future<void> _joinGroup(BuildContext context, String groupId) async {
+    if (groupId.isNotEmpty) {
+      try {
+        final groupService = Provider.of<GroupService>(context, listen: false);
+        final success = await groupService.joinGroup(context, groupId);
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Successfully joined group: $groupId')),
+          );
+          _loadGroups(); // Reload to show the updated list
+          Navigator.pop(context); // Dismiss the join group dialog
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to join group with ID: $groupId. Please check the ID.')),
+          );
+          // Optionally, don't pop the dialog to allow the user to retry
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error joining group: $e')),
+        );
+        print('Error joining group: $e');
+        // Optionally, don't pop the dialog to allow the user to retry
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a group ID.')),
+      );
+    }
   }
 
   @override
@@ -132,26 +209,30 @@ class _GroupsViewState extends State<GroupsView> {
       appBar: AppBar(
         title: const Text('Groups'),
       ),
-      body: _groups.isEmpty
-          ? const Center(
-              child: Text(
-                'Your Groups will appear here',
-                style: TextStyle(fontSize: 16.0),
-              ),
-            )
-          : ListView.builder(
-              itemCount: _groups.length,
-              itemBuilder: (context, index) {
-                final group = _groups[index];
-                return ListTile(
-                  leading: const CircleAvatar(
-                    child: Icon(Icons.group),
-                  ),
-                  title: Text(group.name),
-                  // You can add onTap functionality to navigate to the group chat
-                );
-              },
-            ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _errorMessage != null
+              ? Center(child: Text(_errorMessage!))
+              : _groups.isEmpty
+                  ? const Center(
+                      child: Text(
+                        'Your Groups will appear here',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: _groups.length,
+                      itemBuilder: (context, index) {
+                        final group = _groups[index];
+                        return ListTile(
+                          leading: const CircleAvatar(
+                            child: Icon(Icons.group),
+                          ),
+                          title: Text(group.name),
+                          // You can add onTap functionality to navigate to the group chat
+                        );
+                      },
+                    ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _showAddChatOptions(context);

@@ -19,9 +19,9 @@ class _CreateGroupViewState extends State<CreateGroupView> {
   void _createGroup(BuildContext context) {
     String groupName = _groupNameController.text.trim();
     if (groupName.isNotEmpty) {
-      // TODO: Implement the logic to create the group
+      // TODO: Implement the logic to create the group (you are doing this in groups_view)
       print('Creating group with name: $groupName');
-      Navigator.pop(context); 
+      Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Group name cannot be empty')),

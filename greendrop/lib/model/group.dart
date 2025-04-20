@@ -1,7 +1,7 @@
 class Group {
-  final String id; 
+  final String id;
   final String name;
-  final String creatorId; 
+  final String creatorId;
   final DateTime creationDate;
   List<String> memberIds;
 
