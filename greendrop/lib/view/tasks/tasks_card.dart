@@ -23,15 +23,42 @@ class TasksCard extends StatelessWidget {
     }
   }
 
+
+  void _showDeleteDialog(BuildContext context, Task task) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete Task'),
+          content: const Text('Are you sure you want to delete this task?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Provider.of<UserProvider>(context, listen: false).removePersonalizedTask(task);
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
 
-    final userProvider = Provider.of<UserProvider>(context);
-
-     final isPersonalized = task.id.startsWith('user_');
+    final userProvider = Provider.of<UserProvider>(context); 
 
     // Set the background color based on whether the task is personalized
-    final backgroundColor = isPersonalized
+    final backgroundColor = task.isPersonalized
         ? const Color.fromARGB(255, 239, 243, 234)
         : const Color.fromARGB(255, 220, 236, 202);
 
@@ -42,23 +69,31 @@ class TasksCard extends StatelessWidget {
       orElse: () => task, // Fallback to the passed task if not found (shouldn't happen)
     );
 
-    return Card(
-      color: backgroundColor,
-      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      child: ListTile(
-        title: Text(
-          task.description,
-          style: const TextStyle(
-            fontSize: 16.0,
+
+    return GestureDetector(
+      onDoubleTap: () { //delete on double tap
+        if (task.isPersonalized) {
+          _showDeleteDialog(context, task);
+        }
+      },
+      child: Card(
+        color: backgroundColor,
+        margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        child: ListTile(
+          title: Text(
+            task.description,
+            style: const TextStyle(
+              fontSize: 16.0,
+            ),
           ),
-        ),
-        subtitle: Text(
-          "Reward: ${task.dropletReward} droplets",
-          style: const TextStyle(fontSize: 12),
-        ),
-        trailing: Checkbox(
-          value: currentTaskState.isCompleted,
-          onChanged: (_) => _toggleTaskCompletion(context, task),
+          subtitle: Text(
+            "Reward: ${task.dropletReward} droplets",
+            style: const TextStyle(fontSize: 12),
+          ),
+          trailing: Checkbox(
+            value: currentTaskState.isCompleted,
+            onChanged: (_) => _toggleTaskCompletion(context, task),
+          ),
         ),
       ),
     );

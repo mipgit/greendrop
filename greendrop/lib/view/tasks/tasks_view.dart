@@ -33,14 +33,22 @@ class TasksView extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               Expanded(
-                child: ListView.builder(
+                child: ReorderableListView.builder(
                   padding: const EdgeInsets.only(bottom: 80.0),
                   itemCount: userTasks.length,
+                  onReorder: (oldIndex, newIndex) {
+                    if (newIndex > oldIndex) {
+                      newIndex -= 1;
+                    }
+                    userProvider.reorderTasks(oldIndex, newIndex);
+                  },
                   itemBuilder: (context, index) {
                     final task = userTasks[index];
                     return TasksCard(
-                      task: task, 
-                      onStateChanged: () {});
+                      key: ValueKey(task.id), // Key is required for reordering
+                      task: task,
+                      onStateChanged: () {},
+                    );
                   },
                 ),
               ),
@@ -50,13 +58,15 @@ class TasksView extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const CreateTaskView()),
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return const CreateTaskView();
+            },
           );
-        },
-        child: const Icon(Icons.add),
+        },        
         backgroundColor: Colors.lightGreen,
+        child: const Icon(Icons.add),
       ),
     );
   }
