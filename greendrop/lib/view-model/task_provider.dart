@@ -7,7 +7,7 @@ class TaskProvider with ChangeNotifier {
   List<Task> _allAvailableTasks = [];
   bool _isLoading = true;
   String? _error;
-  Completer<void> _dataLoadedCompleter = Completer<void>();
+  final Completer<void> _dataLoadedCompleter = Completer<void>();
 
   List<Task> get allAvailableTasks => _allAvailableTasks;
   bool get isLoading => _isLoading;

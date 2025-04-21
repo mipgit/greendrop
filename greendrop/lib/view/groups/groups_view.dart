@@ -72,12 +72,12 @@ class _GroupsViewState extends State<GroupsView> {
   }
 
   void _showCreateGroupDialog(BuildContext context) {
-    final TextEditingController _groupNameController = TextEditingController();
+    final TextEditingController groupNameController = TextEditingController();
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return CreateGroupView(
-          groupNameController: _groupNameController,
+          groupNameController: groupNameController,
           onCreatePressed: (localContext, groupName) =>
               _handleCreateGroup(localContext, groupName),
         );
