@@ -79,20 +79,45 @@ class TasksCard extends StatelessWidget {
       child: Card(
         color: backgroundColor,
         margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-        child: ListTile(
-          title: Text(
-            task.description,
-            style: const TextStyle(
-              fontSize: 16.0,
-            ),
-          ),
-          subtitle: Text(
-            "Reward: ${task.dropletReward} droplets",
-            style: const TextStyle(fontSize: 12),
-          ),
-          trailing: Checkbox(
-            value: currentTaskState.isCompleted,
-            onChanged: (_) => _toggleTaskCompletion(context, task),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0), 
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    '${task.dropletReward}',
+                    style: const TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(width: 3.0),
+                  Icon(
+                    Icons.water_drop, 
+                    size: 20.0,
+                    color: Colors.green[700], // Adjust color as needed
+                  ),
+                ],
+              ),
+              const SizedBox(width: 3.0),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Text(
+                    task.description,
+                    style: const TextStyle(
+                      fontSize: 16.0,
+                    ),
+                  ),
+                ),
+              ),
+              Checkbox(
+                value: currentTaskState.isCompleted,
+                onChanged: (_) => _toggleTaskCompletion(context, task),
+              ),
+            ],
           ),
         ),
       ),
