@@ -56,20 +56,41 @@ class TasksView extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return const CreateTaskView();
-            },
+      floatingActionButton: Consumer<UserProvider>(
+        builder: (context, userProvider, child) {
+          final personalizedTasksCount = userProvider.userTasks
+              .where((t) => t.id.startsWith('user_'))
+              .length;
+          final isLimitReached = personalizedTasksCount >= 3;
+
+          return FloatingActionButton(
+            onPressed: isLimitReached
+                ? () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          "You have reached the limit of 3 personalized tasks.",
+                        ),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                : () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const CreateTaskView();
+                      },
+                    );
+                  },
+            backgroundColor: isLimitReached ? Colors.grey : Colors.lightGreen,
+            child: const Icon(Icons.add),
           );
-        },        
-        backgroundColor: Colors.lightGreen,
-        child: const Icon(Icons.add),
+        },
       ),
     );
   }
+
 
 
   String formatDuration(Duration duration) {
