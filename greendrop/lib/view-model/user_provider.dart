@@ -49,6 +49,15 @@ class UserProvider with ChangeNotifier {
 
   // Add a new task to the user's daily tasks
   void addTask(Task task) {
+
+    final personalizedTasksCount = _dailyUserTasks.where((t) => t.id.startsWith('user_')).length;
+
+    // Check if the limit of 3 personalized tasks is reached
+    if (personalizedTasksCount >= 3) {
+      print('You can only create up to 3 personalized tasks.');
+      return;
+    }
+
     _dailyUserTasks.add(task);
     notifyListeners();
 
@@ -60,7 +69,7 @@ class UserProvider with ChangeNotifier {
           .collection('daily_tasks')
           .doc('current')
           .update({
-        'tasks': FieldValue.arrayUnion([task.id]),
+        'personalized_tasks': FieldValue.arrayUnion([task.id]),
       });
     }
   }

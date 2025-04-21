@@ -10,7 +10,6 @@ class TasksCard extends StatelessWidget {
   const TasksCard({super.key, required this.task, required this.onStateChanged});
 
   void _toggleTaskCompletion(BuildContext context, Task task) {
-    //final taskProvider = Provider.of<TaskProvider>(context, listen: false);
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
     if (!task.isCompleted) {
@@ -19,7 +18,6 @@ class TasksCard extends StatelessWidget {
       userProvider.unCompleteTask(task);
     }
     
-
     if (onStateChanged != null) {
       onStateChanged!(); // Call the callback if it's provided
     }
@@ -28,7 +26,15 @@ class TasksCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final userProvider = Provider.of<UserProvider>(context); 
+    final userProvider = Provider.of<UserProvider>(context);
+
+     final isPersonalized = task.id.startsWith('user_');
+
+    // Set the background color based on whether the task is personalized
+    final backgroundColor = isPersonalized
+        ? const Color.fromARGB(255, 239, 243, 234)
+        : const Color.fromARGB(255, 220, 236, 202);
+
 
     // Find the current state of this specific task from the user's task list
     final currentTaskState = userProvider.userTasks.firstWhere(
@@ -37,7 +43,7 @@ class TasksCard extends StatelessWidget {
     );
 
     return Card(
-      color: const Color.fromARGB(255, 220, 236, 202),
+      color: backgroundColor,
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: ListTile(
         title: Text(
