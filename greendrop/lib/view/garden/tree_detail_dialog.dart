@@ -16,7 +16,7 @@ class TreeDetailDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    final isOwned = userProvider.user.ownedTrees.contains(tree.id);
+    final isOwned = context.watch<UserProvider>().user.ownedTrees.any((ownedTree) => ownedTree['treeId'] == tree.id);
     final canAfford = userProvider.user.droplets >= tree.price;
     const IconData dropletIcon = Icons.water_drop;
 

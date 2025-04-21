@@ -6,6 +6,7 @@ class Task {
     required this.dropletReward,
     required this.creationDate,
     this.isCompleted = false,
+    this.isPersonalized = false,
     this.dueDate
   });
 
@@ -14,6 +15,7 @@ class Task {
   final String description;
   final int dropletReward;
   bool isCompleted;
+  bool isPersonalized;
   DateTime? dueDate; 
   final DateTime creationDate;
 

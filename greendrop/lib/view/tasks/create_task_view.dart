@@ -29,40 +29,39 @@ class _CreateTaskViewState extends State<CreateTaskView> {
         creationDate: DateTime.now(),
       );
 
-      Provider.of<UserProvider>(context, listen: false).addTask(newTask);
-      Navigator.pop(context); // Go back to the tasks page
+      Provider.of<UserProvider>(context, listen: false).addPersonalizedTask(newTask);
+
+      // Close the dialog
+      Navigator.of(context).pop();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Create Task'),
-        backgroundColor: Colors.lightGreen,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _descriptionController,
-              decoration: const InputDecoration(
-                labelText: 'Task Description',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => _createTask(context),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.lightGreen,
-              ),
-              child: const Text('Create Task'),
-            ),
-          ],
+    return AlertDialog(
+      title: const Text('Create Task'),
+      content: TextField(
+        controller: _descriptionController,
+        decoration: const InputDecoration(
+          labelText: 'Task Description',
+          border: OutlineInputBorder(),
         ),
       ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(); // Close the dialog without creating a task
+          },
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: () => _createTask(context),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.lightGreen,
+          ),
+          child: const Text('Create'),
+        ),
+      ],
     );
   }
 }

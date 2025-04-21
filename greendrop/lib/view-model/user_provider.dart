@@ -30,6 +30,8 @@ class UserProvider with ChangeNotifier {
   List<TaskProvider> get taskProviders => _taskProviders;
   Duration get timeUntilNextReset => _timeUntilNextReset;
 
+
+
   UserProvider(BuildContext context) : _user = _createEmptyUser() {
     _initialize(context);
   }
@@ -41,29 +43,12 @@ class UserProvider with ChangeNotifier {
       email: '',
       profilePicture: null,
       ownedTrees: [],
-      dailyTasks: [],
+
+      //dailyTasks: [],
       droplets: 300,
     );
   }
 
-
-  // Add a new task to the user's daily tasks
-  void addTask(Task task) {
-    _dailyUserTasks.add(task);
-    notifyListeners();
-
-    // Update Firestore if the user is not a guest
-    if (_user.id != 'guest') {
-      FirebaseFirestore.instance
-          .collection('users')
-          .doc(_user.id)
-          .collection('daily_tasks')
-          .doc('current')
-          .update({
-        'tasks': FieldValue.arrayUnion([task.id]),
-      });
-    }
-  }
 
 
   //starting point for initialization
@@ -85,19 +70,28 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  
+
   //we will handle the fetch (in Firestore) depending on the existence of the user or not
   Future<app.User> _fetchUserDataFromFirestore(User? authUser) async {
-    if (authUser == null || authUser.isAnonymous ) {
+    if (authUser == null || authUser.isAnonymous) {
       return _createEmptyUser();
     }
 
-    final userDoc = await FirebaseFirestore.instance.collection('users').doc(authUser.uid).get();
+    final userDoc =
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(authUser.uid)
+            .get();
 
     if (userDoc.exists) {
-      return _createUserFromFirestore(authUser, userDoc); //if the user exists we create the user from Firestore
+      return _createUserFromFirestore(
+        authUser,
+        userDoc,
+      ); //if the user exists we create the user from Firestore
     } else {
-      return _createNewUserInFirestore(authUser); //if the user does not exist we create a new one
+      return _createNewUserInFirestore(
+        authUser,
+      ); //if the user does not exist we create a new one
     }
   }
 
@@ -123,7 +117,7 @@ class UserProvider with ChangeNotifier {
       email: userData['email'] ?? authUser.email ?? "",
       profilePicture: userData['profilePicture'],
       ownedTrees: (userData['ownedTrees'] as List<dynamic>?)?.cast<Map<String, dynamic>>() ?? [],
-      dailyTasks: taskIds,
+      //dailyTasks: taskIds,
       droplets: userData['droplets'] ?? 0,
     );
   }
@@ -137,7 +131,7 @@ class UserProvider with ChangeNotifier {
       email: authUser.email ?? "",
       profilePicture: authUser.photoURL,
       ownedTrees: [],
-      dailyTasks: [],
+      //dailyTasks: [],
       droplets: 100,
     );
     await FirebaseFirestore.instance.collection('users').doc(authUser.uid).set({
@@ -145,7 +139,7 @@ class UserProvider with ChangeNotifier {
       'email': newUser.email,
       'profilePicture': newUser.profilePicture,
       'ownedTrees': newUser.ownedTrees,
-      'dailyTasks': newUser.dailyTasks,
+      //'dailyTasks': newUser.dailyTasks,
       'droplets': newUser.droplets,
     });
     return newUser;
@@ -251,47 +245,48 @@ class UserProvider with ChangeNotifier {
     );
 
     if (_user.droplets >= treeToBuy.price && !alreadyOwned) {
-        // take drops
-        user.takeDroplets(treeToBuy.price);
+      // take drops
+      user.takeDroplets(treeToBuy.price);
 
-        // update locally
-        final newOwnedTree = {
-          'treeId': treeToBuy.id,
-          'dropletsUsed': 0,
-          'curLevel': 0,
-        };
-        _user.ownedTrees.add(newOwnedTree);
+      // update locally
+      final newOwnedTree = {
+        'treeId': treeToBuy.id,
+        'dropletsUsed': 0,
+        'curLevel': 0,
+      };
+      _user.ownedTrees.add(newOwnedTree);
 
-        final boughtTree = gardenProvider.allAvailableTrees.firstWhere(
-          (tree) => tree.id == treeId,
-        );
-        _userTrees.add(boughtTree);
-        _treeProviders.add(TreeProvider(boughtTree));
-        notifyListeners();
+      final boughtTree = gardenProvider.allAvailableTrees.firstWhere(
+        (tree) => tree.id == treeId,
+      );
+      _userTrees.add(boughtTree);
+      _treeProviders.add(TreeProvider(boughtTree));
+      notifyListeners();
 
-        // update firestore ONLY if the user is not a guest
-        if (_user.id != 'guest') {
-          try {
-            await FirebaseFirestore.instance
-                .collection('users')
-                .doc(user.id)
-                .update({
-              'droplets': user.droplets,
-              'ownedTrees': FieldValue.arrayUnion([newOwnedTree]),
-            });
-          } catch (e) {
-            print('Error buying tree (Firestore): $e');
-            // revert local changes if Firestore update fails ? need to discuss this
-            _user.addDroplets(treeToBuy.price);
-            _user.ownedTrees.removeWhere((ownedTree) => ownedTree['treeId'] == treeId);
-            _userTrees.removeWhere((tree) => tree.id == treeId);
-            _treeProviders.removeWhere((provider) => provider.tree.id == treeId);
-            notifyListeners();
-          }
-        } else {
-          print('Guest user: Not updating Firestore for tree purchase.');
+      // update firestore ONLY if the user is not a guest
+      if (_user.id != 'guest') {
+        try {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.id)
+              .update({
+                'droplets': user.droplets,
+                'ownedTrees': FieldValue.arrayUnion([newOwnedTree]),
+              });
+        } catch (e) {
+          print('Error buying tree (Firestore): $e');
+          // revert local changes if Firestore update fails ? need to discuss this
+          _user.addDroplets(treeToBuy.price);
+          _user.ownedTrees.removeWhere(
+            (ownedTree) => ownedTree['treeId'] == treeId,
+          );
+          _userTrees.removeWhere((tree) => tree.id == treeId);
+          _treeProviders.removeWhere((provider) => provider.tree.id == treeId);
+          notifyListeners();
         }
-
+      } else {
+        print('Guest user: Not updating Firestore for tree purchase.');
+      }
     } else if (alreadyOwned) {
       print('You already own ${treeToBuy.name}.');
     } else {
@@ -335,6 +330,14 @@ class UserProvider with ChangeNotifier {
 
   /*TASKS*/
 
+  Future<void> _initializeUserTasks(BuildContext context) async {
+    await _assignDailyTasks(context);
+    _taskProviders = _dailyUserTasks.map((task) => TaskProvider()).toList();
+    notifyListeners();
+  }
+
+
+
   Future<void> _assignDailyTasks(BuildContext context) async {
     if (_user.id.isEmpty) return;
 
@@ -351,12 +354,13 @@ class UserProvider with ChangeNotifier {
     await tasksProvider.dataLoaded;
 
     List<String> completedTaskIds = [];
-    if (dailyTasksDoc.exists &&
-        dailyTasksDoc.data() != null &&
-        dailyTasksDoc.data()!.containsKey('completedTasks')) {
-      completedTaskIds = List<String>.from(
-        dailyTasksDoc.data()!['completedTasks'] ?? [],
-      );
+    List<String> personalizedTaskIds = [];
+    if (dailyTasksDoc.exists && dailyTasksDoc.data() != null) {
+      if (dailyTasksDoc.data()!.containsKey('completedTasks')) {
+        completedTaskIds = List<String>.from(dailyTasksDoc.data()!['completedTasks'] ?? []);}
+
+      if (dailyTasksDoc.data()!.containsKey('personalized_tasks')) {
+        personalizedTaskIds = List<String>.from(dailyTasksDoc.data()!['personalized_tasks'] ?? []);}
     }
 
     if (tasksProvider.allAvailableTasks.isNotEmpty &&
@@ -379,7 +383,11 @@ class UserProvider with ChangeNotifier {
         availableTasks.removeAt(randomIndex);
       }
 
-      await dailyTasksDocRef.set({'date': todayDate, 'tasks': selectedTasks});
+      await dailyTasksDocRef.set({
+        'date': todayDate, 
+        'tasks': selectedTasks,
+        'personalized_tasks': personalizedTaskIds
+      });
 
       _dailyUserTasks =
           tasksProvider.allAvailableTasks
@@ -388,11 +396,8 @@ class UserProvider with ChangeNotifier {
 
       // we check if any of them is completed on Firestore
       for (var task in _dailyUserTasks) {
-        if (completedTaskIds.contains(task.id.toString())) {
-          task.isCompleted = true;
-        } else {
-          task.isCompleted = false;
-        }
+        task.isCompleted = completedTaskIds.contains(task.id.toString());
+        task.isPersonalized = personalizedTaskIds.contains(task.id.toString());
       }
 
       _tasksNeedReset = false;
@@ -410,26 +415,38 @@ class UserProvider with ChangeNotifier {
 
       // we check if any of them is completed on Firestore
       for (var task in _dailyUserTasks) {
-        if (completedTaskIds.contains(task.id.toString())) {
-          task.isCompleted = true;
-        } else {
-          task.isCompleted = false;
-        }
+        task.isCompleted = completedTaskIds.contains(task.id.toString());
+        task.isPersonalized = personalizedTaskIds.contains(task.id.toString());
       }
       notifyListeners();
     }
   }
 
 
-  Future<void> _initializeUserTasks(BuildContext context) async {
-    await _assignDailyTasks(context);
-    _taskProviders = _dailyUserTasks.map((task) => TaskProvider()).toList();
+
+  // Add a new task to the user's daily tasks
+  void addPersonalizedTask(Task task) {
+
+    task.isPersonalized = true;
+
+    _dailyUserTasks.add(task);
     notifyListeners();
+
+    // Update Firestore if the user is not a guest
+    if (_user.id != 'guest') {
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(_user.id)
+          .collection('daily_tasks')
+          .doc('current')
+          .update({'personalized_tasks': FieldValue.arrayUnion([task.id]),});
+    }
   }
 
 
   Future<void> completeTask(Task task) async {
-    if (!_dailyUserTasks.any((t) => t.id == task.id)) {return;} 
+    if (!_dailyUserTasks.any((t) => t.id == task.id)) return;
+    
     addDroplets(task.dropletReward);
     final index = _dailyUserTasks.indexWhere((t) => t.id == task.id);
     if (index != -1 && !_dailyUserTasks[index].isCompleted) {
@@ -444,16 +461,16 @@ class UserProvider with ChangeNotifier {
           .collection('daily_tasks')
           .doc('current');
 
-      await dailyTasksDocRef.update({
-        'completedTasks': FieldValue.arrayUnion([task.id,]),
-      });
+      await dailyTasksDocRef.update({'completedTasks': FieldValue.arrayUnion([task.id])});
     } else {
       print('Guest user: Task completed locally.');
     }
   }
 
+
   Future<void> unCompleteTask(Task task) async {
-    if (!_dailyUserTasks.any((t) => t.id == task.id)) {return;} 
+    if (!_dailyUserTasks.any((t) => t.id == task.id)) return;
+
     takeDroplets(task.dropletReward);
     final index = _dailyUserTasks.indexWhere((t) => t.id == task.id);
 
@@ -469,15 +486,47 @@ class UserProvider with ChangeNotifier {
           .collection('daily_tasks')
           .doc('current');
 
-      await dailyTasksDocRef.update({
-        'completedTasks': FieldValue.arrayRemove([task.id,]),
-      });
+      await dailyTasksDocRef.update({'completedTasks': FieldValue.arrayRemove([task.id])});
     } else {
       print('Guest user: Task un-completed locally.');
     }
   }
 
 
+  void reorderTasks(int oldIndex, int newIndex) {
+    final task = _dailyUserTasks.removeAt(oldIndex);
+    _dailyUserTasks.insert(newIndex, task);
+    notifyListeners();
+
+    // Optionally, update Firestore to save the new order
+    if (_user.id != 'guest') {
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(_user.id)
+          .collection('daily_tasks')
+          .doc('current')
+          .update({'tasks': _dailyUserTasks.map((task) => task.id).toList()});
+    }
+  }
+
+
+  void removePersonalizedTask(Task task) {
+    _dailyUserTasks.removeWhere((t) => t.id == task.id);
+    notifyListeners();
+
+    // Update Firestore if the user is not a guest
+    if (_user.id != 'guest') {
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(_user.id)
+          .collection('daily_tasks')
+          .doc('current')
+          .update({
+            'tasks': _dailyUserTasks.map((task) => task.id).toList(),
+            'personalized_tasks': FieldValue.arrayRemove([task.id]),
+          });
+    }
+  }  
 
 
   Future<void> _clearCompletedTasks(BuildContext context) async {
@@ -489,49 +538,23 @@ class UserProvider with ChangeNotifier {
         .collection('daily_tasks')
         .doc('current');
 
-    await dailyTasksDocRef.update({'completedTasks': FieldValue.delete()});
+    await dailyTasksDocRef.update({
+      'completedTasks': FieldValue.delete(),
+      'personalized_tasks': FieldValue.delete(),
+    });
 
     for (var task in _dailyUserTasks) {
-      if (task.isCompleted) {
-        task.isCompleted = false;
-      }
+      if (task.isCompleted) task.isCompleted = false;
+      if (task.isPersonalized) task.isPersonalized = false;
     }
   }
 
-  void _startTaskResetTimer(BuildContext context) {
-  _taskResetTimer?.cancel(); // Cancel any existing timer
-
-  // Reset every minute
-  final now = DateTime.now();
-  final nextReset = now.add(const Duration(minutes: 1)); // Set reset to one minute from now
-  _timeUntilNextReset = nextReset.difference(now);
-
-  // Start the timer
-  _taskResetTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
-    if (_timeUntilNextReset.inSeconds <= 0) {
-      timer.cancel();
-      _tasksNeedReset = true;
-      _clearCompletedTasks(context);
-      _assignDailyTasks(context);
-      _startTaskResetTimer(context); // Restart the timer
-    } else {
-      _timeUntilNextReset = nextReset.difference(DateTime.now());
-      notifyListeners();
-    }
-  });
-
-  print(
-    'Task reset timer started. Tasks will reset in ${_timeUntilNextReset.inSeconds} seconds.',
-  );
-}
-
-/*
   void _startTaskResetTimer(BuildContext context) {
     _taskResetTimer?.cancel(); // cancel any existing timer
 
     // reset on next midnight
     final now = DateTime.now();
-    final nextReset = DateTime(now.year, now.month, now.day + 1);
+    final nextReset = now.add(const Duration(minutes: 1));
     //final nextMidnight = DateTime(now.year, now.month, now.day + 1);
     _timeUntilNextReset = nextReset.difference(now);
 
@@ -553,7 +576,6 @@ class UserProvider with ChangeNotifier {
       'Task reset timer started. Tasks will reset in ${_timeUntilNextReset}',
     );
   }
-  */
 
 
 
