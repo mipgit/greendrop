@@ -20,19 +20,7 @@ class _CreateTaskViewState extends State<CreateTaskView> {
   }
 
   void _createTask(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
     final description = _descriptionController.text.trim();
-
-    final personalizedTasksCount = userProvider.userTasks.where((t) => t.id.startsWith('user_')).length;
-    if (personalizedTasksCount >= 3) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("You can only create up to 3 personalized tasks."),
-          backgroundColor: Colors.black,
-        ),
-      );
-      return;
-    }
 
     if (description.isNotEmpty) {
       final newTask = Task(

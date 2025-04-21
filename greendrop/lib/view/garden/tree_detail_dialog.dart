@@ -84,7 +84,10 @@ class TreeDetailDialog extends StatelessWidget {
             ),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("You already own ${tree.name}!")),
+                SnackBar(
+                  content: Text("You already own ${tree.name}!"), 
+                  duration: Duration(seconds: 1),
+                ),
               );
                Navigator.of(context).pop();
             },
@@ -104,6 +107,7 @@ class TreeDetailDialog extends StatelessWidget {
                    ScaffoldMessenger.of(context).showSnackBar(
                      SnackBar(
                          content: Text('${tree.name} purchased!'),
+                         duration: Duration(seconds: 1),
                          backgroundColor: Colors.green,
                      ),
                    );
