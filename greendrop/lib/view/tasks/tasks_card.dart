@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:greendrop/model/task.dart';
 import 'package:provider/provider.dart';
 import 'package:greendrop/view-model/user_provider.dart';
-import 'package:greendrop/view/tasks/droplet_reward_badge.dart';
 
 class TasksCard extends StatelessWidget {
   final Task task;
@@ -71,34 +70,28 @@ class TasksCard extends StatelessWidget {
     );
 
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Stack(
       children: [
-        if (task.dropletReward > 0)
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: DropletRewardBadge(reward: task.dropletReward),
-          ),
-
-          GestureDetector(
-            onDoubleTap: () {
-              if (task.isPersonalized) {
-                _showDeleteDialog(context, task);
-              }
-            },
-            child: Card(
-              color: backgroundColor,
-              margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: Text(
-                        task.description,
-                        style: const TextStyle(fontSize: 16.0),
+        GestureDetector(
+          onDoubleTap: () {
+            if (task.isPersonalized) {
+              _showDeleteDialog(context, task);
+            }
+          },
+          child: Card(
+            color: backgroundColor,
+            margin: const EdgeInsets.only(
+              top: 24.0, left: 16.0, right: 16.0, bottom: 8.0,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      task.description,
+                      style: const TextStyle(
+                        fontSize: 16.0,
                       ),
                     ),
                   ),
@@ -108,6 +101,35 @@ class TasksCard extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+          ),
+        ),
+        Positioned(
+          top: 8,
+          left: 24,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.circular(12),
+            
+            ),
+            child: Row(
+              children: [
+                Text(
+                  '${task.dropletReward}',
+                  style: const TextStyle(
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(width: 2),
+                Icon(
+                  Icons.water_drop,
+                  size: 16.0,
+                  color: Colors.green[700],
+                ),
+              ],
             ),
           ),
         ),
