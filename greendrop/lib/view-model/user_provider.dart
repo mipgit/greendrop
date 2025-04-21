@@ -98,17 +98,18 @@ class UserProvider with ChangeNotifier {
   //we create the user from Firestore (only fetching data)
   Future<app.User> _createUserFromFirestore(User? authUser, DocumentSnapshot<Map<String, dynamic>> userDoc) async {
     final userData = userDoc.data()!;
-    final dailyTasksDoc = await FirebaseFirestore.instance
+    //final dailyTasksDoc = 
+      await FirebaseFirestore.instance
         .collection('users')
         .doc(authUser!.uid)
         .collection('daily_tasks')
         .doc('current')
         .get();
 
-    List<String> taskIds = [];
-    if (dailyTasksDoc.exists && dailyTasksDoc.data() != null) {
-      taskIds = List<String>.from(dailyTasksDoc.data()!['tasks'] ?? []);
-    }
+    //List<String> taskIds = [];
+    //if (dailyTasksDoc.exists && dailyTasksDoc.data() != null) {
+    //  taskIds = List<String>.from(dailyTasksDoc.data()!['tasks'] ?? []);
+    //}
 
     return app.User(
       id: authUser.uid,
@@ -559,7 +560,7 @@ class UserProvider with ChangeNotifier {
 
     // reset on next midnight
     final now = DateTime.now();
-    final nextReset = now.add(const Duration(minutes: 1));
+    final nextReset = DateTime(now.year, now.month, now.day + 1);
     //final nextMidnight = DateTime(now.year, now.month, now.day + 1);
     _timeUntilNextReset = nextReset.difference(now);
 
