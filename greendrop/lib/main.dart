@@ -24,8 +24,8 @@ void main() async {
         ChangeNotifierProvider(create: (context) => GardenProvider()),
         ChangeNotifierProvider(create: (context) => TaskProvider()),
         ChangeNotifierProvider(create: (context) => UserProvider(context)),
-        Provider<GroupService>( // Use Provider since GroupService doesn't need to notify listeners on its own
-          create: (context) => GroupService(),
+        ChangeNotifierProvider<GroupService>( 
+          create: (_) => GroupService(),
         ),
       ],
       child: const GreenDropApp(),

@@ -1,39 +1,43 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:greendrop/model/group.dart';
 import 'package:greendrop/services/authentication_service.dart';
 import 'package:provider/provider.dart';
 
-
-class GroupService {
+class GroupService extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  List<Group> _groups = [];
 
-  // Helper method to get the current user's ID
+  List<Group> get groups => _groups;
+
   String? _getCurrentUserId(BuildContext context) {
     final authService = Provider.of<AuthenticationService>(context, listen: false);
-    return authService.email; // Or authService.currentUser?.uid, adjust as needed
+    return authService.email;
   }
 
-  // Method to fetch user's groups from Firebase
-  Future<List<Group>> fetchUserGroups(BuildContext context) async {
+  Future<void> fetchUserGroups(BuildContext context) async {
     final userId = _getCurrentUserId(context);
     if (userId == null) {
       print('User not authenticated, cannot fetch groups.');
-      return [];
+      _groups = [];
+      notifyListeners();
+      return;
     }
     try {
       final QuerySnapshot<Map<String, dynamic>> snapshot = await _firestore
           .collection('groups')
           .where('memberIds', arrayContains: userId)
           .get();
-      return snapshot.docs.map((doc) => _groupFromFirestore(doc)).toList();
+      _groups = snapshot.docs.map((doc) => _groupFromFirestore(doc)).toList();
+      notifyListeners();
     } catch (e) {
       print('Error fetching user groups: $e');
+      _groups = [];
+      notifyListeners();
       throw Exception('Failed to fetch user groups');
     }
   }
 
-  // Method to create a new group in Firebase
   Future<Group?> createGroup(BuildContext context, String groupName) async {
     final creatorId = _getCurrentUserId(context);
     if (creatorId == null) {
@@ -56,6 +60,7 @@ class GroupService {
         'creationDate': Timestamp.fromDate(newGroup.creationDate),
         'memberIds': newGroup.memberIds,
       });
+      fetchUserGroups(context);
       return newGroup;
     } catch (e) {
       print('Error creating group: $e');
@@ -63,7 +68,6 @@ class GroupService {
     }
   }
 
-  // Method to join an existing group in Firebase
   Future<bool> joinGroup(BuildContext context, String groupId) async {
     final userId = _getCurrentUserId(context);
     if (userId == null) {
@@ -77,6 +81,7 @@ class GroupService {
         await groupRef.update({
           'memberIds': FieldValue.arrayUnion([userId]),
         });
+        fetchUserGroups(context);
         return true;
       } else {
         print('Group with ID: $groupId does not exist.');
@@ -88,7 +93,6 @@ class GroupService {
     }
   }
 
-  // Helper method to convert a Firestore document to a Group object
   Group _groupFromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
     return Group(
