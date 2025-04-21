@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:greendrop/view/groups/message_view.dart'; 
 
 class ChatView extends StatefulWidget {
   final String groupId;
@@ -12,12 +13,15 @@ class ChatView extends StatefulWidget {
 
 class _ChatViewState extends State<ChatView> {
   final TextEditingController _messageController = TextEditingController();
-  final List<String> _messages = []; 
+  final List<_ChatMessage> _messages = [];
 
   void _sendMessage() {
     if (_messageController.text.trim().isNotEmpty) {
       setState(() {
-        _messages.add('You: ${_messageController.text.trim()}'); 
+        _messages.add(_ChatMessage(
+          text: _messageController.text.trim(),
+          isMe: true,
+        ));
         _messageController.clear();
       });
     }
@@ -35,13 +39,14 @@ class _ChatViewState extends State<ChatView> {
             child: ListView.builder(
               itemCount: _messages.length,
               itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(_messages[index]),
+                return MessageBubble(
+                  message: _messages[index].text,
+                  isMe: _messages[index].isMe,
                 );
               },
             ),
           ),
+          const Divider(height: 1),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -51,6 +56,7 @@ class _ChatViewState extends State<ChatView> {
                     controller: _messageController,
                     decoration: const InputDecoration(
                       hintText: 'Send a message...',
+                      border: InputBorder.none,
                     ),
                     onSubmitted: (_) => _sendMessage(),
                   ),
@@ -66,4 +72,11 @@ class _ChatViewState extends State<ChatView> {
       ),
     );
   }
+}
+
+class _ChatMessage {
+  final String text;
+  final bool isMe;
+
+  _ChatMessage({required this.text, required this.isMe});
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:greendrop/services/group_service.dart';
 import 'package:greendrop/view/groups/create_group_view.dart';
 import 'package:greendrop/view/groups/join_group_view.dart';
-import 'package:greendrop/view/groups/group_chat_view.dart';
+import 'package:greendrop/view/groups/chat_view.dart';
 import 'package:provider/provider.dart';
 
 class GroupsView extends StatefulWidget {
