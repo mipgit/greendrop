@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:greendrop/model/task.dart';
 import 'package:provider/provider.dart';
 import 'package:greendrop/view-model/user_provider.dart';
+import 'package:greendrop/view/tasks/droplet_reward_badge.dart';
 
 class TasksCard extends StatelessWidget {
   final Task task;
@@ -70,57 +71,47 @@ class TasksCard extends StatelessWidget {
     );
 
 
-    return GestureDetector(
-      onDoubleTap: () { //delete on double tap
-        if (task.isPersonalized) {
-          _showDeleteDialog(context, task);
-        }
-      },
-      child: Card(
-        color: backgroundColor,
-        margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0), 
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    '${task.dropletReward}',
-                    style: const TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (task.dropletReward > 0)
+          Padding(
+            padding: const EdgeInsets.only(top: 16.0),
+            child: DropletRewardBadge(reward: task.dropletReward),
+          ),
+
+          GestureDetector(
+            onDoubleTap: () {
+              if (task.isPersonalized) {
+                _showDeleteDialog(context, task);
+              }
+            },
+            child: Card(
+              color: backgroundColor,
+              margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text(
+                        task.description,
+                        style: const TextStyle(fontSize: 16.0),
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 3.0),
-                  Icon(
-                    Icons.water_drop, 
-                    size: 20.0,
-                    color: Colors.green[700], // Adjust color as needed
+                  Checkbox(
+                    value: currentTaskState.isCompleted,
+                    onChanged: (_) => _toggleTaskCompletion(context, task),
                   ),
                 ],
               ),
-              const SizedBox(width: 3.0),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 16.0),
-                  child: Text(
-                    task.description,
-                    style: const TextStyle(
-                      fontSize: 16.0,
-                    ),
-                  ),
-                ),
-              ),
-              Checkbox(
-                value: currentTaskState.isCompleted,
-                onChanged: (_) => _toggleTaskCompletion(context, task),
-              ),
-            ],
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 }
