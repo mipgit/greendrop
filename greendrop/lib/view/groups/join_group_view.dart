@@ -12,13 +12,11 @@ class JoinGroupView extends StatefulWidget {
 class _JoinGroupViewState extends State<JoinGroupView> {
   final TextEditingController _groupIdController = TextEditingController();
 
-  void _joinGroup(BuildContext context) {
+  void _joinGroup(BuildContext context) async {
     if (_groupIdController.text.trim().isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Attempting to join group: ${_groupIdController.text.trim()}')),
-      );
+      final groupService = Provider.of<GroupService>(context, listen: false);
+      await groupService.joinGroup(context, _groupIdController.text.trim()); 
       Navigator.pop(context);
-      Provider.of<GroupService>(context, listen: false).fetchUserGroups(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter a group ID.')),

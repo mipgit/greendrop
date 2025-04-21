@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:greendrop/services/authentication_service.dart';
 import 'package:greendrop/services/group_service.dart';
 import 'package:greendrop/view/groups/create_group_view.dart';
 import 'package:greendrop/view/groups/join_group_view.dart';
@@ -71,6 +72,7 @@ class _GroupsViewState extends State<GroupsView> {
     );
   }
 
+  
   void _showCreateGroupDialog(BuildContext context) {
     final TextEditingController groupNameController = TextEditingController();
     showDialog(
@@ -87,6 +89,18 @@ class _GroupsViewState extends State<GroupsView> {
 
   Future<void> _handleCreateGroup(BuildContext context, String groupName) async {
     if (groupName.isNotEmpty) {
+      final authService = Provider.of<AuthenticationService>(context, listen: false);
+      if (authService.isGuest) {
+        try {
+          await authService.signInAnonymously();
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to sign in as guest: $e')),
+          );
+          return; // Don't proceed with group creation if guest sign-in fails
+        }
+      }
+
       try {
         final groupService = Provider.of<GroupService>(context, listen: false);
         final newGroup = await groupService.createGroup(context, groupName);
@@ -113,29 +127,24 @@ class _GroupsViewState extends State<GroupsView> {
     }
   }
 
+
+
   void _showJoinGroupDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return const JoinGroupView();
       },
-    ).then((_) {
-      _handleJoinGroup(context);
+    ).then((joinedSuccessfully) {
+      if (joinedSuccessfully == true) {
+        _loadInitialGroups();
+      }
     });
-  }
-
-  Future<void> _handleJoinGroup(BuildContext context) async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Joining a group is not yet implemented.')),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Groups'),
-      ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _errorMessage != null

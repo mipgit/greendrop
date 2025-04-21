@@ -45,6 +45,18 @@ class GroupService extends ChangeNotifier {
       return null;
     }
     try {
+      final QuerySnapshot<Map<String, dynamic>> existingGroupsSnapshot = await _firestore
+          .collection('groups')
+          .where('name', isEqualTo: groupName)
+          .get();
+
+      if (existingGroupsSnapshot.docs.isNotEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('A group with this name already exists. Please choose a different name.')),
+        );
+        return null;
+      }
+
       final newGroupRef = _firestore.collection('groups').doc();
       final creationDate = DateTime.now();
       final newGroup = Group(
@@ -67,31 +79,51 @@ class GroupService extends ChangeNotifier {
       return null;
     }
   }
-
-  Future<bool> joinGroup(BuildContext context, String groupId) async {
+  Future<bool> joinGroup(BuildContext context, String groupName) async { 
     final userId = _getCurrentUserId(context);
     if (userId == null) {
       print('User not authenticated, cannot join group.');
       return false;
     }
     try {
-      final groupRef = _firestore.collection('groups').doc(groupId);
-      final DocumentSnapshot<Map<String, dynamic>> snapshot = await groupRef.get();
-      if (snapshot.exists) {
-        await groupRef.update({
-          'memberIds': FieldValue.arrayUnion([userId]),
-        });
-        fetchUserGroups(context);
-        return true;
+      final QuerySnapshot<Map<String, dynamic>> snapshot = await _firestore
+          .collection('groups')
+          .where('name', isEqualTo: groupName)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        final groupId = snapshot.docs.first.id;
+        final groupRef = _firestore.collection('groups').doc(groupId);
+        final groupData = snapshot.docs.first.data();
+        List<String> existingMembers = (groupData['memberIds'] as List<dynamic>?)?.cast<String>() ?? [];
+
+        if (!existingMembers.contains(userId)) {
+          await groupRef.update({
+            'memberIds': FieldValue.arrayUnion([userId]),
+          });
+          fetchUserGroups(context); 
+          return true;
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('You are already a member of this group.')),
+          );
+          return false;
+        }
       } else {
-        print('Group with ID: $groupId does not exist.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Group does not exist.')),
+        );
         return false;
       }
     } catch (e) {
       print('Error joining group: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to join group: $e')),
+      );
       return false;
     }
   }
+
 
   Group _groupFromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
