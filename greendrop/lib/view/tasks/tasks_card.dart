@@ -69,8 +69,9 @@ class TasksCard extends StatelessWidget {
       orElse: () => task, // Fallback to the passed task if not found (shouldn't happen)
     );
 
+
     return GestureDetector(
-      onDoubleTap: () {
+      onDoubleTap: () { //delete on double tap
         if (task.isPersonalized) {
           _showDeleteDialog(context, task);
         }
@@ -92,7 +93,6 @@ class TasksCard extends StatelessWidget {
           trailing: Checkbox(
             value: currentTaskState.isCompleted,
             onChanged: (_) => _toggleTaskCompletion(context, task),
-
           ),
         ),
       ),

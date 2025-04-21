@@ -50,7 +50,6 @@ class UserProvider with ChangeNotifier {
   }
 
 
-
   //starting point for initialization
   Future<void> _initialize(BuildContext context) async {
     await _fetchInitialUser(context);
