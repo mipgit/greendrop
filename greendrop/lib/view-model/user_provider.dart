@@ -294,6 +294,8 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+
+
   //we need to update things on the cloud too
   Future<void> updateUserTreeInFirestore(Tree updatedTree) async {
     if (_user.id.isNotEmpty) {
@@ -354,20 +356,25 @@ class UserProvider with ChangeNotifier {
     await tasksProvider.dataLoaded;
 
     List<String> completedTaskIds = [];
-    List<String> personalizedTaskIds = [];
+    List<Map<String, dynamic>> personalizedTasksMap = [];
+    
     if (dailyTasksDoc.exists && dailyTasksDoc.data() != null) {
+      
+      if (dailyTasksDoc.data()!.containsKey('personalized_tasks_map')) {
+        personalizedTasksMap = List<Map<String, dynamic>>.from(dailyTasksDoc.data()!['personalized_tasks_map'] ?? []);}
+      
       if (dailyTasksDoc.data()!.containsKey('completedTasks')) {
         completedTaskIds = List<String>.from(dailyTasksDoc.data()!['completedTasks'] ?? []);}
-
-      if (dailyTasksDoc.data()!.containsKey('personalized_tasks')) {
-        personalizedTaskIds = List<String>.from(dailyTasksDoc.data()!['personalized_tasks'] ?? []);}
     }
 
+
+    // Check if the tasks need to be reset
     if (tasksProvider.allAvailableTasks.isNotEmpty &&
         (_tasksNeedReset ||
             !dailyTasksDoc.exists ||
             dailyTasksDoc.data()?['date'] != todayDate ||
             (dailyTasksDoc.data()?['tasks'] as List<dynamic>?)?.isEmpty == true)) {
+      
       //we assign new tasks
       final random = Random();
       final availableTasks = List<Task>.from(tasksProvider.allAvailableTasks);
@@ -386,7 +393,7 @@ class UserProvider with ChangeNotifier {
       await dailyTasksDocRef.set({
         'date': todayDate, 
         'tasks': selectedTasks,
-        'personalized_tasks': personalizedTaskIds
+        //'personalized_tasks': personalizedTaskMap
       });
 
       _dailyUserTasks =
@@ -394,39 +401,70 @@ class UserProvider with ChangeNotifier {
               .where((task) => selectedTasks.contains(task.id.toString()))
               .toList();
 
-      // we check if any of them is completed on Firestore
-      for (var task in _dailyUserTasks) {
-        task.isCompleted = completedTaskIds.contains(task.id.toString());
-        task.isPersonalized = personalizedTaskIds.contains(task.id.toString());
-      }
-
+      
       _tasksNeedReset = false;
-      notifyListeners();
 
 
     } else {
+
       final taskIds = List<String>.from(
         dailyTasksDoc.data()!['tasks'] as List<dynamic>,
       );
+
       _dailyUserTasks =
           tasksProvider.allAvailableTasks
               .where((task) => taskIds.contains(task.id.toString()))
               .toList();
-
-      // we check if any of them is completed on Firestore
-      for (var task in _dailyUserTasks) {
-        task.isCompleted = completedTaskIds.contains(task.id.toString());
-        task.isPersonalized = personalizedTaskIds.contains(task.id.toString());
-      }
-      notifyListeners();
     }
+
+
+    //finally
+
+    //we add the personalized tasks to the list
+    for (var taskMap in personalizedTasksMap) {
+      final String taskId = taskMap['id'];
+      final String description = taskMap['description'];
+      final int dropletReward = taskMap['dropletReward'] ?? 1;
+
+      // we check if task already exists in the user tasks
+      final taskExists = _dailyUserTasks.any((t) => t.id == taskId);
+
+      if (taskExists) {
+        final existingTaskIndex = _dailyUserTasks.indexWhere((t) => t.id == taskId);
+        _dailyUserTasks[existingTaskIndex].isPersonalized = true;
+      } else {
+        final newTask = Task(
+          id: taskId,
+          description: description,
+          dropletReward: dropletReward,
+          creationDate: DateTime.now(),
+          isPersonalized: true,
+        );
+        _dailyUserTasks.add(newTask);
+      }
+
+    }
+
+
+    // we check if any of them is completed on Firestore
+    for (var task in _dailyUserTasks) {
+      task.isCompleted = completedTaskIds.contains(task.id.toString());
+      task.isPersonalized = personalizedTasksMap.any((taskMap) => taskMap['id'] == task.id);
+    }
+    
+
+    notifyListeners();
+  
   }
+
+
+
 
 
   // Add a new task to the user's daily tasks
   void addPersonalizedTask(Task task) {
 
-    final personalizedTasksCount = _dailyUserTasks.where((t) => t.id.startsWith('user_')).length;
+    final personalizedTasksCount = _dailyUserTasks.where((t) => t.isPersonalized).length;
 
     // Check if the limit of 3 personalized tasks is reached
     if (personalizedTasksCount >= 3) {
@@ -440,12 +478,21 @@ class UserProvider with ChangeNotifier {
 
     // Update Firestore if the user is not a guest
     if (_user.id != 'guest') {
+      // now personalized tasks are stored in a map
+      final Map<String, dynamic> personalizedTask = {
+        'id': task.id,
+        'description': task.description,
+        'dropletReward': task.dropletReward
+      };
+
       FirebaseFirestore.instance
           .collection('users')
           .doc(_user.id)
           .collection('daily_tasks')
           .doc('current')
-          .update({'personalized_tasks': FieldValue.arrayUnion([task.id]),});
+          .update({
+            'personalized_tasks_map': FieldValue.arrayUnion([personalizedTask]),
+          });
     }
   }
 
@@ -504,7 +551,7 @@ class UserProvider with ChangeNotifier {
     _dailyUserTasks.insert(newIndex, task);
     notifyListeners();
 
-    // Optionally, update Firestore to save the new order
+    // we update Firestore to save the new order
     if (_user.id != 'guest') {
       FirebaseFirestore.instance
           .collection('users')
@@ -523,19 +570,48 @@ class UserProvider with ChangeNotifier {
     // Update Firestore if the user is not a guest
     if (_user.id != 'guest') {
       FirebaseFirestore.instance
-          .collection('users')
-          .doc(_user.id)
-          .collection('daily_tasks')
-          .doc('current')
-          .update({
-            'tasks': _dailyUserTasks.map((task) => task.id).toList(),
-            'personalized_tasks': FieldValue.arrayRemove([task.id]),
-          });
+        .collection('users')
+        .doc(_user.id)
+        .collection('daily_tasks')
+        .doc('current')
+
+        .get().then((doc) {
+
+          if (doc.exists && doc.data()!.containsKey('personalized_tasks_map')) {
+            
+            List<String> tasks = List<String>.from(doc.data()!['tasks'] ?? []);
+            List<String> completedTasks = List<String>.from(doc.data()!['completedTasks'] ?? []);
+
+            List<Map<String, dynamic>> personalizedTasksMap = 
+                List<Map<String, dynamic>>.from(doc.data()!['personalized_tasks_map'] ?? []);
+            
+            // find matching id
+            personalizedTasksMap.removeWhere((taskMap) => taskMap['id'] == task.id);
+            tasks.removeWhere((taskId) => taskId == task.id);
+            completedTasks.removeWhere((taskId) => taskId == task.id);
+
+            // update Firestore
+            FirebaseFirestore.instance
+                .collection('users')
+                .doc(_user.id)
+                .collection('daily_tasks')
+                .doc('current')
+                .update({
+                  'personalized_tasks_map': personalizedTasksMap,
+                  'tasks': tasks,
+                  'completedTasks': completedTasks,
+                });
+          }
+        }
+
+      );
     }
   }  
 
 
-  Future<void> _clearCompletedTasks(BuildContext context) async {
+
+  //we need to clear the completed tasks list and the personalized tasks map
+  Future<void> _clearTasks(BuildContext context) async {
     if (_user.id.isEmpty) return;
 
     final dailyTasksDocRef = FirebaseFirestore.instance
@@ -546,7 +622,7 @@ class UserProvider with ChangeNotifier {
 
     await dailyTasksDocRef.update({
       'completedTasks': FieldValue.delete(),
-      'personalized_tasks': FieldValue.delete(),
+      'personalized_tasks_map': FieldValue.delete(),
     });
 
     for (var task in _dailyUserTasks) {
@@ -555,12 +631,16 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+
+
+
   void _startTaskResetTimer(BuildContext context) {
     _taskResetTimer?.cancel(); // cancel any existing timer
 
     // reset on next midnight
     final now = DateTime.now();
     final nextReset = DateTime(now.year, now.month, now.day + 1);
+    //final secondsReset = now.add(Duration(seconds: 15));
     //final nextMidnight = DateTime(now.year, now.month, now.day + 1);
     _timeUntilNextReset = nextReset.difference(now);
 
@@ -569,7 +649,7 @@ class UserProvider with ChangeNotifier {
       if (_timeUntilNextReset.inSeconds <= 0) {
         timer.cancel();
         _tasksNeedReset = true;
-        _clearCompletedTasks(context);
+        _clearTasks(context);
         _assignDailyTasks(context);
         _startTaskResetTimer(context);
       } else {

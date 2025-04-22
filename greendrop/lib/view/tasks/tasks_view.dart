@@ -58,9 +58,7 @@ class TasksView extends StatelessWidget {
       ),
       floatingActionButton: Consumer<UserProvider>(
         builder: (context, userProvider, child) {
-          final personalizedTasksCount = userProvider.userTasks
-              .where((t) => t.id.startsWith('user_'))
-              .length;
+          final personalizedTasksCount = userProvider.userTasks.where((t) => t.isPersonalized).length;
           final isLimitReached = personalizedTasksCount >= 3;
 
           return FloatingActionButton(

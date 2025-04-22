@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:greendrop/model/task.dart';
 import 'package:provider/provider.dart';
@@ -23,11 +24,17 @@ class _CreateTaskViewState extends State<CreateTaskView> {
     final description = _descriptionController.text.trim();
 
     if (description.isNotEmpty) {
+
+      // unique ID using UUID package or Firebase
+      final taskId = FirebaseFirestore.instance.collection('tasks').doc().id;
+
       final newTask = Task(
-        id: 'user_${DateTime.now().toString()}', // Prefix in ID to identify personalized tasks
+        id: taskId,
         description: description,
         dropletReward: 1,
         creationDate: DateTime.now(),
+        isCompleted: false,
+        isPersonalized: true,
       );
 
       Provider.of<UserProvider>(context, listen: false).addPersonalizedTask(newTask);
