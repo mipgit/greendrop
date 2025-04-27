@@ -79,22 +79,20 @@ class GroupService extends ChangeNotifier {
       return null;
     }
   }
-  Future<bool> joinGroup(BuildContext context, String groupName) async { 
+  Future<bool> joinGroup(BuildContext context, String groupId) async { 
     final userId = _getCurrentUserId(context);
     if (userId == null) {
       print('User not authenticated, cannot join group.');
       return false;
     }
     try {
-      final QuerySnapshot<Map<String, dynamic>> snapshot = await _firestore
-          .collection('groups')
-          .where('name', isEqualTo: groupName)
-          .get();
 
-      if (snapshot.docs.isNotEmpty) {
-        final groupId = snapshot.docs.first.id;
-        final groupRef = _firestore.collection('groups').doc(groupId);
-        final groupData = snapshot.docs.first.data();
+      //entrar com o id? 
+      final groupRef = _firestore.collection('groups').doc(groupId);
+      final groupDoc = await groupRef.get();
+
+      if (groupDoc.exists) {
+        final groupData = groupDoc.data()!;
         List<String> existingMembers = (groupData['memberIds'] as List<dynamic>?)?.cast<String>() ?? [];
 
         if (!existingMembers.contains(userId)) {

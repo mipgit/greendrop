@@ -188,6 +188,7 @@ class _GroupsViewState extends State<GroupsView> {
         onPressed: () {
           _showAddChatOptions(context);
         },
+        backgroundColor: Colors.lightGreen, //pus igual às tasks
         child: const Icon(Icons.add),
       ),
     );
