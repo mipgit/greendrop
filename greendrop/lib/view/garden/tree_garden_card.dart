@@ -24,49 +24,62 @@ class TreeGardenCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final userProvider = context.watch<UserProvider>(); // Use watch for reactivity
     final bool isOwned = userProvider.user.ownedTrees.any((ownedTree) => ownedTree['treeId'] == tree.id);
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return Card(
       margin: const EdgeInsets.all(8.0),
+      elevation: isOwned ? 1.0 : 2.0,
       color: isOwned ? null : const Color.fromARGB(204, 226, 221, 221),
-      child: SizedBox(
-        height: 100.0,
-        child: Row(
-          children: [
-            SizedBox(
-              width: 100.0,
-              height: double.infinity,
-              child: Image.asset(
-                imagePath,
-                fit: BoxFit.cover,
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      name,
-                      style: const TextStyle(
-                        fontSize: 25.0,
-                      ),
-                    ),
-                    Text(
-                      '$price droplets',
-                      style: const TextStyle(
-                        fontSize: 12.0,
-                      ),
-                    ),
-                  ],
+      child: InkWell(
+        onTap: onCardTap,
+        child: SizedBox(
+          height: 100.0,
+          child: Row(
+            children: [
+              SizedBox(
+                width: 100.0,
+                height: double.infinity,
+                child: Image.asset(
+                  imagePath,
+                  fit: BoxFit.cover,
                 ),
               ),
-            ),
-            
-            GestureDetector(
-              onTap: onCardTap,
-              child: Padding(
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        name,
+                        style: textTheme.headlineSmall?.copyWith(fontSize: 25.0),
+                      ),
+                      const SizedBox(height: 6),
+                      Row( 
+                        children: [
+                          Text(
+                            '$price', 
+                            style: textTheme.bodyMedium?.copyWith( 
+                              color: colorScheme.primary, 
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ), 
+                          //Icon(Icons.water_drop_rounded, size: 16, color: colorScheme.primary), 
+                          Text(
+                            ' droplets',
+                            style: textTheme.bodySmall?.copyWith(
+                              color: colorScheme.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
                 padding: const EdgeInsets.only(right: 16.0),
                 child: Icon(
                   isOwned ? Icons.check : Icons.add,
@@ -74,8 +87,8 @@ class TreeGardenCard extends StatelessWidget {
                   size: 30.0,
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
