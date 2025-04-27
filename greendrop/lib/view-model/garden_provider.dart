@@ -10,7 +10,7 @@ class GardenProvider with ChangeNotifier{
   List<Tree> _allAvailableTrees = [];
   bool _isLoading = true; 
   String? _error; 
-  Completer<void> _dataLoadedCompleter = Completer<void>(); // Add a Completer
+  final Completer<void> _dataLoadedCompleter = Completer<void>(); // Add a Completer
 
 
   List<Tree> get allAvailableTrees => _allAvailableTrees;

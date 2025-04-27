@@ -8,10 +8,12 @@ class AuthenticationService with ChangeNotifier {
   GoogleSignInAccount? _currentUser;
   final GoogleSignIn _googleSignIn;
   final FirebaseAuth _auth;
+  bool _isGuest = false;
 
   GoogleSignInAccount? get currentUser => _currentUser;
   String? get displayName => _auth.currentUser?.displayName;
   String? get email => _auth.currentUser?.email;
+  bool get isGuest => _isGuest;
 
 
 
@@ -30,6 +32,7 @@ class AuthenticationService with ChangeNotifier {
     _auth.authStateChanges().listen((User? user) {
       print('authStateChanges triggered: user = $user');
       _updateCurrentUser(user);
+      _updateIsGuest(user);
       notifyListeners();
     });
 
@@ -43,6 +46,10 @@ class AuthenticationService with ChangeNotifier {
     });
 
     _googleSignIn.signInSilently(); // Try to sign in silently on startup (?? need to clarify this)
+  }
+
+  void _updateIsGuest(User? user) {
+    _isGuest = user?.isAnonymous ?? false;
   }
 
 

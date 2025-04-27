@@ -3,7 +3,7 @@ import 'package:greendrop/view-model/tree_provider.dart';
 import 'package:provider/provider.dart';
 
 class TreeHomeCard extends StatelessWidget {
-  TreeHomeCard({super.key});
+  const TreeHomeCard({super.key});
 
   @override
   Widget build(BuildContext context) {
