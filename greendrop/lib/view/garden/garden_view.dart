@@ -6,14 +6,13 @@ import 'package:greendrop/view/garden/tree_garden_card.dart';
 import 'package:greendrop/model/tree.dart';
 import 'tree_detail_dialog.dart';
 
-// Define an enum for sorting options for type safety and clarity
+// Keep the enum
 enum GardenSortOption {
   priceLowToHigh,
   nameAZ,
   notOwned,
 }
 
-// Convert to StatefulWidget
 class GardenView extends StatefulWidget {
   const GardenView({super.key});
 
@@ -22,24 +21,15 @@ class GardenView extends StatefulWidget {
 }
 
 class _GardenViewState extends State<GardenView> {
-  // State variable to hold the current sorting option
   GardenSortOption _selectedSortOption = GardenSortOption.priceLowToHigh; // Default sort
 
-  // Helper function to show the dialog (moved inside State)
-  void _showTreeDetailDialog(
-    BuildContext context,
-    Tree tree,
-    String imagePath,
-  ) {
-    // Important: Use the BuildContext from the builder method or one derived from it,
-    // NOT the stored context if this were called from initState or somewhere else.
-    // Here it's okay as it's called from itemBuilder's context.
+  void _showTreeDetailDialog(BuildContext context, Tree tree, String imagePath) {
     showDialog(
       context: context,
+      // Make dialog background slightly transparent for a modern feel
+      barrierColor: Colors.black.withOpacity(0.3),
       builder: (BuildContext dialogContext) {
-        // Provide UserProvider down to the dialog
         return ChangeNotifierProvider.value(
-          // Ensure we grab the UserProvider available in the current scope
           value: Provider.of<UserProvider>(context, listen: false),
           child: TreeDetailDialog(tree: tree, imagePath: imagePath),
         );
@@ -47,7 +37,6 @@ class _GardenViewState extends State<GardenView> {
     );
   }
 
-  // Helper function to get display text for sort options
   String _getSortOptionText(GardenSortOption option) {
     switch (option) {
       case GardenSortOption.priceLowToHigh:
@@ -59,129 +48,118 @@ class _GardenViewState extends State<GardenView> {
     }
   }
 
-  // --- Sorting Logic ---
   List<Tree> _sortTrees(List<Tree> trees, GardenSortOption sortOption, UserProvider userProvider) {
-    List<Tree> sortedList = List.from(trees); // Create a mutable copy
-
+    List<Tree> sortedList = List.from(trees);
     switch (sortOption) {
       case GardenSortOption.priceLowToHigh:
         sortedList.sort((a, b) => a.price.compareTo(b.price));
         break;
       case GardenSortOption.nameAZ:
-        // Using species for sorting as it's shown on the card
         sortedList.sort((a, b) => a.species.toLowerCase().compareTo(b.species.toLowerCase()));
         break;
       case GardenSortOption.notOwned:
-        // Custom sort: unowned first, then by price
         sortedList.sort((a, b) {
           bool aOwned = userProvider.user.ownedTrees.any((t) => t['treeId'] == a.id);
           bool bOwned = userProvider.user.ownedTrees.any((t) => t['treeId'] == b.id);
-
-          if (!aOwned && bOwned) return -1; // a (not owned) comes before b (owned)
-          if (aOwned && !bOwned) return 1;  // a (owned) comes after b (not owned)
-
-          // If both have the same ownership status (both owned or both not owned), sort by price
+          if (!aOwned && bOwned) return -1;
+          if (aOwned && !bOwned) return 1;
           return a.price.compareTo(b.price);
         });
         break;
     }
     return sortedList;
   }
-  // --- End Sorting Logic ---
-
 
   @override
   Widget build(BuildContext context) {
-    // Use Consumer instead of Provider.of directly in build if you only need it here
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Consumer2<GardenProvider, UserProvider>(
       builder: (context, gardenProvider, userProvider, child) {
         if (gardenProvider.isLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator(color: colorScheme.primary));
         }
         if (gardenProvider.error != null) {
            return Center(child: Text("Error loading trees: ${gardenProvider.error}"));
         }
 
         final allTrees = gardenProvider.allAvailableTrees;
-        // Apply sorting
         final List<Tree> displayedTrees = _sortTrees(allTrees, _selectedSortOption, userProvider);
 
         return Scaffold(
-          // Scaffold provides background, AppBar etc. if needed later
-          backgroundColor: Theme.of(context).colorScheme.background, // Use theme background
+          backgroundColor: colorScheme.background, // Use theme background
           body: Padding(
-            // Consistent padding
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-            child: Column( // Use Column to place Dropdown above the list
-              crossAxisAlignment: CrossAxisAlignment.start,
+            // More vertical padding, less horizontal if cards have margins
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch, // Stretch children horizontally
               children: [
-                // --- Sorting Dropdown ---
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0, bottom: 8.0, top: 5.0),
-                  child: DropdownButton<GardenSortOption>(
-                    value: _selectedSortOption,
-                    icon: const Icon(Icons.sort),
-                    // Style the dropdown to match theme
-                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-                    underline: Container( // Simple underline
-                      height: 1,
-                      color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                // --- Styled Sorting Dropdown ---
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+                  margin: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 12.0, top: 5.0), // Add horizontal margin
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceVariant.withOpacity(0.5), // Subtle background
+                    borderRadius: BorderRadius.circular(20.0), // More rounded
+                  ),
+                  child: DropdownButtonHideUnderline( // Hide default underline
+                    child: DropdownButton<GardenSortOption>(
+                      value: _selectedSortOption,
+                      isExpanded: true, // Make dropdown take available width
+                      icon: Icon(Icons.sort_rounded, color: colorScheme.primary), // Rounded icon, themed color
+                      // Style the text shown in the button
+                      style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+                      dropdownColor: colorScheme.surfaceVariant, // Background of the dropdown menu
+                      onChanged: (GardenSortOption? newValue) {
+                        if (newValue != null) {
+                          setState(() {
+                            _selectedSortOption = newValue;
+                          });
+                        }
+                      },
+                      items: GardenSortOption.values.map((GardenSortOption option) {
+                        return DropdownMenuItem<GardenSortOption>(
+                          value: option,
+                          child: Text(
+                            _getSortOptionText(option),
+                            // Style the text within the dropdown menu items
+                            style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+                          ),
+                        );
+                      }).toList(),
                     ),
-                    onChanged: (GardenSortOption? newValue) {
-                      if (newValue != null) {
-                        setState(() { // Update state to trigger rebuild with new sort
-                          _selectedSortOption = newValue;
-                        });
-                      }
-                    },
-                    // Generate dropdown items from the enum
-                    items: GardenSortOption.values.map((GardenSortOption option) {
-                      return DropdownMenuItem<GardenSortOption>(
-                        value: option,
-                        child: Text(_getSortOptionText(option)),
-                      );
-                    }).toList(),
                   ),
                 ),
                 // --- End Sorting Dropdown ---
 
                 // --- Tree List ---
-                Expanded( // Make the list take remaining space
+                Expanded(
                   child: displayedTrees.isEmpty
-                      ? Center( // Handle case where filtered/sorted list is empty
+                      ? Center(
                           child: Text(
-                            "No trees match the current criteria.",
-                            style: TextStyle(fontSize: 14.0, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                            "No trees available.", // Simpler text
+                            style: textTheme.titleMedium?.copyWith(color: colorScheme.onSurfaceVariant),
                           ),
                         )
                       : ListView.builder(
-                          // Use the sorted list
                           itemCount: displayedTrees.length,
                           itemBuilder: (context, index) {
                             final tree = displayedTrees[index];
-                            // Default image path
-                            String imagePath = 'assets/images/trees/default_tree.png'; // More specific default?
-                            // Safely try to get the last level image
-                            if (tree.levels.isNotEmpty) {
-                               final lastLevel = tree.levels.last;
-                               if(lastLevel.levelPicture.isNotEmpty) {
-                                  imagePath = lastLevel.levelPicture;
-                               } else {
-                                  print("Warning: Empty image path for last level of ${tree.name}");
-                               }
+                            String imagePath = 'assets/images/trees/default_tree.png';
+                            if (tree.levels.isNotEmpty && tree.levels.last.levelPicture.isNotEmpty) {
+                                imagePath = tree.levels.last.levelPicture;
                             } else {
-                               print("Warning: Tree ${tree.name} has no levels defined.");
+                               print("Warning: Using default image for ${tree.name}");
                             }
 
-
+                            // Pass the UserProvider down explicitly if needed by card (already done via context.watch)
                             return TreeGardenCard(
-                              // Use tree.species or tree.name based on your preference
                               name: tree.species,
                               price: tree.price,
                               imagePath: imagePath,
-                              tree: tree, // Pass the whole tree object
+                              tree: tree,
                               onCardTap: () {
-                                // Pass the correct imagePath used by the card
                                 _showTreeDetailDialog(context, tree, imagePath);
                               },
                             );
