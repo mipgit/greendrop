@@ -18,6 +18,7 @@ class DropletCounter extends StatelessWidget {
               '${userProvider.user.droplets}',
               style: const TextStyle(
                 fontSize: 20.0,
+                color: Color.fromARGB(255, 9, 34, 54),
               ),
             );
           },

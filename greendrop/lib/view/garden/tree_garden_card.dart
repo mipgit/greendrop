@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:greendrop/model/tree.dart';
 import 'package:greendrop/view-model/user_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart'; // For formatting price
 
 class TreeGardenCard extends StatelessWidget {
   final String name;

@@ -45,52 +45,64 @@ class _NavigationViewState extends State<NavigationView> {
         title: GestureDetector(
           onTap: () {
             if (_selectedIndex != 1) {
-               _onItemTapped(1);
+              _onItemTapped(1);
             }
           },
           child: Text(
             'GreenDrop',
-            // Use themed text style
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              // You might want to explicitly set color if needed
-              // color: colorScheme.onSurface
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontSize: 30),
           ),
         ),
         centerTitle: false,
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const ProfilePage(),
+            padding: const EdgeInsets.only(right: 16.0),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 4.0,
+              ),
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 215, 226, 235),
+                borderRadius: BorderRadius.circular(23.0),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const ProfilePage(),
+                        ),
+                      );
+                    },
+                    child: Hero(
+                      tag: ProfilePage.profileAvatarHeroTag,
+                      child: CircleAvatar(
+                        radius: 20,
+                        backgroundImage:
+                            userProvider.user.profilePicture != null
+                                ? NetworkImage(
+                                  userProvider.user.profilePicture!,
+                                )
+                                : null,
+                        foregroundColor: colorScheme.onPrimaryContainer,
+                        backgroundColor: colorScheme.primaryContainer,
+                        child:
+                            userProvider.user.profilePicture == null
+                                ? const Icon(Icons.person, size: 20)
+                                : null,
                       ),
-                    );
-                  },
-                  child: Hero(
-                    tag: ProfilePage.profileAvatarHeroTag,
-                    child: CircleAvatar(
-                      radius: 20,
-                      backgroundImage: userProvider.user.profilePicture != null
-                          ? NetworkImage(userProvider.user.profilePicture!)
-                          : null,
-                      // Use theme colors for icon/background
-                      foregroundColor: colorScheme.onPrimaryContainer,
-                      backgroundColor: colorScheme.primaryContainer,
-                      child: userProvider.user.profilePicture == null
-                          ? const Icon(Icons.person, size: 20)
-                          : null,
                     ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                const DropletCounter(),
-              ],
+                  const SizedBox(width: 8),
+                  const DropletCounter(),
+                  const SizedBox(width: 4),
+                ],
+              ),
             ),
           ),
         ],
