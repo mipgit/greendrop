@@ -95,49 +95,34 @@ class _NavigationViewState extends State<NavigationView> {
           ),
         ],
       ),
-      body: Padding(
-         padding: const EdgeInsets.only(top: 10.0),
-         child: Center(child: _widgetOptions.elementAt(_selectedIndex)),
-       ),
-       // Alternative: Use IndexedStack to preserve state
-       // body: IndexedStack(
-       //   index: _selectedIndex,
-       //   children: _widgetOptions,
-       // ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0), // Adjusted padding
-        child: Material( // Use Material for elevation and shape
-          elevation: 3.0,
-          borderRadius: BorderRadius.circular(30.0),
-          // Use theme color for the background of the Material widget
-          color: colorScheme.surfaceVariant.withOpacity(0.8), // Example: Slightly transparent background
-          clipBehavior: Clip.antiAlias,
-          child: NavigationBar(
-              height: 60,
-              // Make NavigationBar itself transparent to see Material background
-              backgroundColor: Colors.transparent,
-              selectedIndex: _selectedIndex,
-              onDestinationSelected: _onItemTapped,
-              indicatorColor: colorScheme.primaryContainer,
-              // --- FIX: Use WidgetStateProperty ---
-              labelTextStyle: WidgetStateProperty.resolveWith<TextStyle?>((Set<WidgetState> states) {
-                 final Color labelColor = states.contains(WidgetState.selected)
-                   ? colorScheme.onSurface // Color when selected
-                   : colorScheme.onSurfaceVariant; // Color when not selected
-                 return TextStyle(fontWeight: FontWeight.w500, color: labelColor, fontSize: 12);
-               }),
-              // Icon color is often handled well by the theme based on selection,
-              // but you *can* theme it using NavigationBarTheme if needed.
-              // We removed the incorrect 'iconTheme' parameter here.
-              destinations: const [
-                NavigationDestination(icon: Icon(Icons.local_florist_outlined), selectedIcon: Icon(Icons.local_florist), label: 'Garden'),
-                NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home_rounded), label: 'Home'),
-                NavigationDestination(icon: Icon(Icons.check_box_outline_blank), selectedIcon: Icon(Icons.check_box), label: 'Tasks'),
-                NavigationDestination(icon: Icon(Icons.group_outlined), selectedIcon: Icon(Icons.group_rounded), label: 'Groups'),
+      body: Padding( 
+            padding: const EdgeInsets.only(top: 10.0), 
+            child: Center(child: _widgetOptions.elementAt(_selectedIndex)),
+          ),
+          bottomNavigationBar: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Material(
+              elevation: 3.0,
+              borderRadius: BorderRadius.circular(30.0),
+              color: null,
+              clipBehavior: Clip.antiAlias,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: NavigationBar(
+                  backgroundColor: Colors.transparent, 
+                  selectedIndex: _selectedIndex,
+                  onDestinationSelected: _onItemTapped,
+                  indicatorColor: Theme.of(context).colorScheme.primaryContainer,
+                  destinations: const [
+                    NavigationDestination(icon: Icon(Icons.local_florist_rounded), label: 'Garden'),
+                    NavigationDestination(icon: Icon(Icons.home_rounded), label: 'Home'),
+                    NavigationDestination(icon: Icon(Icons.check_box), label: 'Tasks'),
+                    NavigationDestination(icon: Icon(Icons.group_rounded), label: 'Groups'), 
               ],
             ),
           ),
         ),
+      ),
     );
   }
 }
