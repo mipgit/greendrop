@@ -17,7 +17,7 @@ class NavigationView extends StatefulWidget {
 }
 
 class _NavigationViewState extends State<NavigationView> {
-  int _selectedIndex = 1; // Default to Home view
+  int _selectedIndex = 1; //default to Home view
 
   static final List<Widget> _widgetOptions = <Widget>[
     const GardenView(),
@@ -35,10 +35,11 @@ class _NavigationViewState extends State<NavigationView> {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
-    // Get the color scheme for easier access
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      extendBody: true,
+
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -107,29 +108,26 @@ class _NavigationViewState extends State<NavigationView> {
           ),
         ],
       ),
-      body: Padding( 
-            padding: const EdgeInsets.only(top: 10.0), 
-            child: Center(child: _widgetOptions.elementAt(_selectedIndex)),
-          ),
-          bottomNavigationBar: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Material(
-              elevation: 3.0,
-              borderRadius: BorderRadius.circular(30.0),
-              color: null,
-              clipBehavior: Clip.antiAlias,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: NavigationBar(
-                  backgroundColor: Colors.transparent, 
-                  selectedIndex: _selectedIndex,
-                  onDestinationSelected: _onItemTapped,
-                  indicatorColor: Theme.of(context).colorScheme.primaryContainer,
-                  destinations: const [
-                    NavigationDestination(icon: Icon(Icons.local_florist_rounded), label: 'Garden'),
-                    NavigationDestination(icon: Icon(Icons.home_rounded), label: 'Home'),
-                    NavigationDestination(icon: Icon(Icons.check_box), label: 'Tasks'),
-                    NavigationDestination(icon: Icon(Icons.group_rounded), label: 'Groups'), 
+      body: Center(child: _widgetOptions.elementAt(_selectedIndex)),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Material(
+          elevation: 4.0,
+          borderRadius: BorderRadius.circular(30.0),
+          color: null,
+          clipBehavior: Clip.antiAlias,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: NavigationBar(
+              backgroundColor: Colors.transparent, 
+              selectedIndex: _selectedIndex,
+              onDestinationSelected: _onItemTapped,
+              indicatorColor: Theme.of(context).colorScheme.primaryContainer,
+              destinations: const [
+                NavigationDestination(icon: Icon(Icons.local_florist_rounded), label: 'Garden'),
+                NavigationDestination(icon: Icon(Icons.home_rounded), label: 'Home'),
+                NavigationDestination(icon: Icon(Icons.check_box), label: 'Tasks'),
+                NavigationDestination(icon: Icon(Icons.group_rounded), label: 'Groups'), 
               ],
             ),
           ),

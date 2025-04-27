@@ -6,7 +6,7 @@ import 'package:greendrop/view/garden/tree_garden_card.dart';
 import 'package:greendrop/model/tree.dart';
 import 'tree_detail_dialog.dart';
 
-// Keep the enum
+
 enum GardenSortOption {
   priceLowToHigh,
   nameAZ,
@@ -21,13 +21,11 @@ class GardenView extends StatefulWidget {
 }
 
 class _GardenViewState extends State<GardenView> {
-  GardenSortOption _selectedSortOption = GardenSortOption.priceLowToHigh; // Default sort
+  GardenSortOption _selectedSortOption = GardenSortOption.priceLowToHigh; //default sort
 
   void _showTreeDetailDialog(BuildContext context, Tree tree, String imagePath) {
     showDialog(
       context: context,
-      // Make dialog background slightly transparent for a modern feel
-      barrierColor: Colors.black.withOpacity(0.3),
       builder: (BuildContext dialogContext) {
         return ChangeNotifierProvider.value(
           value: Provider.of<UserProvider>(context, listen: false),
@@ -75,6 +73,9 @@ class _GardenViewState extends State<GardenView> {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
+    //avoid the bottom nav bar
+    final double bottomNavBarHeightPadding = 100.0; 
+
     return Consumer2<GardenProvider, UserProvider>(
       builder: (context, gardenProvider, userProvider, child) {
         if (gardenProvider.isLoading) {
@@ -88,29 +89,27 @@ class _GardenViewState extends State<GardenView> {
         final List<Tree> displayedTrees = _sortTrees(allTrees, _selectedSortOption, userProvider);
 
         return Scaffold(
-          backgroundColor: colorScheme.background, // Use theme background
+          backgroundColor: colorScheme.surface, 
           body: Padding(
-            // More vertical padding, less horizontal if cards have margins
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
+            padding: EdgeInsets.only(left: 8.0, right: 12.0, top: 12.0, bottom: bottomNavBarHeightPadding, ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch, // Stretch children horizontally
+              crossAxisAlignment: CrossAxisAlignment.stretch, 
               children: [
                 // --- Styled Sorting Dropdown ---
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
-                  margin: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 12.0, top: 5.0), // Add horizontal margin
+                  margin: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 12.0, top: 5.0), 
                   decoration: BoxDecoration(
-                    color: colorScheme.surfaceVariant.withOpacity(0.5), // Subtle background
-                    borderRadius: BorderRadius.circular(20.0), // More rounded
+                    color: colorScheme.surfaceContainerHighest.withOpacity(0.5), //FIX!!!
+                    borderRadius: BorderRadius.circular(20.0), 
                   ),
-                  child: DropdownButtonHideUnderline( // Hide default underline
+                  child: DropdownButtonHideUnderline(
                     child: DropdownButton<GardenSortOption>(
                       value: _selectedSortOption,
-                      isExpanded: true, // Make dropdown take available width
-                      icon: Icon(Icons.sort_rounded, color: colorScheme.primary), // Rounded icon, themed color
-                      // Style the text shown in the button
+                      isExpanded: true, 
+                      icon: Icon(Icons.sort_rounded, color: colorScheme.primary), 
                       style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
-                      dropdownColor: colorScheme.surfaceVariant, // Background of the dropdown menu
+                      dropdownColor: colorScheme.surfaceContainerHighest, 
                       onChanged: (GardenSortOption? newValue) {
                         if (newValue != null) {
                           setState(() {
@@ -123,7 +122,6 @@ class _GardenViewState extends State<GardenView> {
                           value: option,
                           child: Text(
                             _getSortOptionText(option),
-                            // Style the text within the dropdown menu items
                             style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
                           ),
                         );
@@ -138,7 +136,7 @@ class _GardenViewState extends State<GardenView> {
                   child: displayedTrees.isEmpty
                       ? Center(
                           child: Text(
-                            "No trees available.", // Simpler text
+                            "No trees available.", 
                             style: textTheme.titleMedium?.copyWith(color: colorScheme.onSurfaceVariant),
                           ),
                         )
@@ -153,7 +151,6 @@ class _GardenViewState extends State<GardenView> {
                                print("Warning: Using default image for ${tree.name}");
                             }
 
-                            // Pass the UserProvider down explicitly if needed by card (already done via context.watch)
                             return TreeGardenCard(
                               name: tree.species,
                               price: tree.price,

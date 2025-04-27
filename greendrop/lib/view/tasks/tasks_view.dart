@@ -10,6 +10,11 @@ class TasksView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    //avoid the bottom nav bar
+    final double bottomNavBarHeightPadding = 100.0; 
+
+
     return Scaffold(
       body: Consumer<UserProvider>(
         builder: (context, userProvider, child) {
@@ -34,7 +39,7 @@ class TasksView extends StatelessWidget {
               const SizedBox(height: 10),
               Expanded(
                 child: ReorderableListView.builder(
-                  padding: const EdgeInsets.only(bottom: 80.0),
+                  padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding + 90),
                   itemCount: userTasks.length,
                   onReorder: (oldIndex, newIndex) {
                     if (newIndex > oldIndex) {
@@ -56,35 +61,38 @@ class TasksView extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: Consumer<UserProvider>(
-        builder: (context, userProvider, child) {
-          final personalizedTasksCount = userProvider.userTasks.where((t) => t.isPersonalized).length;
-          final isLimitReached = personalizedTasksCount >= 3;
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding), 
+        child: Consumer<UserProvider>(
+          builder: (context, userProvider, child) {
+            final personalizedTasksCount = userProvider.userTasks.where((t) => t.isPersonalized).length;
+            final isLimitReached = personalizedTasksCount >= 3;
 
-          return FloatingActionButton(
-            onPressed: isLimitReached
-                ? () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          "You have reached the limit of 3 personalized tasks.",
+            return FloatingActionButton(
+              onPressed: isLimitReached
+                  ? () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            "You have reached the limit of 3 personalized tasks.",
+                          ),
+                          duration: Duration(seconds: 2),
                         ),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  }
-                : () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return const CreateTaskView();
-                      },
-                    );
-                  },
-            backgroundColor: isLimitReached ? Colors.grey : Colors.lightGreen,
-            child: const Icon(Icons.add),
-          );
-        },
+                      );
+                    }
+                  : () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return const CreateTaskView();
+                        },
+                      );
+                    },
+              backgroundColor: isLimitReached ? Colors.grey : Colors.lightGreen,
+              child: const Icon(Icons.add),
+            );
+          },
+        ),
       ),
     );
   }

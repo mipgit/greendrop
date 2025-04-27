@@ -44,6 +44,11 @@ class _HomeViewState extends State<HomeView> {
     final bottomButtonPaddingBottom = screenHeight * 0.03;
     final bottomButtonPaddingTop = screenHeight * 0.01;
 
+
+    //avoid the bottom nav bar
+    final double bottomNavBarHeightPadding = 100.0; 
+
+
     //we check 1st if the user has any trees
     if (userProvider.userTrees.isEmpty) {
       return const Scaffold(
@@ -58,61 +63,64 @@ class _HomeViewState extends State<HomeView> {
 
 
     return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            child: PageView.builder(
-              controller: _pageController,
-              itemCount: userProvider.treeProviders.length,
-              itemBuilder: (context, index) {
-                final treeProvider = userProvider.treeProviders[index];
-                return ChangeNotifierProvider.value(
-                  value: treeProvider,
-                  child: Padding(
-                    padding: EdgeInsets.all(pagePadding),
-                    child: TreeHomeCard(),
+      body: Padding( 
+        padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding), 
+        child: Column(
+          children: [
+            Expanded(
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: userProvider.treeProviders.length,
+                itemBuilder: (context, index) {
+                  final treeProvider = userProvider.treeProviders[index];
+                  return ChangeNotifierProvider.value(
+                    value: treeProvider,
+                    child: Padding(
+                      padding: EdgeInsets.all(pagePadding),
+                      child: TreeHomeCard(),
+                    ),
+                  );
+                },
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                bottom: bottomButtonPaddingBottom,
+                top: bottomButtonPaddingTop,
+              ),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 146, 169, 187),
+                  padding: EdgeInsets.symmetric(
+                    vertical: buttonVerticalPadding,
+                    horizontal: buttonHorizontalPadding,
                   ),
-                );
-              },
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-              bottom: bottomButtonPaddingBottom,
-              top: bottomButtonPaddingTop,
-            ),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 146, 169, 187),
-                padding: EdgeInsets.symmetric(
-                  vertical: buttonVerticalPadding,
-                  horizontal: buttonHorizontalPadding,
+                ),
+                onPressed: () {
+                  if (userProvider.treeProviders.isNotEmpty &&
+                      _currentPageIndex < userProvider.treeProviders.length) {
+                    final treeProvider =
+                        userProvider.treeProviders[_currentPageIndex];
+                    if (userProvider.user.droplets > 0) {
+                      treeProvider.waterTree(userProvider);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("You don't have enough droplets."),
+                          duration: Duration(seconds: 1),
+                        ),
+                      );
+                    }
+                  }
+                },
+                child: Text(
+                  "     Water Me!     ",
+                  style: TextStyle(color: Colors.white, fontSize: buttonFontSize),
                 ),
               ),
-              onPressed: () {
-                if (userProvider.treeProviders.isNotEmpty &&
-                    _currentPageIndex < userProvider.treeProviders.length) {
-                  final treeProvider =
-                      userProvider.treeProviders[_currentPageIndex];
-                  if (userProvider.user.droplets > 0) {
-                    treeProvider.waterTree(userProvider);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("You don't have enough droplets."),
-                        duration: Duration(seconds: 1),
-                      ),
-                    );
-                  }
-                }
-              },
-              child: Text(
-                "     Water Me!     ",
-                style: TextStyle(color: Colors.white, fontSize: buttonFontSize),
-              ),
             ),
-          ),
-        ],
+          ],
+        ),  
       ),
     );
   }
