@@ -3,7 +3,7 @@ import 'package:greendrop/view-model/user_provider.dart';
 import 'package:greendrop/view/garden/garden_view.dart';
 import 'package:greendrop/view/home/home_view.dart';
 // Import ProfilePage to access the static hero tag
-import 'package:greendrop/profile/profile_view.dart';
+import 'package:greendrop/view/profile/profile_view.dart';
 import 'package:greendrop/view/tasks/tasks_view.dart';
 import 'package:greendrop/view/groups/groups_view.dart';
 import 'package:provider/provider.dart';
