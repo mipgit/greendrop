@@ -345,7 +345,7 @@ class UserProvider with ChangeNotifier {
 
     final now = DateTime.now();
     final todayDate = DateFormat('yyyy-MM-dd').format(now);
-    final dailyTasksDocRef = await FirebaseFirestore.instance
+    final dailyTasksDocRef = FirebaseFirestore.instance
         .collection('users')
         .doc(_user.id)
         .collection('daily_tasks')
@@ -659,7 +659,7 @@ class UserProvider with ChangeNotifier {
     });
 
     print(
-      'Task reset timer started. Tasks will reset in ${_timeUntilNextReset}',
+      'Task reset timer started. Tasks will reset in $_timeUntilNextReset',
     );
   }
 

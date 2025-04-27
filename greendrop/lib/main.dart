@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:greendrop/view-model/garden_provider.dart';
 import 'package:greendrop/firebase_options.dart';
 import 'package:greendrop/services/authentication_service.dart';
+import 'package:greendrop/services/group_service.dart';
 import 'package:greendrop/view-model/user_provider.dart';
 import 'package:greendrop/view/login/login_view.dart';
 import 'package:greendrop/view/navbar/navigation_view.dart';
 import 'package:provider/provider.dart';
 
 import 'package:greendrop/view-model/task_provider.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,15 +21,17 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthenticationService()),
-        ChangeNotifierProvider(create: (context) => GardenProvider()), 
+        ChangeNotifierProvider(create: (context) => GardenProvider()),
         ChangeNotifierProvider(create: (context) => TaskProvider()),
         ChangeNotifierProvider(create: (context) => UserProvider(context)),
+        ChangeNotifierProvider<GroupService>( 
+          create: (_) => GroupService(),
+        ),
       ],
       child: const GreenDropApp(),
     ),
   );
 }
-
 
 class GreenDropApp extends StatelessWidget {
   const GreenDropApp({super.key});
@@ -48,12 +50,12 @@ class GreenDropApp extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting ||
               snapshot.connectionState == ConnectionState.none) {
-            return CircularProgressIndicator();
+            return const CircularProgressIndicator();
           } else if (snapshot.hasData) {
             print('${snapshot.data?.uid}');
             return NavigationView();
           } else {
-            return LoginView();
+            return const LoginView();
           }
         },
       ),

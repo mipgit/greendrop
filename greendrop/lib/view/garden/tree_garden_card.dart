@@ -61,7 +61,7 @@ class TreeGardenCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4), 
                       Text(
-                        '${price} droplets', 
+                        '$price droplets', 
                         style: const TextStyle(
                           fontSize: 14.0,
                           color: Colors.black54,

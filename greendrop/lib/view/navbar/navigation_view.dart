@@ -4,6 +4,7 @@ import 'package:greendrop/view/garden/garden_view.dart';
 import 'package:greendrop/view/home/home_view.dart';
 import 'package:greendrop/view/profile_view.dart';
 import 'package:greendrop/view/tasks/tasks_view.dart';
+import 'package:greendrop/view/groups/groups_view.dart'; 
 import 'package:provider/provider.dart';
 import 'package:greendrop/view/navbar/droplet_counter.dart';
 
@@ -21,6 +22,7 @@ class _NavigationViewState extends State<NavigationView> {
     const GardenView(),
     const HomeView(),
     const TasksView(),
+    const GroupsView(), 
   ];
 
   void _onItemTapped(int index) {
@@ -79,8 +81,8 @@ class _NavigationViewState extends State<NavigationView> {
               ),
             ],
           ),
-          body: Padding( // Add padding to the top of the body
-            padding: const EdgeInsets.only(top: 10.0), // Adjust this value as needed
+          body: Padding( 
+            padding: const EdgeInsets.only(top: 10.0), 
             child: Center(child: _widgetOptions.elementAt(_selectedIndex)),
           ),
           bottomNavigationBar: Padding(
@@ -88,12 +90,12 @@ class _NavigationViewState extends State<NavigationView> {
             child: Material(
               elevation: 3.0,
               borderRadius: BorderRadius.circular(30.0),
-              color: null, // Or any background color you prefer
+              color: null,
               clipBehavior: Clip.antiAlias,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: NavigationBar(
-                  backgroundColor: Colors.transparent, // Make the NavigationBar transparent
+                  backgroundColor: Colors.transparent, 
                   selectedIndex: _selectedIndex,
                   onDestinationSelected: _onItemTapped,
                   indicatorColor: Theme.of(context).colorScheme.primaryContainer,
@@ -101,6 +103,7 @@ class _NavigationViewState extends State<NavigationView> {
                     NavigationDestination(icon: Icon(Icons.local_florist_rounded), label: 'Garden'),
                     NavigationDestination(icon: Icon(Icons.home_rounded), label: 'Home'),
                     NavigationDestination(icon: Icon(Icons.check_box), label: 'Tasks'),
+                    NavigationDestination(icon: Icon(Icons.group_rounded), label: 'Groups'), 
                   ],
                 ),
               ),
