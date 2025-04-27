@@ -17,7 +17,7 @@ class GroupService extends ChangeNotifier {
 
   Future<void> fetchUserGroups(BuildContext context) async {
     final userId = _getCurrentUserId(context);
-    if (userId == null) {
+    if (userId == null || userId == 'guest') {
       print('User not authenticated, cannot fetch groups.');
       _groups = [];
       notifyListeners();

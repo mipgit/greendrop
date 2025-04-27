@@ -18,7 +18,7 @@ class TasksView extends StatelessWidget {
 
           if (userTasks.isEmpty) {
             return const Center(
-              child: Text("No tasks available at the moment."),
+              child: Text("No tasks available at the moment.", style: TextStyle(fontSize: 14.0),),
             );
           }
 

@@ -44,30 +44,35 @@ class _HomeViewState extends State<HomeView> {
     final bottomButtonPaddingBottom = screenHeight * 0.03;
     final bottomButtonPaddingTop = screenHeight * 0.01;
 
+    //we check 1st if the user has any trees
+    if (userProvider.userTrees.isEmpty) {
+      return const Scaffold(
+        body: Center(
+          child: Text(
+            "You have no trees yet.",
+            style: TextStyle(fontSize: 14.0),
+          ),
+        ),
+      );
+    }
+
+
     return Scaffold(
       body: Column(
         children: [
           Expanded(
-            child: Builder(
-              builder: (context) {
-                if (userProvider.userTrees.isEmpty) {
-                  return const Center(child: Text("You have no trees yet."));
-                } else {
-                  return PageView.builder(
-                    controller: _pageController,
-                    itemCount: userProvider.treeProviders.length,
-                    itemBuilder: (context, index) {
-                      final treeProvider = userProvider.treeProviders[index];
-                      return ChangeNotifierProvider.value(
-                        value: treeProvider,
-                        child: Padding(
-                          padding: EdgeInsets.all(pagePadding),
-                          child: TreeHomeCard(),
-                        ),
-                      );
-                    },
-                  );
-                }
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: userProvider.treeProviders.length,
+              itemBuilder: (context, index) {
+                final treeProvider = userProvider.treeProviders[index];
+                return ChangeNotifierProvider.value(
+                  value: treeProvider,
+                  child: Padding(
+                    padding: EdgeInsets.all(pagePadding),
+                    child: TreeHomeCard(),
+                  ),
+                );
               },
             ),
           ),
