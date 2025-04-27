@@ -3,6 +3,8 @@ import 'package:greendrop/view-model/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:greendrop/view/tasks/tasks_card.dart';
 
+import 'package:greendrop/view/tasks/create_task_view.dart';
+
 class TasksView extends StatelessWidget {
   const TasksView({super.key});
 
@@ -31,13 +33,22 @@ class TasksView extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               Expanded(
-                child: ListView.builder(
+                child: ReorderableListView.builder(
+                  padding: const EdgeInsets.only(bottom: 80.0),
                   itemCount: userTasks.length,
+                  onReorder: (oldIndex, newIndex) {
+                    if (newIndex > oldIndex) {
+                      newIndex -= 1;
+                    }
+                    userProvider.reorderTasks(oldIndex, newIndex);
+                  },
                   itemBuilder: (context, index) {
                     final task = userTasks[index];
                     return TasksCard(
-                      task: task, 
-                      onStateChanged: () {});
+                      key: ValueKey(task.id), // Key is required for reordering
+                      task: task,
+                      onStateChanged: () {},
+                    );
                   },
                 ),
               ),
@@ -45,8 +56,39 @@ class TasksView extends StatelessWidget {
           );
         },
       ),
+      floatingActionButton: Consumer<UserProvider>(
+        builder: (context, userProvider, child) {
+          final personalizedTasksCount = userProvider.userTasks.where((t) => t.isPersonalized).length;
+          final isLimitReached = personalizedTasksCount >= 3;
+
+          return FloatingActionButton(
+            onPressed: isLimitReached
+                ? () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          "You have reached the limit of 3 personalized tasks.",
+                        ),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                : () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const CreateTaskView();
+                      },
+                    );
+                  },
+            backgroundColor: isLimitReached ? Colors.grey : Colors.lightGreen,
+            child: const Icon(Icons.add),
+          );
+        },
+      ),
     );
   }
+
 
 
   String formatDuration(Duration duration) {

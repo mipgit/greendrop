@@ -16,7 +16,7 @@ class TreeDetailDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    final isOwned = userProvider.user.ownedTrees.contains(tree.id);
+    final isOwned = context.watch<UserProvider>().user.ownedTrees.any((ownedTree) => ownedTree['treeId'] == tree.id);
     final canAfford = userProvider.user.droplets >= tree.price;
     const IconData dropletIcon = Icons.water_drop;
 
@@ -84,7 +84,10 @@ class TreeDetailDialog extends StatelessWidget {
             ),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("You already own ${tree.name}!")),
+                SnackBar(
+                  content: Text("You already own ${tree.name}!"), 
+                  duration: Duration(seconds: 1),
+                ),
               );
                Navigator.of(context).pop();
             },
@@ -104,6 +107,7 @@ class TreeDetailDialog extends StatelessWidget {
                    ScaffoldMessenger.of(context).showSnackBar(
                      SnackBar(
                          content: Text('${tree.name} purchased!'),
+                         duration: Duration(seconds: 1),
                          backgroundColor: Colors.green,
                      ),
                    );

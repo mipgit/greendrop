@@ -95,6 +95,7 @@ class _HomeViewState extends State<HomeView> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text("You don't have enough droplets."),
+                        duration: Duration(seconds: 1),
                       ),
                     );
                   }
