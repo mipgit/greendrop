@@ -28,26 +28,21 @@ class GardenView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer2<GardenProvider, UserProvider>(
-      // Still need UserProvider for isOwned check indirectly
       builder: (context, gardenProvider, userProvider, child) {
-        // Keep userProvider parameter
         final allTrees = gardenProvider.allAvailableTrees;
-
         return Scaffold(
           body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-            child: Column(
-              // Keep Column structure if you have other elements, or remove if just the list
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+          child: allTrees.isEmpty
+            ? const Center(
+                child: Text(
+                  "No trees available for purchase.",
+                  style: TextStyle(fontSize: 14.0),
+                ),
+              )
+            : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // REMOVED: Droplet count display
-                // Padding(
-                //   padding: const EdgeInsets.all(16.0),
-                //   child: Text(
-                //     "Your Droplets: ${userProvider.user.droplets} 💧", // userProvider is available here
-                //     style: Theme.of(context).textTheme.titleLarge,
-                //   ),
-                // ),
                 Expanded(
                   child: ListView.builder(
                     itemCount: allTrees.length,
