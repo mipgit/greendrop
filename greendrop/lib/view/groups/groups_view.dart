@@ -20,7 +20,9 @@ class _GroupsViewState extends State<GroupsView> {
   @override
   void initState() {
     super.initState();
-    _loadInitialGroups();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadInitialGroups();
+    });
   }
 
   Future<void> _loadInitialGroups() async {
@@ -150,46 +152,65 @@ class _GroupsViewState extends State<GroupsView> {
           : _errorMessage != null
               ? Center(child: Text(_errorMessage!))
               : Consumer<GroupService>(
-                  builder: (context, groupService, child) {
-                    final groups = groupService.groups;
-                    return groups.isEmpty
-                        ? const Center(
-                            child: Text(
-                              'Your Groups will appear here',
-                              style: TextStyle(fontSize: 16.0),
+                builder: (context, groupService, child) {
+                  final groups = groupService.groups;
+                  return groups.isEmpty
+                      ? const Center(
+                        child: Text(
+                          'Your Groups will appear here.',
+                          style: TextStyle(fontSize: 14.0),
+                        ),
+                      )
+                      : ListView.builder(
+                        itemCount: groups.length,
+                        itemBuilder: (context, index) {
+                          final group = groups[index];
+                          return ListTile(
+                            leading: const CircleAvatar(
+                              child: Icon(Icons.group),
                             ),
-                          )
-                        : ListView.builder(
-                            itemCount: groups.length,
-                            itemBuilder: (context, index) {
-                              final group = groups[index];
-                              return ListTile(
-                                leading: const CircleAvatar(
-                                  child: Icon(Icons.group),
-                                ),
-                                title: Text(group.name),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ChatView(
+                            title: Text(group.name),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => ChatView(
                                         groupId: group.id,
                                         groupName: group.name,
                                       ),
-                                    ),
-                                  );
-                                },
+                                ),
                               );
                             },
                           );
-                  },
-                ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _showAddChatOptions(context);
+                        },
+                      );
+                },
+              ),
+      floatingActionButton: Consumer<AuthenticationService>(
+        builder: (context, authService, child) {
+          if (authService.isGuest) {
+            return FloatingActionButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Sign in to create groups.'),
+                    duration: Duration(seconds: 1),
+                  ),
+                );
+              },
+              backgroundColor: Colors.grey,
+              child: const Icon(Icons.add), // if guest, can't create groups
+            );
+          }
+          return FloatingActionButton(
+            onPressed: () {
+              _showAddChatOptions(context);
+            },
+            backgroundColor: Colors.lightGreen, // pus igual às tasks
+            child: const Icon(Icons.add),
+          );
         },
-        backgroundColor: Colors.lightGreen, //pus igual às tasks
-        child: const Icon(Icons.add),
       ),
     );
   }
