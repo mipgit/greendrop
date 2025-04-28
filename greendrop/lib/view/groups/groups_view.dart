@@ -151,7 +151,9 @@ class _GroupsViewState extends State<GroupsView> {
     final double bottomNavBarHeightPadding = 100.0; 
 
     return Scaffold(
-      body: _isLoading
+        body: Padding( 
+        padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding), 
+          child: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _errorMessage != null
               ? Center(child: Text(_errorMessage!))
@@ -191,6 +193,7 @@ class _GroupsViewState extends State<GroupsView> {
                       );
                 },
               ),
+        ),
       floatingActionButton: Padding(
         padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding), 
         child: Consumer<AuthenticationService>(

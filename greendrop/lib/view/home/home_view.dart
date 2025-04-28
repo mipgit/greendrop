@@ -51,11 +51,14 @@ class _HomeViewState extends State<HomeView> {
 
     //we check 1st if the user has any trees
     if (userProvider.userTrees.isEmpty) {
-      return const Scaffold(
-        body: Center(
-          child: Text(
-            "You have no trees yet.",
-            style: TextStyle(fontSize: 14.0),
+      return  Scaffold(
+        body: Padding( 
+        padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding), 
+          child: Center(
+            child: Text(
+              "You have no trees yet.",
+              style: TextStyle(fontSize: 14.0),
+            ),
           ),
         ),
       );
