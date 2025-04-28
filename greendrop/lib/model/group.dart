@@ -10,8 +10,8 @@ class Group {
     required this.name,
     required this.creatorId,
     required this.creationDate,
-    this.memberIds = const [],
-  });
+    List<String>? memberIds, 
+  }) : memberIds = memberIds ?? []; 
 
   void addMember(String userId) {
     if (!memberIds.contains(userId)) {
