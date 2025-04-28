@@ -146,8 +146,14 @@ class _GroupsViewState extends State<GroupsView> {
 
   @override
   Widget build(BuildContext context) {
+
+    //avoid the bottom nav bar
+    final double bottomNavBarHeightPadding = 100.0; 
+
     return Scaffold(
-      body: _isLoading
+        body: Padding( 
+        padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding), 
+          child: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _errorMessage != null
               ? Center(child: Text(_errorMessage!))
@@ -187,30 +193,35 @@ class _GroupsViewState extends State<GroupsView> {
                       );
                 },
               ),
-      floatingActionButton: Consumer<AuthenticationService>(
-        builder: (context, authService, child) {
-          if (authService.isGuest) {
+        ),
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding), 
+        child: Consumer<AuthenticationService>(
+          builder: (context, authService, child) {
+            if (authService.isGuest) {
+              return FloatingActionButton(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Sign in to create groups.'),
+                      duration: Duration(seconds: 1),
+
+                    ),
+                  );
+                },
+                backgroundColor: Colors.grey,
+                child: const Icon(Icons.add), // if guest, can't create groups
+              );
+            }
             return FloatingActionButton(
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Sign in to create groups.'),
-                    duration: Duration(seconds: 1),
-                  ),
-                );
+                _showAddChatOptions(context);
               },
-              backgroundColor: Colors.grey,
-              child: const Icon(Icons.add), // if guest, can't create groups
+              backgroundColor: Colors.lightGreen, // pus igual às tasks
+              child: const Icon(Icons.add),
             );
-          }
-          return FloatingActionButton(
-            onPressed: () {
-              _showAddChatOptions(context);
-            },
-            backgroundColor: Colors.lightGreen, // pus igual às tasks
-            child: const Icon(Icons.add),
-          );
-        },
+          },
+        ),
       ),
     );
   }
