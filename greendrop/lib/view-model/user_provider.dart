@@ -15,6 +15,7 @@ import 'dart:math';
 
 class UserProvider with ChangeNotifier {
   app.User _user;
+  bool _isLoading = true;
   List<Tree> _userTrees = []; // user's trees
   List<Task> _dailyUserTasks = []; // user's tasks
   List<TreeProvider> _treeProviders = []; // list of TreeProviders
@@ -24,6 +25,7 @@ class UserProvider with ChangeNotifier {
   bool _tasksNeedReset = false;
 
   app.User get user => _user;
+  bool get isLoading => _isLoading;
   List<Tree> get userTrees => _userTrees;
   List<Task> get userTasks => _dailyUserTasks;
   List<TreeProvider> get treeProviders => _treeProviders;
@@ -49,10 +51,20 @@ class UserProvider with ChangeNotifier {
 
   //starting point for initialization
   Future<void> _initialize(BuildContext context) async {
-    await _fetchInitialUser(context);
-    await _initializeRelatedData(context);
-    _startTaskResetTimer(context);
-     _listenToAuthChanges(context); 
+    try {
+      await _fetchInitialUser(context);
+      if (_user.id != 'guest') {
+         await _initializeRelatedData(context);
+      }
+      _startTaskResetTimer(context);
+      _listenToAuthChanges(context);
+    } catch (e) {
+      print("Error during initialization: $e");
+      _user = _createEmptyUser();
+    } finally {
+      _isLoading = false; 
+      notifyListeners(); 
+    }
   }
 
 
@@ -64,7 +76,7 @@ class UserProvider with ChangeNotifier {
     } else {
       _user = _createEmptyUser();
     }
-    notifyListeners(); 
+    //notifyListeners(); 
   }
 
 
@@ -148,20 +160,33 @@ class UserProvider with ChangeNotifier {
   void _listenToAuthChanges(BuildContext context) {
     fb_auth.FirebaseAuth.instance.authStateChanges().listen((firebaseUser) async {
       print("Auth state changed. User: ${firebaseUser?.uid}");
-      if (firebaseUser != null /*&& !firebaseUser.isAnonymous*/) {
-        _user = await _fetchUserDataFromFirestore(firebaseUser);
-        await _initializeRelatedData(context);
-        _startTaskResetTimer(context); 
-      } else {
-        _user = _createEmptyUser();
-         _userTrees = [];
-         _dailyUserTasks = [];
-         _treeProviders = [];
-         _taskProviders = [];
-         _taskResetTimer?.cancel(); 
+      
+      //setting loading state during auth transition
+      _isLoading = true;
+      notifyListeners(); 
+
+      try {
+        if (firebaseUser != null /*&& !firebaseUser.isAnonymous*/) {
+          _user = await _fetchUserDataFromFirestore(firebaseUser);
+          await _initializeRelatedData(context); // ?????? Re-initialize data for the new user
+          _startTaskResetTimer(context);
+        } else {
+          _user = _createEmptyUser();
+          _userTrees = [];
+          _dailyUserTasks = [];
+          _treeProviders = [];
+          _taskProviders = [];
+          _taskResetTimer?.cancel();
+          print("User signed out, data cleared.");
+        }
+      } catch (e) {
+          print("Error during auth state change handling: $e");
+          _user = _createEmptyUser(); 
+      } finally {
+          _isLoading = false; 
+          notifyListeners(); 
       }
 
-      notifyListeners();
     });
   }
 

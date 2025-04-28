@@ -16,6 +16,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   late TextEditingController _bioController;
+  bool _isSigningOut = false;
 
   @override
   void initState() {
@@ -49,6 +50,15 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+
+    if (_isSigningOut) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+
+
     final userProvider = Provider.of<UserProvider>(context);
     final authService = Provider.of<AuthenticationService>(context, listen: false);
     // Get theme data for consistent styling
@@ -67,9 +77,10 @@ class _ProfilePageState extends State<ProfilePage> {
     // Define consistent border radius
     final BorderRadius boxBorderRadius = BorderRadius.circular(15.0);
 
+
     return Scaffold(
       // Use scaffold background color from theme for overall calm feel
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: Text(
           'Profile',
@@ -77,8 +88,8 @@ class _ProfilePageState extends State<ProfilePage> {
           style: Theme.of(context).appBarTheme.titleTextStyle ?? textTheme.headlineSmall,
         ),
         // Make AppBar blend with scaffold background
-        backgroundColor: colorScheme.background,
-        foregroundColor: colorScheme.onBackground, // Ensure icons/text are visible
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface, // Ensure icons/text are visible
         elevation: 0, // Remove shadow for modern feel
       ),
       body: SingleChildScrollView(
@@ -112,7 +123,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 userProvider.user.username,
                 style: textTheme.headlineMedium?.copyWith( // Slightly smaller headline
                   fontWeight: FontWeight.w500, // Less heavy font weight
-                  color: colorScheme.onBackground, // Ensure visibility
+                  color: colorScheme.onSurface, // Ensure visibility
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -250,25 +261,48 @@ class _ProfilePageState extends State<ProfilePage> {
               // --- END OF STATS BOX ---
 
 
-              const SizedBox(height: 40), // Space before button
+              const SizedBox(height: 40), 
               Center(
                 child: ElevatedButton(
-                  // Button style should come from ElevatedButtonTheme in main theme
                   onPressed: () async {
-                     _saveBio();
-                     await Future.delayed(const Duration(milliseconds: 100));
-                    await authService.signOut();
-                    if (mounted && Navigator.canPop(context)) {
+                    if (_isSigningOut) return;
+
+                    setState(() {
+                      _isSigningOut = true;
+                    });
+
+                    _saveBio();
+
+                    try {
+                      await authService.signOut();
                       Navigator.of(context).pop();
+                    } catch (e) {
+                      print("Sign out error: $e");
+                      if (mounted) {
+                        setState(() {
+                          _isSigningOut = false;
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Sign out failed. Please try again.')),
+                        );
+                      }
                     }
+
                   },
-                  child: const Padding( // Add padding inside button
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colorScheme.primary,
+                    foregroundColor: colorScheme.onPrimary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                  ),
+                  child: const Padding( 
                     padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                     child: Text('Sign Out'),
                   ),
                 ),
               ),
-              const SizedBox(height: 20), // Bottom padding
+              const SizedBox(height: 20),
             ],
           ),
         ),
