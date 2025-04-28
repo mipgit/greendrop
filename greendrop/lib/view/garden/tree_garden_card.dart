@@ -25,8 +25,6 @@ class TreeGardenCard extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.all(8.0),
-      // Optional: Slightly change background if owned, or keep it consistent
-      // color: isOwned ? Colors.green.withOpacity(0.1) : const Color.fromARGB(204, 219, 217, 217),
       color: const Color.fromARGB(204, 219, 217, 217), 
       clipBehavior: Clip.antiAlias, 
       child: InkWell( 
@@ -71,7 +69,6 @@ class TreeGardenCard extends StatelessWidget {
                   ),
                 ),
               ),
-              // Display "Owned!" text if the tree is owned
               if (isOwned)
                 Padding(
                   padding: const EdgeInsets.only(right: 16.0),
@@ -84,20 +81,6 @@ class TreeGardenCard extends StatelessWidget {
                     ),
                   ),
                 ),
-               // Optionally add a price display here if NOT owned, if desired
-               /* else
-                 Padding(
-                   padding: const EdgeInsets.only(right: 16.0),
-                   child: Text(
-                     '$price',
-                     style: TextStyle(
-                       fontSize: 16.0,
-                       fontWeight: FontWeight.bold,
-                       color: Theme.of(context).primaryColor,
-                     ),
-                   ),
-                 ),
-               */
             ],
           ),
         ),
