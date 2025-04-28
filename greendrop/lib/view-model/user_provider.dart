@@ -109,11 +109,21 @@ class UserProvider with ChangeNotifier {
   Future<app.User> _createUserFromFirestore(fb_auth.User authUser, DocumentSnapshot<Map<String, dynamic>> userDoc) async {
     final userData = userDoc.data()!;
 
+    String? originalPhotoURL = authUser.photoURL;
+    String? highResPhotoURL = originalPhotoURL; 
+
+    if (originalPhotoURL != null) {
+      final sizeParamRegex = RegExp(r'=s\d+(-c)?$');
+      if (sizeParamRegex.hasMatch(originalPhotoURL)) {
+        highResPhotoURL = originalPhotoURL.replaceFirst(sizeParamRegex, '');
+      }
+    }
+
     return app.User(
       id: authUser.uid,
       username: userData['username'] ?? authUser.displayName ?? "Anonymous",
       email: userData['email'] ?? authUser.email ?? "",
-      profilePicture: userData['profilePicture'],
+      profilePicture: highResPhotoURL,
       bio: userData['bio'], // <-- ADDED fetching bio from Firestore data
       ownedTrees: (userData['ownedTrees'] as List<dynamic>?)
               ?.cast<Map<String, dynamic>>() ??
@@ -125,11 +135,22 @@ class UserProvider with ChangeNotifier {
 
   //we create a new user in Firestore (with default values)
   Future<app.User> _createNewUserInFirestore(fb_auth.User authUser) async { 
+    
+    String? originalPhotoURL = authUser.photoURL;
+    String? highResPhotoURL = originalPhotoURL; 
+
+    if (originalPhotoURL != null) {
+      final sizeParamRegex = RegExp(r'=s\d+(-c)?$');
+      if (sizeParamRegex.hasMatch(originalPhotoURL)) {
+        highResPhotoURL = originalPhotoURL.replaceFirst(sizeParamRegex, '');
+      }
+    }
+    
     final newUser = app.User(
       id: authUser.uid, 
       username: authUser.displayName ?? "Anonymous",
       email: authUser.email ?? "",
-      profilePicture: authUser.photoURL,
+      profilePicture: highResPhotoURL,
       bio: null, 
       ownedTrees: [],
       droplets: 100,

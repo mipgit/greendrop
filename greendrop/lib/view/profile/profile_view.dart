@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:greendrop/services/authentication_service.dart';
 import 'package:provider/provider.dart';
 import 'package:greendrop/view-model/user_provider.dart';
-import 'package:intl/intl.dart'; // For number formatting
+import 'package:intl/intl.dart'; 
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -61,40 +61,23 @@ class _ProfilePageState extends State<ProfilePage> {
 
     final userProvider = Provider.of<UserProvider>(context);
     final authService = Provider.of<AuthenticationService>(context, listen: false);
-    // Get theme data for consistent styling
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    // --- Calculate Stats ---
     final int treeCount = userProvider.userTrees.length;
-    final int totalDropletsUsed = userProvider.userTrees.fold(
-      0, (prev, tree) => prev + tree.dropletsUsed,
-    );
+    final int totalDropletsUsed = userProvider.userTrees.fold(0, (prev, tree) => prev + tree.dropletsUsed,);
     final formatter = NumberFormat('#,##0', 'en_US');
     final String formattedDroplets = formatter.format(totalDropletsUsed);
-    // --- End Calculate Stats ---
 
-    // Define consistent border radius
     final BorderRadius boxBorderRadius = BorderRadius.circular(15.0);
 
 
     return Scaffold(
-      // Use scaffold background color from theme for overall calm feel
-      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        title: Text(
-          'Profile',
-          // Use AppBar theme text style if defined, otherwise fallback
-          style: Theme.of(context).appBarTheme.titleTextStyle ?? textTheme.headlineSmall,
-        ),
-        // Make AppBar blend with scaffold background
-        backgroundColor: colorScheme.surface,
-        foregroundColor: colorScheme.onSurface, // Ensure icons/text are visible
-        elevation: 0, // Remove shadow for modern feel
+        title: Text('Profile'),
       ),
       body: SingleChildScrollView(
         child: Padding(
-          // Add horizontal padding for content centering
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -102,28 +85,22 @@ class _ProfilePageState extends State<ProfilePage> {
               Hero(
                 tag: ProfilePage.profileAvatarHeroTag,
                 child: CircleAvatar(
-                  radius: 75, // Slightly smaller radius?
-                  // Use a theme color that contrasts well with background
-                  backgroundColor: colorScheme.primaryContainer.withOpacity(0.7),
+                  radius: 75, 
+                  //backgroundColor: colorScheme.primaryContainer.withOpacity(0.7),
                   backgroundImage: userProvider.user.profilePicture != null
                       ? NetworkImage(userProvider.user.profilePicture!)
                       : null,
                   child: userProvider.user.profilePicture == null
-                      ? Icon(
-                          Icons.person_rounded, // Rounded icon
-                          size: 80,
-                          // Use contrasting color from theme
-                          color: colorScheme.onPrimaryContainer.withOpacity(0.8),
-                         )
+                      ? Icon(Icons.person_rounded, size: 80)
                       : null,
                 ),
               ),
               const SizedBox(height: 20),
               Text(
                 userProvider.user.username,
-                style: textTheme.headlineMedium?.copyWith( // Slightly smaller headline
-                  fontWeight: FontWeight.w500, // Less heavy font weight
-                  color: colorScheme.onSurface, // Ensure visibility
+                style: textTheme.headlineMedium?.copyWith( 
+                  fontWeight: FontWeight.w500, 
+                  color: colorScheme.onSurface, 
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -131,15 +108,14 @@ class _ProfilePageState extends State<ProfilePage> {
               Text(
                 userProvider.user.email,
                 style: textTheme.titleMedium?.copyWith(
-                  // Use a softer color for less emphasis
                   color: colorScheme.onSurfaceVariant,
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 30), // Space before Bio
+              const SizedBox(height: 30), 
 
 
-              // --- BIO TEXTFIELD (MOVED HERE) ---
+              // --- BIO TEXTFIELD  ---
               Focus(
                 onFocusChange: (hasFocus) {
                   if (!hasFocus) {
@@ -154,32 +130,26 @@ class _ProfilePageState extends State<ProfilePage> {
                   keyboardType: TextInputType.multiline,
                   maxLengthEnforcement: MaxLengthEnforcement.enforced,
                   textInputAction: TextInputAction.done,
-                   onSubmitted: (_) => _saveBio(),
+                    onSubmitted: (_) => _saveBio(),
                   style: textTheme.bodyLarge?.copyWith(color: colorScheme.onSurfaceVariant), // Style for typed text
                   decoration: InputDecoration(
                     hintText: 'Tell us a bit about yourself...',
                     hintStyle: textTheme.bodyLarge?.copyWith(color: colorScheme.onSurfaceVariant.withOpacity(0.7)),
-                    // Removed labelText for a cleaner look, hintText is usually enough
-                    // labelText: 'Bio',
                     filled: true,
-                    // Use a light, themed background color, slightly different from stats
                     fillColor: colorScheme.secondaryContainer.withOpacity(0.3),
                     counterStyle: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
-                    // Consistent rounded border
                     border: OutlineInputBorder(
                       borderRadius: boxBorderRadius,
-                      borderSide: BorderSide.none, // Make border invisible by default
+                      borderSide: BorderSide.none, 
                     ),
                     enabledBorder: OutlineInputBorder(
-                       borderRadius: boxBorderRadius,
-                       // Very subtle border when enabled
-                       borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.3), width: 1.0),
+                      borderRadius: boxBorderRadius,
+                      borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.3), width: 1.0),
                     ),
-                     focusedBorder: OutlineInputBorder(
-                       borderRadius: boxBorderRadius,
-                       // Highlight border with primary color when focused
-                       borderSide: BorderSide(color: colorScheme.primary, width: 1.5),
-                     ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: boxBorderRadius,
+                        borderSide: BorderSide(color: colorScheme.primary, width: 1.5),
+                      ),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                   ),
                 ),
@@ -187,19 +157,16 @@ class _ProfilePageState extends State<ProfilePage> {
               // --- END OF BIO TEXTFIELD ---
 
 
-              const SizedBox(height: 25), // Space between Bio and Stats
+              const SizedBox(height: 25), 
 
 
-              // --- STATS BOX (MOVED HERE) ---
+              // --- STATS BOX  ---
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
                 decoration: BoxDecoration(
-                  // Use a different themed background, maybe primary container
                   color: colorScheme.primaryContainer.withOpacity(0.3),
-                  borderRadius: boxBorderRadius, // Consistent rounding
-                  // Optional subtle border
-                  // border: Border.all(color: colorScheme.outline.withOpacity(0.3))
+                  borderRadius: boxBorderRadius, 
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,50 +174,48 @@ class _ProfilePageState extends State<ProfilePage> {
                     Text(
                       "Stats",
                       style: textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w600, // Slightly bolder title
-                        color: colorScheme.onPrimaryContainer, // Contrast with background
+                        fontWeight: FontWeight.w600, 
+                        color: colorScheme.onPrimaryContainer, 
                        ),
                     ),
-                    const SizedBox(height: 15), // More space after title
+                    const SizedBox(height: 15),
                     Row(
                       children: [
                         Icon(
-                          Icons.park_rounded, // Tree icon
+                          Icons.park_rounded, 
                           size: 20,
-                          // Use primary color for the icon
                           color: colorScheme.primary,
                          ),
                         const SizedBox(width: 10),
                         Text(
-                          "Trees Planted:", // Label
+                          "Trees Planted:", 
                           style: textTheme.bodyLarge?.copyWith(color: colorScheme.onPrimaryContainer.withOpacity(0.9)),
                         ),
-                        const Spacer(), // Push value to the right
+                        const Spacer(), 
                         Text(
-                          "$treeCount", // Value
+                          "$treeCount", 
                            style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500, color: colorScheme.onPrimaryContainer),
                         ),
                       ],
                     ),
                     const SizedBox(height: 10),
-                    Divider(color: colorScheme.outline.withOpacity(0.2)), // Subtle divider
+                    Divider(color: colorScheme.outline.withOpacity(0.2)), 
                     const SizedBox(height: 10),
                     Row(
                       children: [
                          Icon(
-                           Icons.opacity_rounded, // Droplet icon
+                           Icons.opacity_rounded, 
                            size: 20,
-                           // Use a different thematic color (e.g., secondary or a specific blue/green)
-                           color: colorScheme.secondary, // Example
+                           color: colorScheme.secondary, 
                           ),
                          const SizedBox(width: 10),
                          Text(
-                          "Droplets Spent:", // Label
+                          "Droplets Spent:", 
                           style: textTheme.bodyLarge?.copyWith(color: colorScheme.onPrimaryContainer.withOpacity(0.9)),
                         ),
-                        const Spacer(), // Push value to the right
+                        const Spacer(), 
                         Text(
-                          formattedDroplets, // Value
+                          formattedDroplets, 
                            style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500, color: colorScheme.onPrimaryContainer),
                         ),
                       ],
@@ -266,11 +231,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: ElevatedButton(
                   onPressed: () async {
                     if (_isSigningOut) return;
-
+                    
                     setState(() {
                       _isSigningOut = true;
                     });
-
                     _saveBio();
 
                     try {
