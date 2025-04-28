@@ -20,20 +20,11 @@ class TreeDetailDialog extends StatelessWidget {
     final canAfford = userProvider.user.droplets >= tree.price;
     const IconData dropletIcon = Icons.water_drop;
 
-    // --- CORRECTED Brightness Calculation ---
-    // Get the actual primary color from the theme
     final Color primaryButtonColor = Theme.of(context).primaryColor;
-    // Estimate its brightness
     final Brightness estimatedBrightness = ThemeData.estimateBrightnessForColor(primaryButtonColor);
-    // Determine contrasting text color
     final Color buttonTextColor = estimatedBrightness == Brightness.dark
-        ? Colors.white // Use white text on dark backgrounds
-        : Colors.black; // Use black text on light backgrounds
-
-    // --- OR Simplest Fix: Hardcode if you know your theme ---
-    // If your primary color is always green/dark, just use white:
-    // final Color buttonTextColor = Colors.white;
-    // -----------------------------------------------------
+        ? Colors.white 
+        : Colors.black; 
 
 
     return AlertDialog(
@@ -80,7 +71,7 @@ class TreeDetailDialog extends StatelessWidget {
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.grey,
-              foregroundColor: Colors.white, // Keep text white on grey
+              foregroundColor: Colors.white, 
             ),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -93,16 +84,14 @@ class TreeDetailDialog extends StatelessWidget {
             },
             child: const Text('Bought'),
           )
-        else // Not owned
+        else
           ElevatedButton(
             style: ElevatedButton.styleFrom(
                backgroundColor: canAfford ? primaryButtonColor : Colors.grey, // Use the stored color
-               // Use foregroundColor for simplicity and better practice:
                foregroundColor: canAfford ? buttonTextColor : Colors.white, // Set contrast text color (white on grey if disabled)
             ),
             onPressed: canAfford ? () {
-              // ... purchase logic ...
-               try {
+              try {
                   userProvider.buyTree(context, tree.id);
                    ScaffoldMessenger.of(context).showSnackBar(
                      SnackBar(
@@ -118,15 +107,7 @@ class TreeDetailDialog extends StatelessWidget {
                    );
               }
             } : null,
-            // The foregroundColor in styleFrom handles the text color now
             child: Text('Buy'),
-            // Remove the explicit TextStyle if using foregroundColor:
-            // child: Text(
-            //   'Buy (${tree.price})',
-            //   style: TextStyle(
-            //     color: buttonTextColor,
-            //   ),
-            // ),
           ),
       ],
     );

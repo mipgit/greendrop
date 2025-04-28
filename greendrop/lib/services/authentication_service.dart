@@ -27,7 +27,6 @@ class AuthenticationService with ChangeNotifier {
   }
 
 
-  //we need this to listen to account/user/auth changes
   void _listenToAuthChanges() {
     _auth.authStateChanges().listen((User? user) {
       print('authStateChanges triggered: user = $user');
@@ -45,7 +44,7 @@ class AuthenticationService with ChangeNotifier {
       }
     });
 
-    _googleSignIn.signInSilently(); // Try to sign in silently on startup (?? need to clarify this)
+    _googleSignIn.signInSilently(); 
   }
 
   void _updateIsGuest(User? user) {
@@ -65,7 +64,6 @@ class AuthenticationService with ChangeNotifier {
       print('Firebase re-authenticated with Google.');
     } catch (e) {
       print('Error re-authenticating with Google: $e');
-      // handle this appropriately
     }
   }
 
@@ -90,16 +88,13 @@ class AuthenticationService with ChangeNotifier {
 
 
 
-  //to experiment locally only, without database connection
   Future<void> signInAnonymously() async {
     try {
       print('Attempting anonymous/guest sign-in...');
       await _auth.signInAnonymously();
       print('Anonymous sign-in successful. User UID: ${_auth.currentUser?.uid}');
-      // The authStateChanges listener will trigger and update the user state
     } catch (e) {
       print('Error during anonymous sign-in: $e');
-      // Handle error appropriately
     }
   }
 
