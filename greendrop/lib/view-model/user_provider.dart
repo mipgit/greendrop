@@ -690,6 +690,12 @@ class UserProvider with ChangeNotifier {
             List<Map<String, dynamic>> personalizedTasksMap = 
                 List<Map<String, dynamic>>.from(doc.data()!['personalized_tasks_map'] ?? []);
             
+            bool wasCompleted = completedTasks.contains(task.id);
+            if (wasCompleted) {
+              print("Task ${task.id} was completed. Taking 1 droplet.");
+              takeDroplets(1); 
+            }
+          
             // find matching id
             personalizedTasksMap.removeWhere((taskMap) => taskMap['id'] == task.id);
             tasks.removeWhere((taskId) => taskId == task.id);
