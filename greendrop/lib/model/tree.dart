@@ -9,7 +9,7 @@ class Tree {
     required this.description,
     required this.levels,
     required this.price,
-    this.curLevel = 0, //para ser mais facil lidar c/ lista de levels
+    this.curLevel = 0, 
     this.dropletsUsed = 0,
   });
 
