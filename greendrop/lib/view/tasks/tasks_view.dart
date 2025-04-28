@@ -16,51 +16,53 @@ class TasksView extends StatelessWidget {
 
 
     return Scaffold(
-      body: Padding( 
-        padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding), 
-        child: Consumer<UserProvider>(
-          builder: (context, userProvider, child) {
-            final userTasks = userProvider.userTasks;
-            final timeLeft = userProvider.timeUntilNextReset;
-            if (userTasks.isEmpty) {
-              return const Center(
-                child: Text("No tasks available at the moment.", style: TextStyle(fontSize: 14.0),),
-              );
-            }
-            return Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Text(
-                    'Tasks refresh in: ${formatDuration(timeLeft)}',
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
-                  ),
+      body: Consumer<UserProvider>(
+        builder: (context, userProvider, child) {
+          final userTasks = userProvider.userTasks;
+          final timeLeft = userProvider.timeUntilNextReset;
+
+          if (userTasks.isEmpty) {
+            return Padding( 
+              padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding), 
+              child: Center(
+                child:Text("No tasks available at the moment.", style: TextStyle(fontSize: 14.0),),
+              ),
+            );  
+          }
+
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  'Tasks refresh in: ${formatDuration(timeLeft)}',
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
                 ),
-                const SizedBox(height: 10),
-                Expanded(
-                  child: ReorderableListView.builder(
-                    padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding + 90),
-                    itemCount: userTasks.length,
-                    onReorder: (oldIndex, newIndex) {
-                      if (newIndex > oldIndex) {
-                        newIndex -= 1;
-                      }
-                      userProvider.reorderTasks(oldIndex, newIndex);
-                    },
-                    itemBuilder: (context, index) {
-                      final task = userTasks[index];
-                      return TasksCard(
-                        key: ValueKey(task.id), // Key is required for reordering
-                        task: task,
-                        onStateChanged: () {},
-                      );
-                    },
-                  ),
+              ),
+              const SizedBox(height: 10),
+              Expanded(
+                child: ReorderableListView.builder(
+                  padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding + 90),
+                  itemCount: userTasks.length,
+                  onReorder: (oldIndex, newIndex) {
+                    if (newIndex > oldIndex) {
+                      newIndex -= 1;
+                    }
+                    userProvider.reorderTasks(oldIndex, newIndex);
+                  },
+                  itemBuilder: (context, index) {
+                    final task = userTasks[index];
+                    return TasksCard(
+                      key: ValueKey(task.id), // Key is required for reordering
+                      task: task,
+                      onStateChanged: () {},
+                    );
+                  },
                 ),
-              ],
-            );
-          },
-        ),
+              ),
+            ],
+          );
+        },
       ),
       floatingActionButton: Padding(
         padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding), 
