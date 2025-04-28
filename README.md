@@ -300,6 +300,37 @@ You can find below information and references related with the project managemen
 
 ### Sprint 2
 
+> **Goal:** 
+
+#### Project Board
+
+<p align="center" justify="center">
+  <b>Start of Sprint 2</b>
+  <img src="docs/sprints/sprint2_start.png"/>
+  <b>End of Sprint 2</b>
+  <img src="docs/sprints/sprint2_end.png"/>
+</p>
+
+#### Sprint Retrospective
+
+##### What went right
+
+  - 
+  - 
+
+
+##### What went wrong
+
+  - 
+
+
+##### What should start
+
+  - 
+  - 
+
+
+
 ### Sprint 3
 
 ### Final Release
