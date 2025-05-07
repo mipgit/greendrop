@@ -87,7 +87,6 @@ class GroupService extends ChangeNotifier {
     }
     try {
 
-      //entrar com o id? 
       final groupRef = _firestore.collection('groups').doc(groupId);
       final groupDoc = await groupRef.get();
 

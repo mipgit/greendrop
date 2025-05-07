@@ -19,6 +19,21 @@ class User {
   List<Map<String, dynamic>> ownedTrees;
   int droplets;
 
+User copyWith({
+    String? id,
+    String? username,
+    String? email,
+    List<Map<String, String>>? ownedTrees,
+    int? droplets,
+  }) {
+    return User(
+      id: id ?? this.id,
+      username: username ?? this.username,
+      email: email ?? this.email,
+      ownedTrees: ownedTrees ?? this.ownedTrees,
+      droplets: droplets ?? this.droplets,
+    );
+  }
 
   void addDroplets(int amount) {
     droplets += amount;
