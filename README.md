@@ -300,7 +300,8 @@ You can find below information and references related with the project managemen
 
 ### Sprint 2
 
-> **Goal:** 
+> **Goal:** Establish the core functionality of the application by implementing user account creation, personalized and dynamic tasks, profile access, and integrating Firebase for backend support, while laying the groundwork for the visual identity through initial design updates.
+
 
 #### Project Board
 
@@ -315,19 +316,18 @@ You can find below information and references related with the project managemen
 
 ##### What went right
 
-  - 
-  - 
+  - Once again, our task distribution and organization surpassed our expectations
+  - We were able to achieve more than we planned  
 
 
 ##### What went wrong
 
-  - 
+  - We weren't able to conclude all tests, there is still space to provide better results
 
 
 ##### What should start
 
-  - 
-  - 
+  - We plan on working on details that are still not how we want them and improve what is already implemented
 
 
 
