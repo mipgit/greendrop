@@ -8,7 +8,7 @@ class TreeGardenCard extends StatelessWidget {
   final int price;
   final String imagePath;
   final Tree tree;
-  final VoidCallback onCardTap; 
+  final VoidCallback onCardTap;
 
   const TreeGardenCard({
     super.key,
@@ -16,18 +16,21 @@ class TreeGardenCard extends StatelessWidget {
     required this.price,
     required this.imagePath,
     required this.tree,
-    required this.onCardTap, 
+    required this.onCardTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isOwned = context.watch<UserProvider>().user.ownedTrees.any((ownedTree) => ownedTree['treeId'] == tree.id);
+    final userProvider = context.watch<UserProvider>(); // Use watch for reactivity
+    final bool isOwned = userProvider.user.ownedTrees.any((ownedTree) => ownedTree['treeId'] == tree.id);
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return Card(
       margin: const EdgeInsets.all(8.0),
-      color: const Color.fromARGB(204, 219, 217, 217), 
-      clipBehavior: Clip.antiAlias, 
-      child: InkWell( 
+      elevation: isOwned ? 1.0 : 2.0,
+      color: isOwned ? null : const Color.fromARGB(204, 226, 221, 221),
+      child: InkWell(
         onTap: onCardTap,
         child: SizedBox(
           height: 100.0,
@@ -39,48 +42,50 @@ class TreeGardenCard extends StatelessWidget {
                 child: Image.asset(
                   imagePath,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.error), 
                 ),
               ),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), 
+                  padding: const EdgeInsets.all(20.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         name,
-                        style: const TextStyle(
-                          fontSize: 22.0, 
-                          fontWeight: FontWeight.bold,
-                        ),
-                        overflow: TextOverflow.ellipsis,
+                        style: textTheme.headlineSmall?.copyWith(fontSize: 25.0),
                       ),
-                      const SizedBox(height: 4), 
-                      Text(
-                        '$price droplets', 
-                        style: const TextStyle(
-                          fontSize: 14.0,
-                          color: Colors.black54,
-                        ),
+                      const SizedBox(height: 6),
+                      Row( 
+                        children: [
+                          Text(
+                            '$price', 
+                            style: textTheme.bodyMedium?.copyWith( 
+                              color: colorScheme.primary, 
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ), 
+                          //Icon(Icons.water_drop_rounded, size: 16, color: colorScheme.primary), 
+                          Text(
+                            ' droplets',
+                            style: textTheme.bodySmall?.copyWith(
+                              color: colorScheme.primary,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
               ),
-              if (isOwned)
-                Padding(
-                  padding: const EdgeInsets.only(right: 16.0),
-                  child: Text(
-                    "Owned!",
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green[700],
-                    ),
-                  ),
+              Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: Icon(
+                  isOwned ? Icons.check : Icons.add,
+                  color: isOwned ? Colors.green : const Color.fromARGB(255, 0, 0, 0),
+                  size: 30.0,
                 ),
+              ),
             ],
           ),
         ),

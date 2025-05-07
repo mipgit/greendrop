@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:greendrop/model/tree.dart';
 import 'package:greendrop/view-model/user_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart'; // For formatting price
 
 class TreeDetailDialog extends StatelessWidget {
   final Tree tree;
@@ -15,100 +16,124 @@ class TreeDetailDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-    final isOwned = context.watch<UserProvider>().user.ownedTrees.any((ownedTree) => ownedTree['treeId'] == tree.id);
+    // Get providers and theme data
+    final userProvider = context.read<UserProvider>(); // Use read if only needed for actions
+    final isOwned = context.watch<UserProvider>().user.ownedTrees.any((t) => t['treeId'] == tree.id);
     final canAfford = userProvider.user.droplets >= tree.price;
-    const IconData dropletIcon = Icons.water_drop;
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final formatter = NumberFormat('#,##0', 'en_US'); // Formatter
 
-    final Color primaryButtonColor = Theme.of(context).primaryColor;
-    final Brightness estimatedBrightness = ThemeData.estimateBrightnessForColor(primaryButtonColor);
-    final Color buttonTextColor = estimatedBrightness == Brightness.dark
-        ? Colors.white 
-        : Colors.black; 
+    // Determine button text color based on *button's* background (using ElevatedButtonTheme ideally)
+    // This is a fallback if theme isn't set up perfectly
+    Color getButtonTextColor(Color backgroundColor) {
+       return ThemeData.estimateBrightnessForColor(backgroundColor) == Brightness.dark
+           ? Colors.white
+           : Colors.black;
+    }
+    // Get the actual button colors from the theme if possible
+    final ButtonStyle? buttonStyle = Theme.of(context).elevatedButtonTheme.style;
+    final Color enabledButtonBg = buttonStyle?.backgroundColor?.resolve({}) ?? colorScheme.primary; // Default to primary
+    final Color disabledButtonBg = buttonStyle?.backgroundColor?.resolve({MaterialState.disabled}) ?? Colors.grey.shade400;
+    final Color enabledButtonFg = buttonStyle?.foregroundColor?.resolve({}) ?? getButtonTextColor(enabledButtonBg);
+    final Color disabledButtonFg = buttonStyle?.foregroundColor?.resolve({MaterialState.disabled}) ?? getButtonTextColor(disabledButtonBg);
 
 
     return AlertDialog(
-      title: Text(tree.name, textAlign: TextAlign.center),
+      // Themed background and shape
+      backgroundColor: colorScheme.surface, // Use surface color
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)), // Consistent rounding
+      // Title styling
+      title: Text(
+        tree.name,
+        textAlign: TextAlign.center,
+        style: textTheme.headlineSmall?.copyWith(color: colorScheme.onSurface),
+      ),
+      // Content styling
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.asset(
-              imagePath,
-              height: 120,
-              fit: BoxFit.contain,
-               errorBuilder: (context, error, stackTrace) => const Icon(Icons.error, size: 120),
+            ClipRRect( // Clip image if needed
+              borderRadius: BorderRadius.circular(8.0),
+              child: Image.asset(
+                imagePath,
+                height: 130, // Slightly larger image
+                fit: BoxFit.contain,
+                 errorBuilder: (context, error, stackTrace) => Container( // Placeholder on error
+                   height: 130,
+                   width: 130,
+                   color: colorScheme.secondaryContainer.withOpacity(0.3),
+                   child: Icon(Icons.park_rounded, size: 60, color: colorScheme.onSecondaryContainer.withOpacity(0.5)),
+                 ),
+              ),
             ),
             const SizedBox(height: 16),
             Text(
               tree.description,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 16),
+              style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant), // Softer color
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20), // More space
+            // Cost display
             Row(
                mainAxisAlignment: MainAxisAlignment.center,
                children: [
-                 const Text(
+                 Text(
                    'Cost: ',
-                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                   style: textTheme.titleMedium?.copyWith(color: colorScheme.onSurfaceVariant),
                  ),
-                 Icon(dropletIcon, size: 18, color: Theme.of(context).primaryColor),
+                 Icon(Icons.water_drop_rounded, size: 18, color: colorScheme.primary), // Rounded icon
                  const SizedBox(width: 4),
                  Text(
-                   '${tree.price}',
-                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
+                    formatter.format(tree.price), // Formatted price
+                   style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.primary),
                  ),
                ],
             ),
           ],
         ),
       ),
+      // Actions styling
       actionsAlignment: MainAxisAlignment.center,
+      actionsPadding: const EdgeInsets.only(bottom: 16.0, left: 16.0, right: 16.0), // Adjust padding
       actions: <Widget>[
-        if (isOwned)
-          ElevatedButton(
+        SizedBox( // Constrain button width if needed
+          width: 150,
+          child: ElevatedButton(
+            // Use the resolved theme colors for styling
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.grey,
-              foregroundColor: Colors.white, 
-            ),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text("You already own ${tree.name}!"), 
-                  duration: Duration(seconds: 1),
-                ),
-              );
-               Navigator.of(context).pop();
-            },
-            child: const Text('Bought'),
-          )
-        else
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-               backgroundColor: canAfford ? primaryButtonColor : Colors.grey, // Use the stored color
-               foregroundColor: canAfford ? buttonTextColor : Colors.white, // Set contrast text color (white on grey if disabled)
-            ),
-            onPressed: canAfford ? () {
-              try {
+               backgroundColor: isOwned ? disabledButtonBg : (canAfford ? enabledButtonBg : disabledButtonBg),
+               foregroundColor: isOwned ? disabledButtonFg : (canAfford ? enabledButtonFg : disabledButtonFg),
+               // Ensure shape matches theme or override consistently
+               // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+            ).merge(buttonStyle), // Merge with theme style
+            onPressed: isOwned ? null : (canAfford ? () { // Disable button if owned
+               try {
                   userProvider.buyTree(context, tree.id);
                    ScaffoldMessenger.of(context).showSnackBar(
                      SnackBar(
                          content: Text('${tree.name} purchased!'),
-                         duration: Duration(seconds: 1),
-                         backgroundColor: Colors.green,
+                         duration: const Duration(seconds: 2),
+                         backgroundColor: Colors.green.shade600, // Success color
+                         behavior: SnackBarBehavior.floating, // Modern look
                      ),
                    );
                   Navigator.of(context).pop();
               } catch (e) {
                    ScaffoldMessenger.of(context).showSnackBar(
-                     SnackBar(content: Text('Error purchasing: $e')),
+                     SnackBar(
+                        content: Text('Error purchasing: $e'),
+                        backgroundColor: colorScheme.error, // Error color
+                        behavior: SnackBarBehavior.floating,
+                      ),
                    );
               }
-            } : null,
-            child: Text('Buy'),
+            } : null), // Disable button if cannot afford
+            child: Text(isOwned ? 'Owned' : 'Buy Tree'),
           ),
+        ),
       ],
     );
   }

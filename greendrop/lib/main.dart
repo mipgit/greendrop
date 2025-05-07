@@ -47,16 +47,26 @@ class GreenDropApp extends StatelessWidget {
       ),
       home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting ||
-              snapshot.connectionState == ConnectionState.none) {
-            return const CircularProgressIndicator();
-          } else if (snapshot.hasData) {
-            print('${snapshot.data?.uid}');
-            return NavigationView();
-          } else {
-            return const LoginView();
-          }
+        builder: (context, authSnapshot) {
+          return Consumer<UserProvider>(
+            builder: (context, userProvider, child) {
+              if (userProvider.isLoading) {
+                return const Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                );
+              }
+              if (authSnapshot.connectionState == ConnectionState.waiting) {
+                 return const Scaffold(
+                   body: Center(child: CircularProgressIndicator()),
+                 );
+              }
+              if (authSnapshot.hasData) {
+                return const NavigationView();
+              } else {
+                return const LoginView();
+              }
+            },
+          );
         },
       ),
     );
