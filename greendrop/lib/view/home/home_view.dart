@@ -94,19 +94,40 @@ class _HomeViewState extends State<HomeView> {
         child: Column(
           children: [
             Expanded(
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: userProvider.treeProviders.length,
-                itemBuilder: (context, index) {
-                  final treeProvider = userProvider.treeProviders[index];
-                  return ChangeNotifierProvider.value(
-                    value: treeProvider,
-                    child: Padding(
-                      padding: EdgeInsets.all(pagePadding),
-                      child: TreeHomeCard(),
+              child: Stack(
+                children: [
+                  PageView.builder(
+                    controller: _pageController,
+                    itemCount: userProvider.treeProviders.length,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _currentPageIndex = index;
+                      });
+                    },
+                    itemBuilder: (context, index) {
+                      final treeProvider = userProvider.treeProviders[index];
+                      return ChangeNotifierProvider.value(
+                        value: treeProvider,
+                        child: Padding(
+                          padding: EdgeInsets.all(pagePadding),
+                          child: TreeHomeCard(),
+                        ),
+                      );
+                    },
+                  ),
+                  // left arrow
+                  if (_currentPageIndex > 0)
+                    Positioned(
+                      left: 2, top: 0, bottom: 0,
+                      child: Center(child: Icon(Icons.arrow_left, size: 30, color: Color.fromARGB(50, 158, 158, 158)),),
                     ),
-                  );
-                },
+                  // right arrow
+                  if (_currentPageIndex < userProvider.treeProviders.length - 1)
+                    Positioned(
+                      right: 2, top: 0, bottom: 0,
+                      child: Center(child: Icon(Icons.arrow_right, size: 30, color: Color.fromARGB(50, 158, 158, 158)),),
+                    ),
+                ],
               ),
             ),
             Padding(
