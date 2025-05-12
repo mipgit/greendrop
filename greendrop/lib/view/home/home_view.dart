@@ -55,21 +55,22 @@ class _HomeViewState extends State<HomeView> {
           padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding),
           child: Center(
             child: Column(
-              mainAxisSize: MainAxisSize.min, // Center vertically
+              mainAxisSize: MainAxisSize.min, 
               children: [
                 SizedBox(height: 65),
                 Text(
                   "You have no trees yet  :(",
-                  style: TextStyle(fontSize: 14.0),
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 14.0),
                 ),
-                SizedBox(height: 15), // Space between text and button
+                SizedBox(height: 12), 
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 146, 169, 187)
                   ),
                   onPressed: () {
-                    final navState =
-                        context.findAncestorStateOfType<NavigationViewState>();
+                    final navState = context.findAncestorStateOfType<NavigationViewState>();
                     navState?.onItemTapped(0);
                   },
                   child: Text(

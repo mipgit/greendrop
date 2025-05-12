@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:greendrop/services/authentication_service.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_animate/flutter_animate.dart'; // Import flutter_animate
+import 'package:flutter_animate/flutter_animate.dart'; 
 
-// Back to StatelessWidget
+
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
 
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthenticationService>(context);
-    final Color googleButtonBackgroundColor = Colors.grey[100] ?? const Color(0xFFF5F5F5);
+    final Color googleButtonBackgroundColor = Colors.white; //we have to decide these colors
     final Color screenBackgroundColor = const Color(0xFFF0F7EF);
     final Color darkPastelGreen = Colors.green[800]!;
 
-    // Define animation timings (optional but good practice)
-    final Duration initialDelay = 300.ms; // Start animation after this delay
+    final Duration initialDelay = 300.ms; 
     final Duration iconDuration = 600.ms;
-    final Duration buttonDelay = 200.ms; // Delay *after* the icon starts animating
+    final Duration buttonDelay = 200.ms; 
     final Duration buttonDuration = 600.ms;
-    final double slideAmount = 0.5; // How much to slide (0.5 = half height)
+    final double slideAmount = 0.5; 
 
     return Scaffold(
       backgroundColor: screenBackgroundColor,
@@ -36,13 +35,13 @@ class LoginView extends StatelessWidget {
                   'assets/icon/greendrop.png',
                   height: 200,
                 )
-                .animate() // Apply animations
-                .fadeIn(delay: initialDelay, duration: iconDuration, curve: Curves.easeIn) // Fade in first
-                .slideY(begin: slideAmount, end: 0, duration: iconDuration, curve: Curves.easeOut), // Then slide up
+                .animate() 
+                .fadeIn(delay: initialDelay, duration: iconDuration, curve: Curves.easeIn) 
+                .slideY(begin: slideAmount, end: 0, duration: iconDuration, curve: Curves.easeOut), 
 
                 const SizedBox(height: 24),
 
-                // App Name (Could also be animated similarly if desired)
+                // App Name 
                 Text(
                   'GreenDrop',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
@@ -51,10 +50,9 @@ class LoginView extends StatelessWidget {
                       ),
                   textAlign: TextAlign.center,
                 )
-                .animate() // Optional: Animate name too
-                .fadeIn(delay: initialDelay + 100.ms, duration: iconDuration) // Slightly later fade
-                .scaleXY(begin: 0.8, end: 1.0, duration: iconDuration, curve: Curves.easeOutBack), // Optional scale effect
-
+                .animate() 
+                .fadeIn(delay: initialDelay + 100.ms, duration: iconDuration) 
+                .scaleXY(begin: 0.8, end: 1.0, duration: iconDuration, curve: Curves.easeOutBack),
 
                 const SizedBox(height: 72),
 
@@ -81,11 +79,11 @@ class LoginView extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   ),
                 )
-                .animate() // Apply animations
-                .fadeIn(delay: initialDelay + buttonDelay, duration: buttonDuration, curve: Curves.easeIn) // Staggered fade in
-                .slideY(begin: slideAmount, end: 0, duration: buttonDuration, curve: Curves.easeOut), // Staggered slide up
+                .animate() 
+                .fadeIn(delay: initialDelay + buttonDelay, duration: buttonDuration, curve: Curves.easeIn) 
+                .slideY(begin: slideAmount, end: 0, duration: buttonDuration, curve: Curves.easeOut),
               
-              const SizedBox(height: 16), 
+                const SizedBox(height: 16), 
 
                 // Guest Sign-in Button with Animation
                 ElevatedButton(
@@ -106,8 +104,8 @@ class LoginView extends StatelessWidget {
                   ),
                 )
                 .animate() 
-                .fadeIn(delay: initialDelay + buttonDelay, duration: buttonDuration, curve: Curves.easeIn) // Staggered fade in
-                .slideY(begin: slideAmount, end: 0, duration: buttonDuration, curve: Curves.easeOut), // Staggered slide up
+                .fadeIn(delay: initialDelay + buttonDelay, duration: buttonDuration, curve: Curves.easeIn) 
+                .slideY(begin: slideAmount, end: 0, duration: buttonDuration, curve: Curves.easeOut),
               ],
             ),
           ),
