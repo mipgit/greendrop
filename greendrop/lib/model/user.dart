@@ -7,7 +7,8 @@ class User {
     this.profilePicture,
     this.bio,
     required this.ownedTrees,
-    this.droplets = 0
+    this.droplets = 0,
+    this.role = 'user',
   });
 
 
@@ -18,6 +19,8 @@ class User {
   String? bio;
   List<Map<String, dynamic>> ownedTrees;
   int droplets;
+  String role; 
+
 
 User copyWith({
     String? id,
@@ -25,6 +28,7 @@ User copyWith({
     String? email,
     List<Map<String, String>>? ownedTrees,
     int? droplets,
+    String? role,
   }) {
     return User(
       id: id ?? this.id,
@@ -32,6 +36,7 @@ User copyWith({
       email: email ?? this.email,
       ownedTrees: ownedTrees ?? this.ownedTrees,
       droplets: droplets ?? this.droplets,
+      role: role ?? this.role,
     );
   }
 
