@@ -20,7 +20,12 @@ class _JoinGroupViewState extends State<JoinGroupView> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please enter a group ID.'),
+          content: SizedBox(
+            height: 25, 
+            child: Center(
+              child: Text('Please enter a group ID.'),
+            ),
+          ),
           behavior: SnackBarBehavior.floating,
         ),
       );

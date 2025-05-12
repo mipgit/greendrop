@@ -98,7 +98,12 @@ class _GroupsViewState extends State<GroupsView> {
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to sign in as guest: $e'),
+              content: SizedBox(
+                height: 25, 
+                child: Center(
+                  child: Text('Failed to sign in as guest: $e'),
+                ),
+              ),              
               behavior: SnackBarBehavior.floating,
             ),
           );
@@ -112,7 +117,12 @@ class _GroupsViewState extends State<GroupsView> {
         if (newGroup != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Group created successfully!'),
+              content: SizedBox(
+                height: 25, 
+                child: Center(
+                  child: Text('Group created successfully!'),
+                ),
+              ),   
               behavior: SnackBarBehavior.floating,
             ),
           );
@@ -120,7 +130,12 @@ class _GroupsViewState extends State<GroupsView> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Failed to create group.'),
+              content: SizedBox(
+                height: 25, 
+                child: Center(
+                  child: Text('Failed to create group.'),
+                ),
+              ),   
               behavior: SnackBarBehavior.floating,
             ),
           );
@@ -128,7 +143,12 @@ class _GroupsViewState extends State<GroupsView> {
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error creating group: $e'),
+            content: SizedBox(
+              height: 25, 
+              child: Center(
+                child: Text('Error creating group: $e'),
+              ),
+            ),   
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -137,7 +157,12 @@ class _GroupsViewState extends State<GroupsView> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Group name cannot be empty'),
+          content: SizedBox(
+            height: 25, 
+            child: Center(
+              child: Text('Group name cannot be empty'),
+            ),
+          ),   
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -218,7 +243,12 @@ class _GroupsViewState extends State<GroupsView> {
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Sign in to use groups.'),
+                      content: SizedBox(
+                        height: 25, 
+                        child: Center(
+                          child: Text('Sign in to use groups.'),
+                        ),
+                      ),
                       duration: Duration(seconds: 1),
                       behavior: SnackBarBehavior.floating,  
                     ),

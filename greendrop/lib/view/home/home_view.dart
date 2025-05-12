@@ -109,9 +109,14 @@ class _HomeViewState extends State<HomeView> {
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text("You don't have enough droplets."),
+                          content: SizedBox(
+                            height: 25, 
+                            child: Center(
+                              child: Text("You don't have enough droplets."),
+                            ),
+                          ),
                           duration: Duration(seconds: 1),
-                          backgroundColor: Colors.blueAccent,
+                          backgroundColor: Colors.blue,
                           behavior: SnackBarBehavior.floating,
                         ),
                       );

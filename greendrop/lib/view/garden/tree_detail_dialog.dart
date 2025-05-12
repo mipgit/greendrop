@@ -105,17 +105,27 @@ class TreeDetailDialog extends StatelessWidget {
                   userProvider.buyTree(context, tree.id);
                    ScaffoldMessenger.of(context).showSnackBar(
                      SnackBar(
-                         content: Text('${tree.name} purchased!'),
-                         duration: const Duration(seconds: 2),
-                         backgroundColor: Colors.green.shade600, 
-                         behavior: SnackBarBehavior.floating, 
+                        content: SizedBox(
+                          height: 25, 
+                          child: Center(
+                            child: Text('${tree.name} purchased!'),
+                          ),
+                        ),
+                        duration: const Duration(seconds: 2),
+                        backgroundColor: Colors.green.shade600, 
+                        behavior: SnackBarBehavior.floating, 
                      ),
                    );
                   Navigator.of(context).pop();
               } catch (e) {
                    ScaffoldMessenger.of(context).showSnackBar(
                      SnackBar(
-                        content: Text('Error purchasing: $e'),
+                        content: SizedBox(
+                          height: 25, 
+                          child: Center(
+                            child: Text('Error purchasing: $e'),
+                          ),
+                        ),
                         backgroundColor: colorScheme.error, 
                         behavior: SnackBarBehavior.floating,
                       ),
