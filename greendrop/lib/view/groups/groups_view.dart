@@ -97,7 +97,10 @@ class _GroupsViewState extends State<GroupsView> {
           await authService.signInAnonymously();
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to sign in as guest: $e')),
+            SnackBar(
+              content: Text('Failed to sign in as guest: $e'),
+              behavior: SnackBarBehavior.floating,
+            ),
           );
           return; // Don't proceed with group creation if guest sign-in fails
         }
@@ -108,23 +111,35 @@ class _GroupsViewState extends State<GroupsView> {
         final newGroup = await groupService.createGroup(context, groupName);
         if (newGroup != null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Group created successfully!')),
+            const SnackBar(
+              content: Text('Group created successfully!'),
+              behavior: SnackBarBehavior.floating,
+            ),
           );
           Navigator.pop(context);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Failed to create group.')),
+            const SnackBar(
+              content: Text('Failed to create group.'),
+              behavior: SnackBarBehavior.floating,
+            ),
           );
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error creating group: $e')),
+          SnackBar(
+            content: Text('Error creating group: $e'),
+            behavior: SnackBarBehavior.floating,
+          ),
         );
         print('Error creating group: $e');
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Group name cannot be empty')),
+        const SnackBar(
+          content: Text('Group name cannot be empty'),
+          behavior: SnackBarBehavior.floating,
+        ),
       );
     }
   }
@@ -163,7 +178,7 @@ class _GroupsViewState extends State<GroupsView> {
                   return groups.isEmpty
                       ? const Center(
                         child: Text(
-                          'Your Groups will appear here.',
+                          'Your groups will appear here.',
                           style: TextStyle(fontSize: 14.0),
                         ),
                       )
@@ -203,9 +218,9 @@ class _GroupsViewState extends State<GroupsView> {
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Sign in to create groups.'),
+                      content: Text('Sign in to use groups.'),
                       duration: Duration(seconds: 1),
-
+                      behavior: SnackBarBehavior.floating,  
                     ),
                   );
                 },

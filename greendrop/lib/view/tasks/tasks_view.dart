@@ -76,10 +76,9 @@ class TasksView extends StatelessWidget {
                   ? () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text(
-                            "You have reached the limit of 3 personalized tasks.",
-                          ),
+                          content: Text("You have reached the limit of 3 personalized tasks.",),
                           duration: Duration(seconds: 2),
+                          behavior: SnackBarBehavior.floating,
                         ),
                       );
                     }

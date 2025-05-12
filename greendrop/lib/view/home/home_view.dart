@@ -111,6 +111,8 @@ class _HomeViewState extends State<HomeView> {
                         const SnackBar(
                           content: Text("You don't have enough droplets."),
                           duration: Duration(seconds: 1),
+                          backgroundColor: Colors.blueAccent,
+                          behavior: SnackBarBehavior.floating,
                         ),
                       );
                     }
