@@ -601,6 +601,7 @@ class UserProvider with ChangeNotifier {
           .doc('current')
           .update({
             'personalized_tasks_map': FieldValue.arrayUnion([personalizedTask]),
+            'tasks': FieldValue.arrayUnion([task.id]),
           });
     }
   }
