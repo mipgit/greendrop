@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:greendrop/view-model/user_provider.dart';
 import 'package:greendrop/view/home/tree_home_card.dart';
+import 'package:greendrop/view/navbar/navigation_view.dart';
 import 'package:provider/provider.dart';
 
 class HomeView extends StatefulWidget {
@@ -44,30 +45,51 @@ class _HomeViewState extends State<HomeView> {
     final bottomButtonPaddingBottom = screenHeight * 0.03;
     final bottomButtonPaddingTop = screenHeight * 0.01;
 
-
     //avoid the bottom nav bar
-    final double bottomNavBarHeightPadding = 100.0; 
-
+    final double bottomNavBarHeightPadding = 100.0;
 
     //we check 1st if the user has any trees
     if (userProvider.userTrees.isEmpty) {
-      return  Scaffold(
-        body: Padding( 
-        padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding), 
+      return Scaffold(
+        body: Padding(
+          padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding),
           child: Center(
-            child: Text(
-              "You have no trees yet.",
-              style: TextStyle(fontSize: 14.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // Center vertically
+              children: [
+                SizedBox(height: 65),
+                Text(
+                  "You have no trees yet.",
+                  style: TextStyle(fontSize: 14.0),
+                ),
+                SizedBox(height: 15), // Space between text and button
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 146, 169, 187)
+                  ),
+                  onPressed: () {
+                    final navState =
+                        context.findAncestorStateOfType<NavigationViewState>();
+                    navState?.onItemTapped(0);
+                  },
+                  child: Text(
+                    "   Go to Shop   ",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: buttonFontSize,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
       );
     }
 
-
     return Scaffold(
-      body: Padding( 
-        padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding), 
+      body: Padding(
+        padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding),
         child: Column(
           children: [
             Expanded(
@@ -110,7 +132,7 @@ class _HomeViewState extends State<HomeView> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: SizedBox(
-                            height: 25, 
+                            height: 25,
                             child: Center(
                               child: Text("You don't have enough droplets."),
                             ),
@@ -125,12 +147,15 @@ class _HomeViewState extends State<HomeView> {
                 },
                 child: Text(
                   "     Water Me!     ",
-                  style: TextStyle(color: Colors.white, fontSize: buttonFontSize),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: buttonFontSize,
+                  ),
                 ),
               ),
             ),
           ],
-        ),  
+        ),
       ),
     );
   }

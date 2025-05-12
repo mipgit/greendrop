@@ -23,7 +23,7 @@ class TreeGardenCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final userProvider = context.watch<UserProvider>(); // Use watch for reactivity
     final bool isOwned = userProvider.user.ownedTrees.any((ownedTree) => ownedTree['treeId'] == tree.id);
-    final colorScheme = Theme.of(context).colorScheme;
+    //final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
     return Card(
@@ -61,7 +61,7 @@ class TreeGardenCard extends StatelessWidget {
                           Text(
                             '$price', 
                             style: textTheme.bodyMedium?.copyWith( 
-                              color: colorScheme.primary, 
+                              color: Colors.grey, 
                               fontWeight: FontWeight.w500,
                             ),
                           ), 
@@ -69,7 +69,7 @@ class TreeGardenCard extends StatelessWidget {
                           Text(
                             ' droplets',
                             style: textTheme.bodySmall?.copyWith(
-                              color: colorScheme.primary,
+                              color: Colors.grey,
                             ),
                           ),
                         ],
