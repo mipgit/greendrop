@@ -43,6 +43,7 @@ class NavigationViewState extends State<NavigationView> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        scrolledUnderElevation: 0,
         title: GestureDetector(
           onTap: () {
             if (_selectedIndex != 1) {

@@ -59,7 +59,7 @@ class _HomeViewState extends State<HomeView> {
               children: [
                 SizedBox(height: 65),
                 Text(
-                  "You have no trees yet.",
+                  "You have no trees yet  :(",
                   style: TextStyle(fontSize: 14.0),
                 ),
                 SizedBox(height: 15), // Space between text and button
@@ -73,7 +73,7 @@ class _HomeViewState extends State<HomeView> {
                     navState?.onItemTapped(0);
                   },
                   child: Text(
-                    "   Go to Shop   ",
+                    "   Buy your first tree!   ",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: buttonFontSize,
