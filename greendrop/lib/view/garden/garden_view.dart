@@ -22,7 +22,7 @@ class GardenView extends StatefulWidget {
 }
 
 class _GardenViewState extends State<GardenView> {
-  GardenSortOption _selectedSortOption = GardenSortOption.priceLowToHigh; //default sort
+  GardenSortOption _selectedSortOption = GardenSortOption.owned; //default sort
 
   void _showTreeDetailDialog(BuildContext context, Tree tree, String imagePath) {
     showDialog(
