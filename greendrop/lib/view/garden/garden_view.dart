@@ -10,6 +10,7 @@ import 'tree_detail_dialog.dart';
 enum GardenSortOption {
   priceLowToHigh,
   nameAZ,
+  owned,
   notOwned,
 }
 
@@ -21,7 +22,7 @@ class GardenView extends StatefulWidget {
 }
 
 class _GardenViewState extends State<GardenView> {
-  GardenSortOption _selectedSortOption = GardenSortOption.priceLowToHigh; //default sort
+  GardenSortOption _selectedSortOption = GardenSortOption.owned; //default sort
 
   void _showTreeDetailDialog(BuildContext context, Tree tree, String imagePath) {
     showDialog(
@@ -41,6 +42,8 @@ class _GardenViewState extends State<GardenView> {
         return 'Price: Low to High';
       case GardenSortOption.nameAZ:
         return 'Name: A-Z';
+      case GardenSortOption.owned:
+        return 'Owned First';  
       case GardenSortOption.notOwned:
         return 'Not Owned First';
     }
@@ -55,6 +58,15 @@ class _GardenViewState extends State<GardenView> {
       case GardenSortOption.nameAZ:
         sortedList.sort((a, b) => a.species.toLowerCase().compareTo(b.species.toLowerCase()));
         break;
+      case GardenSortOption.owned:
+        sortedList.sort((a, b) {
+          bool aOwned = userProvider.user.ownedTrees.any((t) => t['treeId'] == a.id);
+          bool bOwned = userProvider.user.ownedTrees.any((t) => t['treeId'] == b.id);
+          if (aOwned && !bOwned) return -1;
+          if (!aOwned && bOwned) return 1;
+          return a.price.compareTo(b.price);
+        });
+        break;  
       case GardenSortOption.notOwned:
         sortedList.sort((a, b) {
           bool aOwned = userProvider.user.ownedTrees.any((t) => t['treeId'] == a.id);

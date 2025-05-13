@@ -10,7 +10,10 @@ class DropletCounter extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Icon(Icons.water_drop_rounded, color: Colors.blue),
+        const Icon(
+          Icons.water_drop_rounded,
+          color: Color.fromARGB(255, 107, 172, 226),
+        ),
         const SizedBox(width: 2.0),
         Consumer<UserProvider>(
           builder: (context, userProvider, child) {
@@ -18,7 +21,7 @@ class DropletCounter extends StatelessWidget {
               '${userProvider.user.droplets}',
               style: const TextStyle(
                 fontSize: 20.0,
-                color: Color.fromARGB(255, 9, 34, 54),
+                color: Color.fromARGB(255, 40, 78, 109),
               ),
             );
           },

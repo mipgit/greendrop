@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:greendrop/view-model/user_provider.dart';
 import 'package:greendrop/view/home/tree_home_card.dart';
+import 'package:greendrop/view/navbar/navigation_view.dart';
 import 'package:provider/provider.dart';
 
 class HomeView extends StatefulWidget {
@@ -44,46 +45,89 @@ class _HomeViewState extends State<HomeView> {
     final bottomButtonPaddingBottom = screenHeight * 0.03;
     final bottomButtonPaddingTop = screenHeight * 0.01;
 
-
     //avoid the bottom nav bar
-    final double bottomNavBarHeightPadding = 100.0; 
-
+    final double bottomNavBarHeightPadding = 100.0;
 
     //we check 1st if the user has any trees
     if (userProvider.userTrees.isEmpty) {
-      return  Scaffold(
-        body: Padding( 
-        padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding), 
+      return Scaffold(
+        body: Padding(
+          padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding),
           child: Center(
-            child: Text(
-              "You have no trees yet.",
-              style: TextStyle(fontSize: 14.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, 
+              children: [
+                SizedBox(height: 65),
+                Text(
+                  "You have no trees yet  :(",
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 14.0),
+                ),
+                SizedBox(height: 12), 
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 146, 169, 187)
+                  ),
+                  onPressed: () {
+                    final navState = context.findAncestorStateOfType<NavigationViewState>();
+                    navState?.onItemTapped(0);
+                  },
+                  child: Text(
+                    "   Buy your first tree!   ",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: buttonFontSize,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
       );
     }
 
-
     return Scaffold(
-      body: Padding( 
-        padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding), 
+      body: Padding(
+        padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding),
         child: Column(
           children: [
             Expanded(
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: userProvider.treeProviders.length,
-                itemBuilder: (context, index) {
-                  final treeProvider = userProvider.treeProviders[index];
-                  return ChangeNotifierProvider.value(
-                    value: treeProvider,
-                    child: Padding(
-                      padding: EdgeInsets.all(pagePadding),
-                      child: TreeHomeCard(),
+              child: Stack(
+                children: [
+                  PageView.builder(
+                    controller: _pageController,
+                    itemCount: userProvider.treeProviders.length,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _currentPageIndex = index;
+                      });
+                    },
+                    itemBuilder: (context, index) {
+                      final treeProvider = userProvider.treeProviders[index];
+                      return ChangeNotifierProvider.value(
+                        value: treeProvider,
+                        child: Padding(
+                          padding: EdgeInsets.all(pagePadding),
+                          child: TreeHomeCard(),
+                        ),
+                      );
+                    },
+                  ),
+                  // left arrow
+                  if (_currentPageIndex > 0)
+                    Positioned(
+                      left: 2, top: 0, bottom: 0,
+                      child: Center(child: Icon(Icons.arrow_left, size: 30, color: Color.fromARGB(50, 158, 158, 158)),),
                     ),
-                  );
-                },
+                  // right arrow
+                  if (_currentPageIndex < userProvider.treeProviders.length - 1)
+                    Positioned(
+                      right: 2, top: 0, bottom: 0,
+                      child: Center(child: Icon(Icons.arrow_right, size: 30, color: Color.fromARGB(50, 158, 158, 158)),),
+                    ),
+                ],
               ),
             ),
             Padding(
@@ -109,8 +153,15 @@ class _HomeViewState extends State<HomeView> {
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text("You don't have enough droplets."),
+                          content: SizedBox(
+                            height: 25,
+                            child: Center(
+                              child: Text("You don't have enough droplets."),
+                            ),
+                          ),
                           duration: Duration(seconds: 1),
+                          backgroundColor: Colors.blue,
+                          behavior: SnackBarBehavior.floating,
                         ),
                       );
                     }
@@ -118,12 +169,15 @@ class _HomeViewState extends State<HomeView> {
                 },
                 child: Text(
                   "     Water Me!     ",
-                  style: TextStyle(color: Colors.white, fontSize: buttonFontSize),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: buttonFontSize,
+                  ),
                 ),
               ),
             ),
           ],
-        ),  
+        ),
       ),
     );
   }

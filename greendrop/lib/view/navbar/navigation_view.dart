@@ -13,10 +13,10 @@ class NavigationView extends StatefulWidget {
   const NavigationView({super.key});
 
   @override
-  State<NavigationView> createState() => _NavigationViewState();
+  State<NavigationView> createState() => NavigationViewState();
 }
 
-class _NavigationViewState extends State<NavigationView> {
+class NavigationViewState extends State<NavigationView> {
   int _selectedIndex = 1; //default to Home view
 
   static final List<Widget> _widgetOptions = <Widget>[
@@ -26,7 +26,7 @@ class _NavigationViewState extends State<NavigationView> {
     const GroupsView(),
   ];
 
-  void _onItemTapped(int index) {
+  void onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
@@ -43,10 +43,11 @@ class _NavigationViewState extends State<NavigationView> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        scrolledUnderElevation: 0,
         title: GestureDetector(
           onTap: () {
             if (_selectedIndex != 1) {
-              _onItemTapped(1);
+              onItemTapped(1);
             }
           },
           child: Text(
@@ -66,7 +67,7 @@ class _NavigationViewState extends State<NavigationView> {
                 vertical: 4.0,
               ),
               decoration: BoxDecoration(
-                color: Color.fromARGB(255, 215, 226, 235),
+                color: Color.fromARGB(255, 227, 241, 234),
                 borderRadius: BorderRadius.circular(23.0),
               ),
               child: Row(
@@ -119,15 +120,27 @@ class _NavigationViewState extends State<NavigationView> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: NavigationBar(
-              backgroundColor: Colors.transparent, 
+              backgroundColor: Colors.transparent,
               selectedIndex: _selectedIndex,
-              onDestinationSelected: _onItemTapped,
+              onDestinationSelected: onItemTapped,
               indicatorColor: Theme.of(context).colorScheme.primaryContainer,
               destinations: const [
-                NavigationDestination(icon: Icon(Icons.local_florist_rounded), label: 'Garden'),
-                NavigationDestination(icon: Icon(Icons.home_rounded), label: 'Home'),
-                NavigationDestination(icon: Icon(Icons.check_box), label: 'Tasks'),
-                NavigationDestination(icon: Icon(Icons.group_rounded), label: 'Groups'), 
+                NavigationDestination(
+                  icon: Icon(Icons.local_florist_rounded),
+                  label: 'Garden',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.home_rounded),
+                  label: 'Home',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.check_box),
+                  label: 'Tasks',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.group_rounded),
+                  label: 'Groups',
+                ),
               ],
             ),
           ),
