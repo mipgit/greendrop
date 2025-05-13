@@ -46,6 +46,7 @@ class UserProvider with ChangeNotifier {
       bio: null, 
       ownedTrees: [],
       droplets: 300,
+      role: 'user',
     );
   }
 
@@ -129,6 +130,7 @@ class UserProvider with ChangeNotifier {
               ?.cast<Map<String, dynamic>>() ??
           [],
       droplets: userData['droplets'] ?? 0,
+      role: userData['role'] ?? 'user',
     );
   }
 
@@ -154,6 +156,7 @@ class UserProvider with ChangeNotifier {
       bio: null, 
       ownedTrees: [],
       droplets: 100,
+      role: 'user', 
     );
 
     await FirebaseFirestore.instance.collection('users').doc(authUser.uid).set({
@@ -163,6 +166,7 @@ class UserProvider with ChangeNotifier {
       'bio': newUser.bio, 
       'ownedTrees': newUser.ownedTrees,
       'droplets': newUser.droplets,
+      'role': newUser.role,
     });
     return newUser;
   }
@@ -597,6 +601,7 @@ class UserProvider with ChangeNotifier {
           .doc('current')
           .update({
             'personalized_tasks_map': FieldValue.arrayUnion([personalizedTask]),
+            'tasks': FieldValue.arrayUnion([task.id]),
           });
     }
   }
