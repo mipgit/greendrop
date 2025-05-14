@@ -32,6 +32,8 @@ class UserProvider with ChangeNotifier {
   List<TaskProvider> get taskProviders => _taskProviders;
   Duration get timeUntilNextReset => _timeUntilNextReset;
 
+  String? _lastUserId;
+
   UserProvider(BuildContext context) : _user = _createEmptyUser() {
     _initialize(context);
   }
@@ -43,7 +45,7 @@ class UserProvider with ChangeNotifier {
       username: 'Guest',
       email: '',
       profilePicture: null,
-      bio: null, 
+      bio: null,
       ownedTrees: [],
       droplets: 300,
       role: 'user',
@@ -54,17 +56,18 @@ class UserProvider with ChangeNotifier {
   Future<void> _initialize(BuildContext context) async {
     try {
       await _fetchInitialUser(context);
-      if (_user.id != 'guest') {
-         await _initializeRelatedData(context);
-      }
-      _startTaskResetTimer(context);
+      //_lastUserId = _user.id; <- add this later
+      //if (_user.id != 'guest') {
+      //   await _initializeRelatedData(context);
+      //}
+      //_startTaskResetTimer(context);
       _listenToAuthChanges(context);
     } catch (e) {
       print("Error during initialization: $e");
       _user = _createEmptyUser();
     } finally {
-      _isLoading = false; 
-      notifyListeners(); 
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
@@ -72,30 +75,30 @@ class UserProvider with ChangeNotifier {
   //we need to fetch user data
   Future<void> _fetchInitialUser(BuildContext context) async {
     final authUser = fb_auth.FirebaseAuth.instance.currentUser;
-    if (authUser != null) { 
+    if (authUser != null) {
       _user = await _fetchUserDataFromFirestore(authUser);
     } else {
       _user = _createEmptyUser();
     }
-    //notifyListeners(); 
+    //notifyListeners();
   }
-
+  
 
   //we will handle the fetch (in Firestore) depending on the existence of the user or not
   Future<app.User> _fetchUserDataFromFirestore(fb_auth.User authUser) async {
-
+    
     if (authUser.isAnonymous) {
-      return _createEmptyUser(); 
+      return _createEmptyUser();
     }
 
     final userDoc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(authUser.uid)
-        .get();
+            .collection('users')
+            .doc(authUser.uid)
+            .get();
 
     if (userDoc.exists) {
       return _createUserFromFirestore(
-        authUser, 
+        authUser,
         userDoc,
       ); //if the user exists we create the user from Firestore
     } else {
@@ -111,7 +114,7 @@ class UserProvider with ChangeNotifier {
     final userData = userDoc.data()!;
 
     String? originalPhotoURL = authUser.photoURL;
-    String? highResPhotoURL = originalPhotoURL; 
+    String? highResPhotoURL = originalPhotoURL;
 
     if (originalPhotoURL != null) {
       final sizeParamRegex = RegExp(r'=s\d+(-c)?$');
@@ -136,10 +139,10 @@ class UserProvider with ChangeNotifier {
 
 
   //we create a new user in Firestore (with default values)
-  Future<app.User> _createNewUserInFirestore(fb_auth.User authUser) async { 
-    
+  Future<app.User> _createNewUserInFirestore(fb_auth.User authUser) async {
+
     String? originalPhotoURL = authUser.photoURL;
-    String? highResPhotoURL = originalPhotoURL; 
+    String? highResPhotoURL = originalPhotoURL;
 
     if (originalPhotoURL != null) {
       final sizeParamRegex = RegExp(r'=s\d+(-c)?$');
@@ -147,23 +150,23 @@ class UserProvider with ChangeNotifier {
         highResPhotoURL = originalPhotoURL.replaceFirst(sizeParamRegex, '');
       }
     }
-    
+
     final newUser = app.User(
-      id: authUser.uid, 
+      id: authUser.uid,
       username: authUser.displayName ?? "Anonymous",
       email: authUser.email ?? "",
       profilePicture: highResPhotoURL,
-      bio: null, 
+      bio: null,
       ownedTrees: [],
       droplets: 100,
-      role: 'user', 
+      role: 'user',
     );
 
     await FirebaseFirestore.instance.collection('users').doc(authUser.uid).set({
       'username': newUser.username,
       'email': newUser.email,
       'profilePicture': newUser.profilePicture,
-      'bio': newUser.bio, 
+      'bio': newUser.bio,
       'ownedTrees': newUser.ownedTrees,
       'droplets': newUser.droplets,
       'role': newUser.role,
@@ -180,39 +183,47 @@ class UserProvider with ChangeNotifier {
     await _initializeUserTasks(context);
   }
 
+  StreamSubscription? _authSubscription;
 
   //listener for authentication changes (when we sign out bla bla bla)
   void _listenToAuthChanges(BuildContext context) {
-    fb_auth.FirebaseAuth.instance.authStateChanges().listen((firebaseUser) async {
-      print("Auth state changed. User: ${firebaseUser?.uid}");
-      
-      //setting loading state during auth transition
-      _isLoading = true;
-      notifyListeners(); 
+    _authSubscription?.cancel();
+    _authSubscription = fb_auth.FirebaseAuth.instance.authStateChanges().listen(
+      (firebaseUser) async {
+        print("Auth state changed. User: ${firebaseUser?.uid}");
 
-      try {
-        if (firebaseUser != null /*&& !firebaseUser.isAnonymous*/) {
-          _user = await _fetchUserDataFromFirestore(firebaseUser);
-          await _initializeRelatedData(context); // ?????? Re-initialize data for the new user
-          _startTaskResetTimer(context);
-        } else {
-          _user = _createEmptyUser();
-          _userTrees = [];
-          _dailyUserTasks = [];
-          _treeProviders = [];
-          _taskProviders = [];
-          _taskResetTimer?.cancel();
-          print("User signed out, data cleared.");
-        }
-      } catch (e) {
+        //setting loading state during auth transition
+        _isLoading = true;
+        notifyListeners();
+
+        try { 
+          if (firebaseUser != null && !firebaseUser.isAnonymous ) {
+            if (_lastUserId != firebaseUser.uid) {
+              _user = await _fetchUserDataFromFirestore(firebaseUser);
+              await _initializeRelatedData(context,); //initialize data for the user
+              _startTaskResetTimer(context);
+              _lastUserId = firebaseUser.uid;
+            }
+          } else {
+            if (user.id == 'guest') print("Guest user.");
+            _user = _createEmptyUser();
+            _userTrees = [];
+            _dailyUserTasks = [];
+            _treeProviders = [];
+            _taskProviders = [];
+            _taskResetTimer?.cancel();
+            _lastUserId = null;
+            print("User signed out, data cleared.");
+          }
+        } catch (e) {
           print("Error during auth state change handling: $e");
-          _user = _createEmptyUser(); 
-      } finally {
-          _isLoading = false; 
-          notifyListeners(); 
-      }
+          _user = _createEmptyUser();
+        } finally {
+          _isLoading = false;
+          notifyListeners();
+        }
 
-    });
+      });
   }
 
 
@@ -220,22 +231,22 @@ class UserProvider with ChangeNotifier {
   Future<void> updateUserBio(String newBio) async {
     //prevent guest users from saving bio to Firestore
     if (_user.id == 'guest') {
-        _user.bio = newBio; //update locally for guest
-        notifyListeners();
-        print("Guest bio updated locally.");
-        return;
+      _user.bio = newBio; //update locally for guest
+      notifyListeners();
+      print("Guest bio updated locally.");
+      return;
     }
 
-    //limit bio length 
-    final trimmedBio = newBio.length > 150 ? newBio.substring(0, 150) : newBio; 
+    //limit bio length
+    final trimmedBio = newBio.length > 150 ? newBio.substring(0, 150) : newBio;
 
     if (_user.bio != trimmedBio) {
       _user.bio = trimmedBio;
-      notifyListeners(); 
+      notifyListeners();
       await _updateUserFirestore({'bio': trimmedBio});
       print("User bio updated in Firestore.");
     } else {
-       print("Bio unchanged, skipping update.");
+      print("Bio unchanged, skipping update.");
     }
 
   }
@@ -245,6 +256,7 @@ class UserProvider with ChangeNotifier {
 
   @override
   void dispose() {
+    _authSubscription?.cancel();
     _taskResetTimer?.cancel();
     super.dispose();
   }
@@ -260,7 +272,7 @@ class UserProvider with ChangeNotifier {
     if (_user.id == 'guest') {
       _userTrees = [];
       _treeProviders = [];
-      notifyListeners(); 
+      notifyListeners();
       return;
     }
 
@@ -274,20 +286,20 @@ class UserProvider with ChangeNotifier {
     print('(InitTrees) Available trees in GardenProvider: ${gardenProvider.allAvailableTrees.map((t) => t.id).toList()}',);
 
     // check if ownedTrees is actually populated
-     if (user.ownedTrees.isEmpty) {
-       print('(InitTrees) User owns no trees.');
-       _userTrees = [];
-       _treeProviders = [];
-       notifyListeners();
-       return;
-     }
+    if (user.ownedTrees.isEmpty) {
+      print('(InitTrees) User owns no trees.');
+      _userTrees = [];
+      _treeProviders = [];
+      notifyListeners();
+      return;
+    }
 
 
     for (final ownedTreeData in user.ownedTrees) {
       //ensure map structure is correct
       if (!ownedTreeData.containsKey('treeId')) {
-          print('Warning: Invalid owned tree data format: $ownedTreeData');
-          continue;
+        print('Warning: Invalid owned tree data format: $ownedTreeData');
+        continue;
       }
       final treeId = ownedTreeData['treeId'] as String?;
       final initialDropletsUsed = ownedTreeData['dropletsUsed'] as int? ?? 0;
@@ -304,16 +316,16 @@ class UserProvider with ChangeNotifier {
             description: tree.description,
             species: tree.species,
             price: tree.price,
-            levels: tree.levels, 
-            dropletsUsed: initialDropletsUsed, 
-            curLevel: initialCurLevel,      
+            levels: tree.levels,
+            dropletsUsed: initialDropletsUsed,
+            curLevel: initialCurLevel,
           );
           foundTrees.add(updatedTree);
-        } catch (e) { 
+        } catch (e) {
           print('Warning: Tree with ID $treeId from user data not found in catalog.');
         }
       } else {
-         print('Warning: Found owned tree data with null treeId.');
+        print('Warning: Found owned tree data with null treeId.');
       }
     }
 
@@ -327,7 +339,7 @@ class UserProvider with ChangeNotifier {
 
   Future<void> buyTree(BuildContext context, String treeId) async {
     final gardenProvider = Provider.of<GardenProvider>(context, listen: false);
-    await gardenProvider.dataLoaded; 
+    await gardenProvider.dataLoaded;
 
     final treeToBuy = gardenProvider.allAvailableTrees.firstWhere(
       (tree) => tree.id == treeId,
@@ -335,14 +347,14 @@ class UserProvider with ChangeNotifier {
     );
 
     print('Attempting to buy tree with ID: ${treeToBuy.id}');
-    final alreadyOwned = _user.ownedTrees.any( 
+    final alreadyOwned = _user.ownedTrees.any(
       (ownedTree) => ownedTree['treeId'] == treeId,
     );
 
     if (_user.droplets >= treeToBuy.price && !alreadyOwned) {
-      final price = treeToBuy.price; 
- 
-      takeDroplets(price); 
+      final price = treeToBuy.price;
+
+      takeDroplets(price);
 
       //update locally
       final newOwnedTreeData = {
@@ -359,26 +371,26 @@ class UserProvider with ChangeNotifier {
         species: treeToBuy.species,
         price: treeToBuy.price,
         levels: treeToBuy.levels,
-        dropletsUsed: 0, 
-        curLevel: 0,     
+        dropletsUsed: 0,
+        curLevel: 0,
       );
       _userTrees.add(boughtTreeInstance);
       _treeProviders.add(TreeProvider(boughtTreeInstance));
       notifyListeners();
 
-      if(_user.id != 'guest') { 
+      if(_user.id != 'guest') {
         try {
           await _updateUserFirestore({
             'ownedTrees': FieldValue.arrayUnion([newOwnedTreeData]),
-            });
+          });
           print("Tree purchased successfully and Firestore updated.");
         } catch (e) {
-           print('Error updating ownedTrees in Firestore after purchase: $e');
-           addDroplets(price); 
-           _user.ownedTrees.removeWhere((ot) => ot['treeId'] == treeId);
-           _userTrees.removeWhere((tree) => tree.id == treeId);
-           _treeProviders.removeWhere((provider) => provider.tree.id == treeId);
-           notifyListeners(); 
+          print('Error updating ownedTrees in Firestore after purchase: $e');
+          addDroplets(price);
+          _user.ownedTrees.removeWhere((ot) => ot['treeId'] == treeId);
+          _userTrees.removeWhere((tree) => tree.id == treeId);
+          _treeProviders.removeWhere((provider) => provider.tree.id == treeId);
+          notifyListeners();
         }
       } else {
         print('Guest user: Not updating Firestore for tree purchase.');
@@ -400,8 +412,8 @@ class UserProvider with ChangeNotifier {
     //update locally?
 
     final userDocRef = FirebaseFirestore.instance
-          .collection('users')
-          .doc(_user.id);
+        .collection('users')
+        .doc(_user.id);
     final userData = (await userDocRef.get()).data();
     if (userData != null && userData.containsKey('ownedTrees')) {
       final List<dynamic> ownedTreesData = List<dynamic>.from(
@@ -425,7 +437,7 @@ class UserProvider with ChangeNotifier {
       }
     }
   }
-  
+
 
 
 
@@ -460,11 +472,11 @@ class UserProvider with ChangeNotifier {
 
     List<String> completedTaskIds = [];
     List<Map<String, dynamic>> personalizedTasksMap = [];
-    
+
     if (dailyTasksDoc.exists && dailyTasksDoc.data() != null) {
       if (dailyTasksDoc.data()!.containsKey('personalized_tasks_map')) {
         personalizedTasksMap = List<Map<String, dynamic>>.from(dailyTasksDoc.data()!['personalized_tasks_map'] ?? []);}
-      
+
       if (dailyTasksDoc.data()!.containsKey('completedTasks')) {
         completedTaskIds = List<String>.from(dailyTasksDoc.data()!['completedTasks'] ?? []);}
     }
@@ -475,7 +487,7 @@ class UserProvider with ChangeNotifier {
         !dailyTasksDoc.exists ||
         dailyTasksDoc.data()?['date'] != todayDate ||
         (dailyTasksDoc.data()?['tasks'] as List<dynamic>?)?.isEmpty == true;
-    
+
     if (tasksProvider.allAvailableTasks.isNotEmpty && doReset) {
       //we assign new tasks
       final random = Random();
@@ -493,16 +505,16 @@ class UserProvider with ChangeNotifier {
       }
 
       await dailyTasksDocRef.set({
-        'date': todayDate, 
+        'date': todayDate,
         'tasks': selectedTasks,
-      });
+        });
 
       _dailyUserTasks =
           tasksProvider.allAvailableTasks
               .where((task) => selectedTasks.contains(task.id.toString()))
               .toList();
 
-      
+
       _tasksNeedReset = false;
 
 
@@ -514,9 +526,9 @@ class UserProvider with ChangeNotifier {
       );
 
       if (taskIdsFromFirestore.isEmpty) {
-         print("Warning: Firestore task list is empty, assigning new tasks.");
-         await _assignDailyTasks(context); 
-         return; 
+        print("Warning: Firestore task list is empty, assigning new tasks.");
+        //await _assignDailyTasks(context);
+        return;
       }
 
 
@@ -540,29 +552,29 @@ class UserProvider with ChangeNotifier {
 
       //build the list in the order from Firestore
       _dailyUserTasks = taskIdsFromFirestore.map((id) {
-        final task = allTasksMap[id];
-        if (task == null) {
-          print("Warning: Task ID $id from Firestore not found in available tasks or personalized map.");
-        }
-        return task;
-      }).whereType<Task>().toList(); 
+                final task = allTasksMap[id];
+                if (task == null) {
+                  print("Warning: Task ID $id from Firestore not found in available tasks or personalized map.");
+                }
+                return task;
+              }).whereType<Task>().toList();
 
 
     } else {
-       print("No existing daily tasks document found, assigning new tasks.");
-       await _assignDailyTasks(context); //recalling to trigger reset
-       return; 
+      print("No existing daily tasks document found, assigning new tasks.");
+      await _assignDailyTasks(context); //recalling to trigger reset
+      return;
     }
 
 
-    
+
 
     // we check if any of them is completed on Firestore
     for (var task in _dailyUserTasks) {
       task.isCompleted = completedTaskIds.contains(task.id.toString());
       task.isPersonalized = personalizedTasksMap.any((taskMap) => taskMap['id'] == task.id);
     }
-    
+
 
     notifyListeners();
   }
@@ -609,15 +621,16 @@ class UserProvider with ChangeNotifier {
 
   Future<void> completeTask(Task task) async {
     if (!_dailyUserTasks.any((t) => t.id == task.id)) return;
-    
+
     addDroplets(task.dropletReward);
     final index = _dailyUserTasks.indexWhere((t) => t.id == task.id);
+
     if (index != -1 && !_dailyUserTasks[index].isCompleted) {
       _dailyUserTasks[index].completeTask();
       notifyListeners();
     }
 
-    if (_user.id != 'guest') { 
+    if (_user.id != 'guest') {
       final dailyTasksDocRef = FirebaseFirestore.instance
           .collection('users')
           .doc(_user.id)
@@ -642,7 +655,7 @@ class UserProvider with ChangeNotifier {
       notifyListeners();
     }
 
-    if (_user.id != 'guest') { 
+    if (_user.id != 'guest') {
       final dailyTasksDocRef = FirebaseFirestore.instance
           .collection('users')
           .doc(_user.id)
@@ -680,49 +693,48 @@ class UserProvider with ChangeNotifier {
     //update Firestore if the user is not a guest
     if (_user.id != 'guest') {
       FirebaseFirestore.instance
-        .collection('users')
-        .doc(_user.id)
-        .collection('daily_tasks')
-        .doc('current')
+          .collection('users')
+          .doc(_user.id)
+          .collection('daily_tasks')
+          .doc('current')
 
-        .get().then((doc) {
+          .get().then((doc) {
 
-          if (doc.exists && doc.data()!.containsKey('personalized_tasks_map')) {
-            
-            List<String> tasks = List<String>.from(doc.data()!['tasks'] ?? []);
-            List<String> completedTasks = List<String>.from(doc.data()!['completedTasks'] ?? []);
+            if (doc.exists && doc.data()!.containsKey('personalized_tasks_map')) {
 
-            List<Map<String, dynamic>> personalizedTasksMap = 
-                List<Map<String, dynamic>>.from(doc.data()!['personalized_tasks_map'] ?? []);
-            
-            bool wasCompleted = completedTasks.contains(task.id);
-            if (wasCompleted) {
-              print("Task ${task.id} was completed. Taking 1 droplet.");
-              takeDroplets(1); 
+              List<String> tasks = List<String>.from(doc.data()!['tasks'] ?? []);
+              List<String> completedTasks = List<String>.from(doc.data()!['completedTasks'] ?? []);
+
+              List<Map<String, dynamic>> personalizedTasksMap = List<Map<String, dynamic>>.from(doc.data()!['personalized_tasks_map'] ?? []);
+
+              bool wasCompleted = completedTasks.contains(task.id);
+              if (wasCompleted) {
+                print("Task ${task.id} was completed. Taking 1 droplet.");
+                takeDroplets(1);
+              }
+
+              // find matching id
+              personalizedTasksMap.removeWhere((taskMap) => taskMap['id'] == task.id);
+              tasks.removeWhere((taskId) => taskId == task.id);
+              completedTasks.removeWhere((taskId) => taskId == task.id);
+
+              // update Firestore
+              FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(_user.id)
+                  .collection('daily_tasks')
+                  .doc('current')
+                  .update({
+                    'personalized_tasks_map': personalizedTasksMap,
+                    'tasks': tasks,
+                    'completedTasks': completedTasks,
+                  });
             }
-          
-            // find matching id
-            personalizedTasksMap.removeWhere((taskMap) => taskMap['id'] == task.id);
-            tasks.removeWhere((taskId) => taskId == task.id);
-            completedTasks.removeWhere((taskId) => taskId == task.id);
-
-            // update Firestore
-            FirebaseFirestore.instance
-                .collection('users')
-                .doc(_user.id)
-                .collection('daily_tasks')
-                .doc('current')
-                .update({
-                  'personalized_tasks_map': personalizedTasksMap,
-                  'tasks': tasks,
-                  'completedTasks': completedTasks,
-                });
           }
-        }
 
       );
     }
-  }  
+  }
 
 
 
@@ -747,8 +759,7 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-
-
+  final ValueNotifier<Duration> countdownNotifier = ValueNotifier(Duration.zero,);
 
   void _startTaskResetTimer(BuildContext context) {
     _taskResetTimer?.cancel(); // cancel any existing timer
@@ -768,15 +779,14 @@ class UserProvider with ChangeNotifier {
         _clearTasks(context);
         _assignDailyTasks(context);
         _startTaskResetTimer(context);
+        notifyListeners();
       } else {
         _timeUntilNextReset = nextReset.difference(DateTime.now());
-        notifyListeners();
+        countdownNotifier.value = _timeUntilNextReset;
       }
     });
 
-    print(
-      'Task reset timer started. Tasks will reset in $_timeUntilNextReset',
-    );
+    print('Task reset timer started. Tasks will reset in $_timeUntilNextReset');
   }
 
 

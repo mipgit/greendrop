@@ -19,7 +19,7 @@ class TasksView extends StatelessWidget {
       body: Consumer<UserProvider>(
         builder: (context, userProvider, child) {
           final userTasks = userProvider.userTasks;
-          final timeLeft = userProvider.timeUntilNextReset;
+          //final timeLeft = userProvider.timeUntilNextReset;
 
           if (userTasks.isEmpty) {
             return Padding( 
@@ -34,10 +34,15 @@ class TasksView extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: Text(
-                  'Tasks refresh in: ${formatDuration(timeLeft)}',
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
-                ),
+                child: ValueListenableBuilder<Duration>(
+                  valueListenable: context.read<UserProvider>().countdownNotifier,
+                  builder: (context, duration, child) {
+                    return Text(
+                      'Tasks refresh in: ${formatDuration(duration)}',
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    );
+                  },
+                )
               ),
               const SizedBox(height: 10),
               Expanded(
