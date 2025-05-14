@@ -18,16 +18,13 @@
 
  class _GroupSettingsViewState extends State<GroupSettingsView> {
    final TextEditingController _bioController = TextEditingController();
-   final TextEditingController _groupNameController = TextEditingController();
    String? _groupBio;
    List<String> _memberIds = [];
-   bool _isEditingName = false;
 
    @override
    void initState() {
      super.initState();
      _loadGroupDetails();
-     _groupNameController.text = widget.groupName; // Initialize with current name
    }
 
    Future<void> _loadGroupDetails() async {
@@ -63,31 +60,6 @@
      }
    }
 
-   Future<void> _updateGroupName(String newName) async {
-     if (newName.trim() != widget.groupName.trim()) {
-       try {
-         await FirebaseFirestore.instance.collection('groups').doc(widget.groupId).update({'name': newName.trim()});
-         setState(() {
-           _isEditingName = false;
-         });
-         ScaffoldMessenger.of(context).showSnackBar(
-           const SnackBar(content: Text('Group name updated!')),
-         );
-         // You might need to update the group name in the ChatView as well
-         // Consider using a state management solution for cross-widget updates
-       } catch (e) {
-         print('Error updating group name: $e');
-         ScaffoldMessenger.of(context).showSnackBar(
-           const SnackBar(content: Text('Failed to update group name.')),
-         );
-       }
-     } else {
-       setState(() {
-         _isEditingName = false;
-       });
-     }
-   }
-
    Future<void> _leaveGroup(BuildContext context) async {
      final userId = FirebaseAuth.instance.currentUser?.email;
      if (userId != null) {
@@ -115,23 +87,7 @@
            icon: const Icon(Icons.arrow_back),
            onPressed: () => Navigator.pop(context),
          ),
-         title: Text(_isEditingName ? 'Edit Group Name' : 'Group Details'),
-         actions: [
-           if (_isEditingName)
-             IconButton(
-               icon: const Icon(Icons.save),
-               onPressed: () => _updateGroupName(_groupNameController.text),
-             ),
-           if (!_isEditingName)
-             IconButton(
-               icon: const Icon(Icons.edit),
-               onPressed: () {
-                 setState(() {
-                   _isEditingName = true;
-                 });
-               },
-             ),
-         ],
+         title: const Text('Group Details'),
        ),
        body: SingleChildScrollView(
          padding: const EdgeInsets.all(16.0),
@@ -143,20 +99,10 @@
                child: Icon(Icons.group, size: 40), // Placeholder
              ),
              const SizedBox(height: 16.0),
-             if (_isEditingName)
-               TextFormField(
-                 controller: _groupNameController,
-                 textAlign: TextAlign.center,
-                 style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                 decoration: const InputDecoration(
-                   border: OutlineInputBorder(),
-                 ),
-               )
-             else
-               Text(
-                 widget.groupName,
-                 style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-               ),
+             Text(
+               widget.groupName,
+               style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+             ),
              const SizedBox(height: 8.0),
              GestureDetector(
                onTap: () => _copyGroupId(context),
@@ -167,12 +113,10 @@
                      'Group ID: ',
                      style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold, color: Colors.grey),
                    ),
-                   Expanded(
-                     child: Text(
-                       widget.groupId,
-                       style: const TextStyle(fontSize: 14.0, color: Colors.grey),
-                       overflow: TextOverflow.ellipsis,
-                     ),
+                   Text(
+                     widget.groupId,
+                     style: const TextStyle(fontSize: 14.0, color: Colors.grey),
+                     overflow: TextOverflow.ellipsis,
                    ),
                    const SizedBox(width: 4.0),
                    const Icon(Icons.copy, size: 16.0, color: Colors.grey),
@@ -212,7 +156,7 @@
                      final userData = snapshot.data!.data() as Map<String, dynamic>?;
                      final String memberName = userData?['displayName'] ?? memberId;
                      return ListTile(
-                       leading: const CircleAvatar(child: Icon(Icons.person)),
+                       leading: const CircleAvatar(child: Icon(Icons.person)), // Placeholder
                        title: Text(memberName),
                      );
                    } else if (snapshot.connectionState == ConnectionState.waiting) {
@@ -223,7 +167,7 @@
                    } else {
                      return ListTile(
                        leading: const CircleAvatar(child: Icon(Icons.person)),
-                       title: Text(memberId),
+                       title: Text(memberId)
                      );
                    }
                  },
