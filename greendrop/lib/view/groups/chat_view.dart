@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:greendrop/view/groups/message_view.dart'; 
+import 'package:greendrop/view/groups/group_settings_view.dart'; 
 
 class ChatView extends StatefulWidget {
   final String groupId;
@@ -57,7 +58,17 @@ class _ChatViewState extends State<ChatView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.groupName),
+        title: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => GroupSettingsView(groupId: widget.groupId, groupName: widget.groupName), // Pass groupName
+              ),
+            );
+          },
+           child: Text(widget.groupName), 
+         ),
       ),
       body: Column(
         children: <Widget>[
