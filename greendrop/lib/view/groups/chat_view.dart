@@ -245,15 +245,14 @@
                       FutureBuilder<DocumentSnapshot>(
                         future: FirebaseFirestore.instance.collection('users').doc(senderId).get(),
                         builder: (context, userSnapshot) {
-                          String senderName = senderId;
+                          //String senderName = senderId;
+                          String senderName = '';
                           String? photoUrl;
                           if (userSnapshot.hasData && userSnapshot.data != null) {
                             final userData = userSnapshot.data!.data() as Map<String, dynamic>?;
                             if (userData != null) {
                                if (userData['email'] != null) {
                                  senderName = (userData['email'] as String).split('@')[0];
-                               } else {
-                                 senderName = senderId;
                                }
                                photoUrl = userData['profilePicture'] as String?;
                             }  
@@ -272,7 +271,7 @@
                                      child: CircleAvatar(
                                        radius: 15,
                                        backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : null,
-                                       child: photoUrl == null ? Text(senderName[0].toUpperCase()) : null,
+                                       child: photoUrl == null ? Icon(Icons.person) : null,
                                      ),
                                    ),
                                  Expanded(

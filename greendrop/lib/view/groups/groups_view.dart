@@ -192,7 +192,7 @@ class _GroupsViewState extends State<GroupsView> {
 
     return Scaffold(
         body: Padding( 
-        padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding), 
+        padding: EdgeInsets.only(top: 15.0, bottom: bottomNavBarHeightPadding), 
           child: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _errorMessage != null
