@@ -268,7 +268,7 @@
                                children: [
                                  if (!isMe)
                                    Padding(
-                                     padding: const EdgeInsets.only(right: 10.0, top: 10.0),
+                                     padding: const EdgeInsets.only(right: 10.0, top: 2.0),
                                      child: CircleAvatar(
                                        radius: 15,
                                        backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : null,
@@ -277,34 +277,46 @@
                                    ),
                                  Expanded(
                                    child: Column(
-                                     crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                                     children: [
-                                       if (!isMe)
-                                         Padding(
-                                           padding: const EdgeInsets.only(bottom: 2.0, left: 8.0, right: 8.0),
-                                           child: Text(
-                                             senderName,
-                                             style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey, fontSize: 12.0),
-                                           ),
-                                         ),
-                                       Container(
-                                         padding: const EdgeInsets.all(8.0),
-                                         margin: EdgeInsets.only(top: !isMe ? 2.0 : 0),
-                                         decoration: BoxDecoration(
-                                           color: isMe ? Colors.green.shade100 : Colors.grey.shade200,
-                                           borderRadius: BorderRadius.circular(8.0),
-                                         ),
-                                         child: Text(messageData['text'] ?? ''),
-                                       ),
-                                       Padding(
-                                         padding: const EdgeInsets.only(top: 2.0, left: 8.0, right: 8.0),
-                                         child: Text(
-                                           formattedTime,
-                                           style: const TextStyle(color: Colors.grey, fontSize: 10.0),
-                                         ),
-                                       ),
-                                     ],
-                                   ),
+                                    crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(8.0),
+                                        margin: EdgeInsets.only(top: !isMe ? 2.0 : 0),
+                                        decoration: BoxDecoration(
+                                          color: isMe ? Colors.green.shade100 : Colors.grey.shade200,
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(isMe ? 12 : 0),
+                                            topRight: const Radius.circular(12),
+                                            bottomLeft: const Radius.circular(12),   
+                                            bottomRight: Radius.circular(isMe ? 0 : 12),  
+                                          ),
+                                        ),  
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            if (!isMe)
+                                              Text(
+                                                senderName,
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.blueGrey,
+                                                  fontSize: 12.0,
+                                                ),
+                                              ),
+                                            const SizedBox(height: 4.0),
+                                            Text(messageData['text'] ?? ''),
+                                          ],
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 2.0, left: 8.0, right: 8.0),
+                                        child: Text(
+                                          formattedTime,
+                                          style: const TextStyle(color: Colors.grey, fontSize: 10.0),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                  ),
                                ],
                              ),
