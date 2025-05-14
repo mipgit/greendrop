@@ -9,9 +9,29 @@ class DropletCounter extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UserProvider>(
       builder: (context, userProvider, child) {
-        final isNegative = UserProvider(context).user.droplets < 0;
+        final isNegative = userProvider.user.droplets < 0;
         final color = isNegative ? const Color.fromARGB(255, 236, 135, 128) : const Color.fromARGB(255, 107, 172, 226);
-        final textColor = isNegative ? const Color.fromARGB(255, 99, 25, 20) : const Color.fromARGB(255, 40, 78, 109);
+        final textColor = isNegative ? const Color.fromARGB(255, 165, 19, 8) : const Color.fromARGB(255, 40, 78, 109);
+
+        if (isNegative) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: SizedBox(
+                  height: 25,
+                  child: Center(
+                    child: Text("You are in debt!!! Revert your actions."),
+                  ),
+                ),
+                duration: Duration(seconds: 3),
+                backgroundColor: Colors.red,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          });
+        }
+
+
 
         return Row(
           mainAxisSize: MainAxisSize.min,
