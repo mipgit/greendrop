@@ -168,22 +168,62 @@
                      final bool isMe = senderId == FirebaseAuth.instance.currentUser?.email;
                      final Timestamp? timestamp = messageData['timestamp'] as Timestamp?;
                      final DateTime? dateTime = timestamp?.toDate();
+
+                    
+                     
+                      bool showDateHeader = false;
+                      if (index == 0) {
+                        showDateHeader = true;
+                      } else {
+                        final prevMessageData = messages[index - 1].data() as Map<String, dynamic>;
+                        final prevTimestamp = prevMessageData['timestamp'] as Timestamp?;
+                        final prevDateTime = prevTimestamp?.toDate();
+                        if (dateTime != null && prevDateTime != null) {
+                          showDateHeader = dateTime.day != prevDateTime.day ||
+                                           dateTime.month != prevDateTime.month ||
+                                           dateTime.year != prevDateTime.year;
+                        }
+                      }
+                  
+
                      final String formattedTime = dateTime != null
                          ? '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}'
                          : '';
 
-                     return FutureBuilder<DocumentSnapshot>(
-                       future: FirebaseFirestore.instance.collection('users').doc(senderId).get(),
-                       builder: (context, userSnapshot) {
-                         String senderName = senderId;
-                         String? photoUrl;
-                         if (userSnapshot.hasData && userSnapshot.data != null) {
-                           final userData = userSnapshot.data!.data() as Map<String, dynamic>?;
-                           if (userData != null) {
-                             senderName = userData['displayName'] ?? senderId;
-                             photoUrl = userData['photoURL'];
-                           }
-                         }
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (showDateHeader)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Center(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 220, 236, 202),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              dateTime != null
+                                  ? '${dateTime.day.toString().padLeft(2, '0')}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.year}'
+                                  : '',
+                              style: const TextStyle(color: Colors.black54, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ),
+                      FutureBuilder<DocumentSnapshot>(
+                        future: FirebaseFirestore.instance.collection('users').doc(senderId).get(),
+                        builder: (context, userSnapshot) {
+                          String senderName = senderId;
+                          String? photoUrl;
+                          if (userSnapshot.hasData && userSnapshot.data != null) {
+                            final userData = userSnapshot.data!.data() as Map<String, dynamic>?;
+                            if (userData != null) {
+                              senderName = userData['displayName'] ?? senderId;
+                              photoUrl = userData['photoURL'];
+                            }
+                          }
 
                          return Align(
                            alignment: isMe ? Alignment.topRight : Alignment.topLeft,
@@ -237,7 +277,9 @@
                            ),
                          );
                        },
-                     );
+                      ),
+                      ],
+                     );  
                    },
                  );
                },
