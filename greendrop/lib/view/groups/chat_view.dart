@@ -24,10 +24,14 @@
    List<String> _memberIds = [];
    Map<String, String> _memberNames = {};
 
+  
+   final ValueNotifier<int> _sentTodayNotifier = ValueNotifier<int>(0);
+  
    @override
    void initState() {
      super.initState();
      _fetchGroupMembers();
+     _updateSentToday();
      WidgetsBinding.instance.addPostFrameCallback((_) {
        _scrollToBottom();
      });
@@ -72,8 +76,32 @@
        });
        _messageController.clear();
        _scrollToBottom();
+       await _updateSentToday(); 
      }
    }
+
+  Future<int> _getMessagesSentToday(String userId) async {
+    print('Fetching messages sent today for user: $userId');
+    final now = DateTime.now();
+    final startOfDay = DateTime(now.year, now.month, now.day);
+    final snapshot = await _messagesCollection
+        .where('groupId', isEqualTo: widget.groupId)
+        .where('senderId', isEqualTo: userId)
+        .where('timestamp', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
+        .get();
+    return snapshot.docs.length;
+  }
+
+
+  Future<void> _updateSentToday() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final count = await _getMessagesSentToday(user.uid);
+      _sentTodayNotifier.value = count;
+    }
+  }
+
+
 
    @override
    Widget build(BuildContext context) {
@@ -92,15 +120,17 @@
              children: [
                if (_memberIds.isNotEmpty)
                  Row(
-                   children: _memberIds.take(3).map((memberId) {
-                     return Padding(
+                   children: [
+                   //_memberIds.take(1).map((memberId) { return 
+                    Padding(
                        padding: const EdgeInsets.only(right: 4.0),
                        child: CircleAvatar(
-                         radius: 15,
-                         child: Text(_memberNames[memberId]?[0].toUpperCase() ?? '?'),
+                         radius: 18,
+                         child: Icon(Icons.group),
                        ),
-                     );
-                   }).toList(),
+                     )
+                   ]
+                   //}).toList(),
                  ),
                const SizedBox(width: 8.0),
                Expanded(
@@ -295,19 +325,25 @@
              child: Row(
                children: <Widget>[
                  Expanded(
-                   child: TextField(
+                   child: ValueListenableBuilder<int>(
+                    valueListenable: _sentTodayNotifier,
+                    builder: (context, sentToday, _) => TextField(
                      controller: _messageController,
-                     decoration: const InputDecoration(
-                       hintText: 'Send a message...',
+                     decoration: InputDecoration(
+                       hintText: 'Send a message...   ($sentToday/5)',
                        border: InputBorder.none,
                      ),
                      onSubmitted: (_) => _sendMessage(),
                    ),
+                  ), 
                  ),
-                 IconButton(
+                 ValueListenableBuilder<int>(
+                  valueListenable: _sentTodayNotifier,
+                  builder: (context, sentToday, _) => IconButton(
                    icon: const Icon(Icons.send),
-                   onPressed: _sendMessage,
+                   onPressed: sentToday >= 5 ? null : _sendMessage,
                  ),
+                ), 
                ],
              ),
            ),

@@ -63,7 +63,7 @@
    }
 
    Future<void> _leaveGroup(BuildContext context) async {
-     final userId = FirebaseAuth.instance.currentUser?.email;
+     final userId = FirebaseAuth.instance.currentUser?.uid;
      if (userId != null) {
        final groupService = Provider.of<GroupService>(context, listen: false);
        bool left = await groupService.leaveGroup(context, widget.groupId, userId);
@@ -71,6 +71,18 @@
          Navigator.pop(context); // Go back to chat view
          Navigator.pop(context); // Go back to groups list
        }
+       if (userId == _creatorId) {
+         //if the user that leaves is the creator, the group is deleted
+         await FirebaseFirestore.instance.collection('groups').doc(widget.groupId).delete();
+         //and so are all the messages
+         final messages = await FirebaseFirestore.instance
+             .collection('messages')
+             .where('groupId', isEqualTo: widget.groupId)
+             .get();
+         for (final doc in messages.docs) {
+           await doc.reference.delete();
+         }
+       } 
      }
    }
 
@@ -175,7 +187,7 @@
                           Text(memberName, style: TextStyle(fontWeight: isCreator ? FontWeight.bold : FontWeight.normal, color: isCreator ? const Color.fromARGB(255, 79, 145, 36) : Colors.black)),
                             const SizedBox(width: 4.0),
                             if (isCreator)
-                              Text("(creator)", style: TextStyle(color: Color.fromARGB(255, 79, 145, 36), fontStyle: FontStyle.italic)),
+                              Text("(creator)", style: TextStyle(color: Color.fromARGB(255, 79, 145, 36), )),
                          ]
                        ),
                        subtitle: Text(memberEmail, style: TextStyle(color: isCreator ? const Color.fromARGB(255, 79, 145, 36) : Colors.black)),
