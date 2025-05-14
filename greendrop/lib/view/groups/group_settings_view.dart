@@ -19,6 +19,7 @@
  class _GroupSettingsViewState extends State<GroupSettingsView> {
    final TextEditingController _bioController = TextEditingController();
    String? _groupBio;
+    String? _creatorId;
    List<String> _memberIds = [];
 
    @override
@@ -36,6 +37,7 @@
            _groupBio = groupData['bio'] as String?;
            _bioController.text = _groupBio ?? '';
            _memberIds = (groupData['memberIds'] as List<dynamic>?)?.cast<String>() ?? [];
+           _creatorId = groupData['creatorId'] as String?;
          });
        }
      } catch (e) {
@@ -154,10 +156,29 @@
                  builder: (context, snapshot) {
                    if (snapshot.hasData && snapshot.data != null) {
                      final userData = snapshot.data!.data() as Map<String, dynamic>?;
-                     final String memberName = userData?['displayName'] ?? memberId;
+                     final String memberName = userData?['username'] ?? memberId;
+                     final String memberProfilePicture = userData?['profilePicture'] ?? '' ;
+                     final String memberEmail = userData?['email'] ?? '';
+                     final bool isCreator = memberId == _creatorId;
                      return ListTile(
-                       leading: const CircleAvatar(child: Icon(Icons.person)), // Placeholder
-                       title: Text(memberName),
+                       //tileColor: isCreator ? const Color.fromARGB(255, 231, 245, 232) : null,
+                       leading: CircleAvatar(
+                         backgroundImage: memberProfilePicture.isNotEmpty
+                             ? NetworkImage(memberProfilePicture)
+                             : null,
+                         child: memberProfilePicture.isEmpty
+                             ? const Icon(Icons.person)
+                             : null,
+                       ),
+                       title: Row (
+                         children: [
+                          Text(memberName, style: TextStyle(fontWeight: isCreator ? FontWeight.bold : FontWeight.normal, color: isCreator ? const Color.fromARGB(255, 79, 145, 36) : Colors.black)),
+                            const SizedBox(width: 4.0),
+                            if (isCreator)
+                              Text("(creator)", style: TextStyle(color: Color.fromARGB(255, 79, 145, 36), fontStyle: FontStyle.italic)),
+                         ]
+                       ),
+                       subtitle: Text(memberEmail, style: TextStyle(color: isCreator ? const Color.fromARGB(255, 79, 145, 36) : Colors.black)),
                      );
                    } else if (snapshot.connectionState == ConnectionState.waiting) {
                      return const ListTile(

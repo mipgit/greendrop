@@ -66,7 +66,7 @@
      if (messageText.isNotEmpty && user != null) {
        await _messagesCollection.add({
          'groupId': widget.groupId,
-         'senderId': user.email,
+         'senderId': user.uid,
          'text': messageText,
          'timestamp': FieldValue.serverTimestamp(),
        });
@@ -165,7 +165,7 @@
                    itemBuilder: (context, index) {
                      final messageData = messages[index].data() as Map<String, dynamic>;
                      final String senderId = messageData['senderId'] ?? '';
-                     final bool isMe = senderId == FirebaseAuth.instance.currentUser?.email;
+                     final bool isMe = senderId == FirebaseAuth.instance.currentUser?.uid;
                      final Timestamp? timestamp = messageData['timestamp'] as Timestamp?;
                      final DateTime? dateTime = timestamp?.toDate();
 
@@ -220,9 +220,13 @@
                           if (userSnapshot.hasData && userSnapshot.data != null) {
                             final userData = userSnapshot.data!.data() as Map<String, dynamic>?;
                             if (userData != null) {
-                              senderName = userData['displayName'] ?? senderId;
-                              photoUrl = userData['photoURL'];
-                            }
+                               if (userData['email'] != null) {
+                                 senderName = (userData['email'] as String).split('@')[0];
+                               } else {
+                                 senderName = senderId;
+                               }
+                               photoUrl = userData['profilePicture'] as String?;
+                            }  
                           }
 
                          return Align(
@@ -234,7 +238,7 @@
                                children: [
                                  if (!isMe)
                                    Padding(
-                                     padding: const EdgeInsets.only(right: 8.0, top: 8.0),
+                                     padding: const EdgeInsets.only(right: 10.0, top: 10.0),
                                      child: CircleAvatar(
                                        radius: 15,
                                        backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : null,

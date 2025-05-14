@@ -12,7 +12,7 @@ class GroupService extends ChangeNotifier {
 
   String? _getCurrentUserId(BuildContext context) {
     final authService = Provider.of<AuthenticationService>(context, listen: false);
-    return authService.email;
+    return authService.uid;
   }
 
   Future<void> fetchUserGroups(BuildContext context) async {

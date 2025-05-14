@@ -12,7 +12,8 @@ class AuthenticationService with ChangeNotifier {
 
   GoogleSignInAccount? get currentUser => _currentUser;
   String? get displayName => _auth.currentUser?.displayName;
-  String? get email => _auth.currentUser?.email;
+  String? get uid => _auth.currentUser?.uid;
+  //String? get email => _auth.currentUser?.email;
   bool get isGuest => _isGuest;
 
 
