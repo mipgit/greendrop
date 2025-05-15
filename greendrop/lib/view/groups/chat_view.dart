@@ -33,6 +33,7 @@ import 'package:provider/provider.dart';
      super.initState();
      _fetchGroupMembers();
      _updateSentToday();
+    _deleteOldMessagesOncePerDay();
      WidgetsBinding.instance.addPostFrameCallback((_) {
         Provider.of<GroupProvider>(context, listen: false).assignDailyTask(context);
        _scrollToBottom();
@@ -105,11 +106,45 @@ import 'package:provider/provider.dart';
 
 
 
+  static DateTime? _lastDeletionDate;
+
+  Future<void> _deleteOldMessagesOncePerDay() async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    if (_lastDeletionDate == null || _lastDeletionDate!.isBefore(today)) {
+      final startOfDay = today;
+      final oldMessages = await _messagesCollection
+          .where('groupId', isEqualTo: widget.groupId)
+          .where('timestamp', isLessThan: Timestamp.fromDate(startOfDay))
+          .get();
+
+      for (final doc in oldMessages.docs) {
+        await doc.reference.delete();
+      }
+      _lastDeletionDate = today;
+    }
+  }
+
+
+
+
+
+
+
+
+
+
    @override
    Widget build(BuildContext context) {
     final groupProvider = Provider.of<GroupProvider>(context);
     final dailyTask = groupProvider.dailyGroupTask;
     final completedBy = groupProvider.completedBy;
+
+    final now = DateTime.now();
+    final startOfDay = DateTime(now.year, now.month, now.day);
+
+    
 
 
     return Scaffold(
@@ -181,13 +216,33 @@ import 'package:provider/provider.dart';
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 10.0),
+                const SizedBox(height: 22.0),
+                Center(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 7, 95, 86),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      '${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                //const SizedBox(height: 10.0),
                 TasksCard(
                   task: dailyTask,
                   isGroupTask: true,
                   onStateChanged: () {},
                 ),
-                 Center( 
+                Center(
                   child: Text(
                     'completed by: ${completedBy.length} / ${_memberIds.length} members',
                     style: const TextStyle(
@@ -195,7 +250,7 @@ import 'package:provider/provider.dart';
                       color: Colors.teal,
                       fontSize: 14,
                     ),
-                 ),
+                  ),
                 ),
                 const SizedBox(height: 12.0),
               ],
@@ -206,6 +261,7 @@ import 'package:provider/provider.dart';
              child: StreamBuilder<QuerySnapshot>(
                stream: _messagesCollection
                    .where('groupId', isEqualTo: widget.groupId)
+                   .where('timestamp', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
                    .orderBy('timestamp', descending: false)
                    .snapshots(),
                builder: (context, snapshot) {
@@ -234,7 +290,7 @@ import 'package:provider/provider.dart';
                      final DateTime? dateTime = timestamp?.toDate();
 
                     
-                     
+                     /*
                       bool showDateHeader = false;
                       if (index == 0) {
                         showDateHeader = true;
@@ -248,34 +304,16 @@ import 'package:provider/provider.dart';
                                            dateTime.year != prevDateTime.year;
                         }
                       }
-                  
+                    */   
 
                      final String formattedTime = dateTime != null
                          ? '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}'
                          : '';
-
+                      
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    if (showDateHeader)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Center(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 220, 236, 202),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              dateTime != null
-                                  ? '${dateTime.day.toString().padLeft(2, '0')}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.year}'
-                                  : '',
-                              style: const TextStyle(color: Colors.black54, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ),
+                    
                       FutureBuilder<DocumentSnapshot>(
                         future: FirebaseFirestore.instance.collection('users').doc(senderId).get(),
                         builder: (context, userSnapshot) {
