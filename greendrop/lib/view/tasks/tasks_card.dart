@@ -1,21 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:greendrop/model/task.dart';
+import 'package:greendrop/view-model/group_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:greendrop/view-model/user_provider.dart';
 
 class TasksCard extends StatelessWidget {
   final Task task;
   final VoidCallback? onStateChanged;
+  final bool isGroupTask;
 
-  const TasksCard({super.key, required this.task, required this.onStateChanged});
+  const TasksCard({super.key, required this.task, required this.onStateChanged, this.isGroupTask = false});
 
   void _toggleTaskCompletion(BuildContext context, Task task) {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
-    if (!task.isCompleted) {
-      userProvider.completeTask(task);
-    }  else {
-      userProvider.unCompleteTask(task);
+    if (isGroupTask) {
+      final groupProvider = Provider.of<GroupProvider>(context, listen: false);
+      final userId = userProvider.user.id;
+      final isCompleted = groupProvider.hasUserCompleted(userId);
+
+      if (!isCompleted) {
+        groupProvider.completeGroupTask(context, userId);
+      } else {
+        groupProvider.unCompleteGroupTask(context, userId);
+      }
+    } else {
+      if (!task.isCompleted) {
+        userProvider.completeTask(task);
+      } else {
+        userProvider.unCompleteTask(task);
+      }
     }
     
     if (onStateChanged != null) {
@@ -56,18 +70,24 @@ class TasksCard extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final userProvider = Provider.of<UserProvider>(context);
+    GroupProvider? groupProvider;
+    if (isGroupTask) {
+      groupProvider = Provider.of<GroupProvider>(context);
+    }
 
-    // Set the background color based on whether the task is personalized
-    final backgroundColor = task.isPersonalized
-        ? const Color.fromARGB(255, 239, 243, 234)
-        : const Color.fromARGB(255, 220, 236, 202);
+    final backgroundColor = isGroupTask
+      ? const Color.fromARGB(255, 227, 241, 234)
+      : (task.isPersonalized
+          ? const Color.fromARGB(255, 239, 243, 234)
+          : const Color.fromARGB(255, 220, 236, 202));
 
 
-    // Find the current state of this specific task from the user's task list
-    final currentTaskState = userProvider.userTasks.firstWhere(
-      (t) => t.id == task.id,
-      orElse: () => task, // Fallback to the passed task if not found (shouldn't happen)
-    );
+    final bool isCompleted = isGroupTask
+      ? groupProvider!.hasUserCompleted(userProvider.user.id)
+      : userProvider.userTasks.firstWhere(
+          (t) => t.id == task.id,
+          orElse: () => task,
+        ).isCompleted;
 
 
     return Stack(
@@ -96,7 +116,7 @@ class TasksCard extends StatelessWidget {
                     ),
                   ),
                   Checkbox(
-                    value: currentTaskState.isCompleted,
+                    value: isCompleted,
                     onChanged: (_) => _toggleTaskCompletion(context, task),
                   ),
                 ],

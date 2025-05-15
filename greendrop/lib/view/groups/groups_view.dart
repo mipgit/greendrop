@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:greendrop/services/authentication_service.dart';
 import 'package:greendrop/services/group_service.dart';
+import 'package:greendrop/view-model/group_provider.dart';
 import 'package:greendrop/view/groups/create_group_view.dart';
 import 'package:greendrop/view/groups/join_group_view.dart';
 import 'package:greendrop/view/groups/chat_view.dart';
@@ -192,7 +193,7 @@ class _GroupsViewState extends State<GroupsView> {
 
     return Scaffold(
         body: Padding( 
-        padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding), 
+        padding: EdgeInsets.only(top: 15.0, bottom: bottomNavBarHeightPadding), 
           child: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _errorMessage != null
@@ -217,17 +218,19 @@ class _GroupsViewState extends State<GroupsView> {
                             ),
                             title: Text(group.name),
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) => ChatView(
-                                        groupId: group.id,
-                                        groupName: group.name,
-                                      ),
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChangeNotifierProvider(
+                                  create: (_) => GroupProvider(group.id),
+                                  child: ChatView(
+                                    groupId: group.id,
+                                    groupName: group.name,
+                                  ),
                                 ),
-                              );
-                            },
+                              ),
+                            );
+                          },
                           );
                         },
                       );

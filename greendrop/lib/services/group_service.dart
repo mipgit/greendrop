@@ -12,7 +12,7 @@ class GroupService extends ChangeNotifier {
 
   String? _getCurrentUserId(BuildContext context) {
     final authService = Provider.of<AuthenticationService>(context, listen: false);
-    return authService.email;
+    return authService.uid;
   }
 
   Future<void> fetchUserGroups(BuildContext context) async {
@@ -132,4 +132,43 @@ class GroupService extends ChangeNotifier {
       memberIds: (data['memberIds'] as List<dynamic>?)?.cast<String>() ?? [],
     );
   }
+
+  // In services/group_service.dart
+ // ... (other imports and class definition)
+
+   Future<bool> leaveGroup(BuildContext context, String groupId, String userId) async {
+     try {
+       final groupRef = _firestore.collection('groups').doc(groupId);
+       final groupDoc = await groupRef.get();
+
+       if (groupDoc.exists) {
+         final groupData = groupDoc.data()!;
+         List<String> existingMembers = (groupData['memberIds'] as List<dynamic>?)?.cast<String>() ?? [];
+
+         if (existingMembers.contains(userId)) {
+           await groupRef.update({
+             'memberIds': FieldValue.arrayRemove([userId]),
+           });
+           fetchUserGroups(context); // Update the user's group list
+           return true;
+         } else {
+           ScaffoldMessenger.of(context).showSnackBar(
+             const SnackBar(content: Text('You are not a member of this group.')),
+           );
+           return false;
+         }
+       } else {
+         ScaffoldMessenger.of(context).showSnackBar(
+           const SnackBar(content: Text('Group does not exist.')),
+         );
+         return false;
+       }
+     } catch (e) {
+       print('Error leaving group: $e');
+       ScaffoldMessenger.of(context).showSnackBar(
+         SnackBar(content: Text('Failed to leave group: $e')),
+       );
+       return false;
+     }
+   }
 }
