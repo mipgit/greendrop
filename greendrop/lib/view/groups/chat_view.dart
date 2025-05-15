@@ -2,7 +2,10 @@
  import 'package:cloud_firestore/cloud_firestore.dart';
  import 'package:firebase_auth/firebase_auth.dart';
  import 'package:flutter/material.dart';
+import 'package:greendrop/view-model/group_provider.dart';
  import 'package:greendrop/view/groups/group_settings_view.dart';
+import 'package:greendrop/view/tasks/tasks_card.dart';
+import 'package:provider/provider.dart';
 
  class ChatView extends StatefulWidget {
    final String groupId;
@@ -17,10 +20,8 @@
  class _ChatViewState extends State<ChatView> {
    final TextEditingController _messageController = TextEditingController();
    final ScrollController _scrollController = ScrollController();
-   final CollectionReference _messagesCollection =
-       FirebaseFirestore.instance.collection('messages');
-   final CollectionReference _groupsCollection =
-       FirebaseFirestore.instance.collection('groups');
+   final CollectionReference _messagesCollection = FirebaseFirestore.instance.collection('messages');
+   final CollectionReference _groupsCollection = FirebaseFirestore.instance.collection('groups');
    List<String> _memberIds = [];
    Map<String, String> _memberNames = {};
 
@@ -33,6 +34,7 @@
      _fetchGroupMembers();
      _updateSentToday();
      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Provider.of<GroupProvider>(context, listen: false).assignDailyTask(context);
        _scrollToBottom();
      });
    }
@@ -105,8 +107,14 @@
 
    @override
    Widget build(BuildContext context) {
-     return Scaffold(
+    final groupProvider = Provider.of<GroupProvider>(context);
+    final dailyTask = groupProvider.dailyGroupTask;
+    final completedBy = groupProvider.completedBy;
+
+
+    return Scaffold(
        appBar: AppBar(
+         scrolledUnderElevation: 0,
          title: InkWell(
            onTap: () {
              Navigator.push(
@@ -168,6 +176,32 @@
        ),
        body: Column(
          children: <Widget>[
+
+          if (dailyTask != null)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 10.0),
+                TasksCard(
+                  task: dailyTask,
+                  isGroupTask: true,
+                  onStateChanged: () {},
+                ),
+                 Center( 
+                  child: Text(
+                    'completed by: ${completedBy.length} / ${_memberIds.length} members',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.teal,
+                      fontSize: 14,
+                    ),
+                 ),
+                ),
+                const SizedBox(height: 12.0),
+              ],
+            ),
+
+
            Expanded(
              child: StreamBuilder<QuerySnapshot>(
                stream: _messagesCollection
