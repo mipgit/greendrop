@@ -79,7 +79,7 @@ import 'package:provider/provider.dart';
 
      if (messageText.isNotEmpty && user != null) {
        await _messagesCollection.add({
-         'groupId': widget.groupId,
+         //'groupId': widget.groupId,
          'senderId': user.uid,
          'text': messageText,
          'timestamp': FieldValue.serverTimestamp(),
