@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:greendrop/view/tasks/tasks_card.dart';
 
 import 'package:greendrop/view/tasks/create_task_view.dart';
+import 'package:greendrop/view/tasks/template_tasks_view.dart';
 
 class TasksView extends StatelessWidget {
   const TasksView({super.key});
@@ -33,11 +34,11 @@ class TasksView extends StatelessWidget {
               title: const Text('Create Task with Template'),
               onTap: () {
                 Navigator.pop(context); // Close the bottom sheet
-                // Add logic for creating tasks with a template here
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Template-based task creation is not implemented yet.'),
-                  ),
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return const TemplateTasksView(); // Show our new TemplateTasksView
+                  },
                 );
               },
             ),
