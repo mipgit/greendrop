@@ -89,6 +89,9 @@ class TasksCard extends StatelessWidget {
           orElse: () => task,
         ).isCompleted;
 
+    int reward = isGroupTask
+      ? task.dropletReward * 2
+      : task.dropletReward;
 
     return Stack(
       children: [
@@ -137,7 +140,7 @@ class TasksCard extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  '${task.dropletReward}',
+                  '$reward',
                   style: const TextStyle(
                     fontSize: 14.0,
                     fontWeight: FontWeight.bold,

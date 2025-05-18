@@ -20,7 +20,8 @@ import 'package:provider/provider.dart';
  class _ChatViewState extends State<ChatView> {
    final TextEditingController _messageController = TextEditingController();
    final ScrollController _scrollController = ScrollController();
-   final CollectionReference _messagesCollection = FirebaseFirestore.instance.collection('messages');
+   //final CollectionReference _messagesCollection = FirebaseFirestore.instance.collection('messages');
+   late final CollectionReference _messagesCollection;
    final CollectionReference _groupsCollection = FirebaseFirestore.instance.collection('groups');
    List<String> _memberIds = [];
    Map<String, String> _memberNames = {};
@@ -31,6 +32,12 @@ import 'package:provider/provider.dart';
    @override
    void initState() {
      super.initState();
+
+     _messagesCollection = FirebaseFirestore.instance
+      .collection('groups')
+      .doc(widget.groupId)
+      .collection('messages');
+
      _fetchGroupMembers();
      _updateSentToday();
     _deleteOldMessagesOncePerDay();
@@ -72,7 +79,7 @@ import 'package:provider/provider.dart';
 
      if (messageText.isNotEmpty && user != null) {
        await _messagesCollection.add({
-         'groupId': widget.groupId,
+         //'groupId': widget.groupId,
          'senderId': user.uid,
          'text': messageText,
          'timestamp': FieldValue.serverTimestamp(),
@@ -88,7 +95,7 @@ import 'package:provider/provider.dart';
     final now = DateTime.now();
     final startOfDay = DateTime(now.year, now.month, now.day);
     final snapshot = await _messagesCollection
-        .where('groupId', isEqualTo: widget.groupId)
+        //.where('groupId', isEqualTo: widget.groupId)
         .where('senderId', isEqualTo: userId)
         .where('timestamp', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
         .get();
@@ -115,7 +122,7 @@ import 'package:provider/provider.dart';
     if (_lastDeletionDate == null || _lastDeletionDate!.isBefore(today)) {
       final startOfDay = today;
       final oldMessages = await _messagesCollection
-          .where('groupId', isEqualTo: widget.groupId)
+          //.where('groupId', isEqualTo: widget.groupId)
           .where('timestamp', isLessThan: Timestamp.fromDate(startOfDay))
           .get();
 
@@ -260,7 +267,7 @@ import 'package:provider/provider.dart';
            Expanded(
              child: StreamBuilder<QuerySnapshot>(
                stream: _messagesCollection
-                   .where('groupId', isEqualTo: widget.groupId)
+                   //.where('groupId', isEqualTo: widget.groupId)
                    .where('timestamp', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
                    .orderBy('timestamp', descending: false)
                    .snapshots(),
