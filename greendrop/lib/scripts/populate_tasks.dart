@@ -55,6 +55,20 @@ Future<void> main() async {
       'creationDate': Timestamp.now(),
     },
 
+    {
+      'description': 'Colected rain water',
+      'dropletReward': 3,
+      'category': 'Water',
+      'creationDate': Timestamp.now(),
+    },
+
+    {
+      'description': 'Watered plants with rain water',
+      'dropletReward': 2,
+      'category': 'Water',
+      'creationDate': Timestamp.now(),
+    },
+
   ];
 
   final tasksCollection = FirebaseFirestore.instance.collection('tasks');

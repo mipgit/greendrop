@@ -8,6 +8,45 @@ import 'package:greendrop/view/tasks/create_task_view.dart';
 class TasksView extends StatelessWidget {
   const TasksView({super.key});
 
+  void _showAddTaskOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext bc) {
+        return Wrap(
+          children: <Widget>[
+            ListTile(
+              leading: const Icon(Icons.add),
+              title: const Text('Create Personalized Task'),
+              onTap: () {
+                Navigator.pop(context); // Close the bottom sheet
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return const CreateTaskView(); // Show the existing CreateTaskView
+                  },
+                );
+              },
+            ),
+            const Divider(height: 1),
+            ListTile(
+              leading: const Icon(Icons.format_list_bulleted),
+              title: const Text('Create Task with Template'),
+              onTap: () {
+                Navigator.pop(context); // Close the bottom sheet
+                // Add logic for creating tasks with a template here
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Template-based task creation is not implemented yet.'),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -147,29 +186,24 @@ class TasksView extends StatelessWidget {
             final isLimitReached = personalizedTasksCount >= 3;
 
             return FloatingActionButton(
-              onPressed: isLimitReached
-                  ? () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: SizedBox(
-                            height: 25, 
-                            child: Center(
-                              child: Text("You have reached the limit of 3 personalized tasks.",),
-                            ),
-                          ), 
-                          duration: Duration(seconds: 2),
-                          behavior: SnackBarBehavior.floating,
+              onPressed: () {
+                if (isLimitReached) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: SizedBox(
+                        height: 25,
+                        child: Center(
+                          child: Text("You have reached the limit of 3 personalized tasks."),
                         ),
-                      );
-                    }
-                  : () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return const CreateTaskView();
-                        },
-                      );
-                    },
+                      ),
+                      duration: Duration(seconds: 2),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                } else {
+                  _showAddTaskOptions(context); // Call your bottom sheet or options
+                }
+              },
               backgroundColor: isLimitReached ? Colors.grey : Colors.lightGreen,
               child: const Icon(Icons.add),
             );
