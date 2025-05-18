@@ -12,22 +12,6 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  /* 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
-  final treesCollection = FirebaseFirestore.instance.collection('trees');
-
-  final treesSnapshot = await treesCollection.get();
-  for (final doc in treesSnapshot.docs) {
-    await doc.reference.delete();
-    print('Deleted tree with ID: ${doc.id}');
-  } 
-  */
-
- 
-
   final trees = [
     {
       'name': 'Oak',
@@ -88,7 +72,7 @@ Future<void> main() async {
         },
         {
           'levelNumber': 1,
-          'levelPicture': 'assets/olive-tree.png',
+          'levelPicture': 'assets/Olive1.png',
           'requiredDroplets': 10,
         },
         {
@@ -145,13 +129,3 @@ Future<void> main() async {
 
   exit(0);
 }
-  /*
-  for (final tree in trees) {
-    try {
-      final docRef = await treesCollection.add(tree);
-      print('Added tree with ID: ${docRef.id}');
-    } catch (e) {
-      print('Error adding tree: $e');
-    }
-  }
-  */
