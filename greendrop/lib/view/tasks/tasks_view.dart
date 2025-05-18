@@ -34,15 +34,85 @@ class TasksView extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: ValueListenableBuilder<Duration>(
-                  valueListenable: context.read<UserProvider>().countdownNotifier,
-                  builder: (context, duration, child) {
-                    return Text(
-                      'Tasks refresh in: ${formatDuration(duration)}',
-                      style: const TextStyle(fontSize: 12, color: Colors.grey),
-                    );
-                  },
-                )
+                child: Column(
+                  children: [
+                    ValueListenableBuilder<Duration>(
+                      valueListenable: context.read<UserProvider>().countdownNotifier,
+                      builder: (context, duration, child) {
+                        return Text(
+                          'Tasks refresh in: ${formatDuration(duration)}',
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        );
+                      },
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 22.0),
+                        
+                        child: IconButton(
+                          icon: const Icon(Icons.help_outline, color: Colors.grey),
+                          tooltip: 'Help',
+                          onPressed: () {
+                            // Show a dialog or perform an action when the icon is pressed
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text("Task's Guide"),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: const [
+                                      Text('You can create, delete or reorder tasks from this page. \n'),
+                                      Text.rich(TextSpan(
+                                        children: [
+                                          TextSpan(text: '• To '),
+                                          TextSpan(text: 'create a task', style: TextStyle(fontWeight: FontWeight.bold)),
+                                          TextSpan(text: ' , click the "+" button at the bottom right corner. \n'),
+                                        ],
+                                      )),
+                                      Text.rich(TextSpan(
+                                        children: [
+                                          TextSpan(text: '• To '),
+                                          TextSpan(text: 'delete a personalised task', style: TextStyle(fontWeight: FontWeight.bold)),
+                                          TextSpan(text: ' , double tap the task card. \n'),
+                                        ],
+                                      )),
+                                      Text.rich(TextSpan(
+                                        children: [
+                                          TextSpan(text: '• To '),
+                                          TextSpan(text: 'reorder tasks', style: TextStyle(fontWeight: FontWeight.bold)),
+                                          TextSpan(text: ' , long press and drag the task card to your desired position.'),
+                                        ],
+                                      )),
+                                    ],
+                                  ),
+
+                                  /*
+                                      const Text('You can create, delete or reorder tasks from this page. \n\n'
+                                      'To create a task, click the "+" button at the bottom right corner. \n\n'
+                                      'To delete a personalised task, double tap the task card. \n\n'
+                                      'To reorder tasks, long press and drag the task card to your desired position.'),
+                                  */
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop(); // Close the dialog
+                                      },
+                                      child: const Text('Close'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 10),
               Expanded(
