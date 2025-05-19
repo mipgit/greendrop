@@ -133,21 +133,6 @@ class TasksView extends StatelessWidget {
                         );
                       },
                     ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 22.0),
-                        
-                        child: IconButton(
-                          icon: const Icon(Icons.help_outline, color: Colors.grey),
-                          tooltip: 'Help',
-                          onPressed: () {
-                            _showTasksGuide(context);
-                          },
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -176,37 +161,61 @@ class TasksView extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding), 
-        child: Consumer<UserProvider>(
-          builder: (context, userProvider, child) {
-            final personalizedTasksCount = userProvider.userTasks.where((t) => t.isPersonalized).length;
-            final isLimitReached = personalizedTasksCount >= 3;
+      floatingActionButton: Stack(
+        children: [
+          Positioned(
+            right: 0,
+            bottom: bottomNavBarHeightPadding + 65, 
+            child: Padding(
+              padding: const EdgeInsets.only(right: 4.0),
+              child: Material(
+                elevation: 2,
+                color: null,
+                borderRadius: BorderRadius.circular(100),
+                child: IconButton(
+                  icon: const Icon(Icons.help_outline, color: Colors.grey),
+                  tooltip: 'Help',
+                  onPressed: () => _showTasksGuide(context),
+                )
+                
+              ),
+            ),
+          ),
+          Positioned(
+            right: 0,
+            bottom: bottomNavBarHeightPadding,
+            child: Consumer<UserProvider>(
+              builder: (context, userProvider, child) {
+                final personalizedTasksCount = userProvider.userTasks
+                    .where((t) => t.isPersonalized).length;
+                final isLimitReached = personalizedTasksCount >= 3;
 
-            return FloatingActionButton(
-              onPressed: () {
-                if (isLimitReached) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: SizedBox(
-                        height: 25,
-                        child: Center(
-                          child: Text("You have reached the limit of 3 personalized tasks."),
+                return FloatingActionButton(
+                  onPressed: () {
+                    if (isLimitReached) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: SizedBox(
+                            height: 25,
+                            child: Center(
+                              child: Text("You have reached the limit of 3 personalized tasks."),
+                            ),
+                          ),
+                          duration: Duration(seconds: 2),
+                          behavior: SnackBarBehavior.floating,
                         ),
-                      ),
-                      duration: Duration(seconds: 2),
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
-                } else {
-                  _showAddTaskOptions(context); // Call your bottom sheet or options
-                }
+                      );
+                    } else {
+                      _showAddTaskOptions(context);
+                    }
+                  },
+                  backgroundColor: isLimitReached ? Colors.grey : Colors.lightGreen,
+                  child: const Icon(Icons.add),
+                );
               },
-              backgroundColor: isLimitReached ? Colors.grey : Colors.lightGreen,
-              child: const Icon(Icons.add),
-            );
-          },
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }
