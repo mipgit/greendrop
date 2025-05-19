@@ -4,9 +4,97 @@ import 'package:provider/provider.dart';
 import 'package:greendrop/view/tasks/tasks_card.dart';
 
 import 'package:greendrop/view/tasks/create_task_view.dart';
+import 'package:greendrop/view/tasks/template_tasks_view.dart';
 
 class TasksView extends StatelessWidget {
   const TasksView({super.key});
+
+  void _showAddTaskOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext bc) {
+        return Wrap(
+          children: <Widget>[
+            ListTile(
+              leading: const Icon(Icons.add),
+              title: const Text('Create Personalized Task'),
+              onTap: () {
+                Navigator.pop(context); // Close the bottom sheet
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return const CreateTaskView(); // Show the existing CreateTaskView
+                  },
+                );
+              },
+            ),
+            const Divider(height: 1),
+            ListTile(
+              leading: const Icon(Icons.format_list_bulleted),
+              title: const Text('Create Task with Template'),
+              onTap: () {
+                Navigator.pop(context); // Close the bottom sheet
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return const TemplateTasksView(); // Show our new TemplateTasksView
+                  },
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showTasksGuide (BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Task's Guide"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text('You can create, delete or reorder tasks from this page. \n'),
+              Text.rich(TextSpan(
+                children: [
+                  TextSpan(text: '• To '),
+                  TextSpan(text: 'create a task', style: TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(text: ' , click the "+" button at the bottom right corner. \n'),
+                ],
+              )),
+              Text.rich(TextSpan(
+                children: [
+                  TextSpan(text: '• To '),
+                  TextSpan(text: 'delete a personalised task', style: TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(text: ' , double tap the task card. \n'),
+                ],
+              )),
+              Text.rich(TextSpan(
+                children: [
+                  TextSpan(text: '• To '),
+                  TextSpan(text: 'reorder tasks', style: TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(text: ' , long press and drag the task card to your desired position.'),
+                ],
+              )),
+            ],
+          ),
+          
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,15 +122,19 @@ class TasksView extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: ValueListenableBuilder<Duration>(
-                  valueListenable: context.read<UserProvider>().countdownNotifier,
-                  builder: (context, duration, child) {
-                    return Text(
-                      'Tasks refresh in: ${formatDuration(duration)}',
-                      style: const TextStyle(fontSize: 12, color: Colors.grey),
-                    );
-                  },
-                )
+                child: Column(
+                  children: [
+                    ValueListenableBuilder<Duration>(
+                      valueListenable: context.read<UserProvider>().countdownNotifier,
+                      builder: (context, duration, child) {
+                        return Text(
+                          'Tasks refresh in: ${formatDuration(duration)}',
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 10),
               Expanded(
@@ -69,42 +161,61 @@ class TasksView extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding), 
-        child: Consumer<UserProvider>(
-          builder: (context, userProvider, child) {
-            final personalizedTasksCount = userProvider.userTasks.where((t) => t.isPersonalized).length;
-            final isLimitReached = personalizedTasksCount >= 3;
+      floatingActionButton: Stack(
+        children: [
+          Positioned(
+            right: 0,
+            bottom: bottomNavBarHeightPadding + 65, 
+            child: Padding(
+              padding: const EdgeInsets.only(right: 4.0),
+              child: Material(
+                elevation: 2,
+                color: null,
+                borderRadius: BorderRadius.circular(100),
+                child: IconButton(
+                  icon: const Icon(Icons.help_outline, color: Colors.grey),
+                  tooltip: 'Help',
+                  onPressed: () => _showTasksGuide(context),
+                )
+                
+              ),
+            ),
+          ),
+          Positioned(
+            right: 0,
+            bottom: bottomNavBarHeightPadding,
+            child: Consumer<UserProvider>(
+              builder: (context, userProvider, child) {
+                final personalizedTasksCount = userProvider.userTasks
+                    .where((t) => t.isPersonalized).length;
+                final isLimitReached = personalizedTasksCount >= 3;
 
-            return FloatingActionButton(
-              onPressed: isLimitReached
-                  ? () {
+                return FloatingActionButton(
+                  onPressed: () {
+                    if (isLimitReached) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: SizedBox(
-                            height: 25, 
+                            height: 25,
                             child: Center(
-                              child: Text("You have reached the limit of 3 personalized tasks.",),
+                              child: Text("You have reached the limit of 3 personalized tasks."),
                             ),
-                          ), 
+                          ),
                           duration: Duration(seconds: 2),
                           behavior: SnackBarBehavior.floating,
                         ),
                       );
+                    } else {
+                      _showAddTaskOptions(context);
                     }
-                  : () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return const CreateTaskView();
-                        },
-                      );
-                    },
-              backgroundColor: isLimitReached ? Colors.grey : Colors.lightGreen,
-              child: const Icon(Icons.add),
-            );
-          },
-        ),
+                  },
+                  backgroundColor: isLimitReached ? Colors.grey : Colors.lightGreen,
+                  child: const Icon(Icons.add),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
