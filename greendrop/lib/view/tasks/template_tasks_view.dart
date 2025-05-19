@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:greendrop/model/task.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +16,7 @@ class _TemplateTasksViewState extends State<TemplateTasksView> {
   int? _expandedCategoryIndex;
   
   // Mock data for template tasks categories
-  final List<Map<String, dynamic>> _categories = [
+  final List<Map<String, dynamic>> _oldCategories = [
     {
       'name': 'Waste Reduction',
       'tasks': [
@@ -49,6 +50,36 @@ class _TemplateTasksViewState extends State<TemplateTasksView> {
       ]
     }
   ];
+
+  final List<String> _categories = [
+    'Water',
+    'Environment'
+  ];
+
+
+  Future<List<String>> _getTasksForCategory(String category) async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final curUserTasks = userProvider.userTasks;
+    //final curTaskDescription = curUserTasks
+
+    try {
+      final docRef = await FirebaseFirestore.instance
+          .collection('tasks')
+          .where('category', isEqualTo: category)
+          .get();
+
+      final availableTasks = docRef.docs
+          .map((doc) => doc.data()['description'] as String)
+          .where((id) => !curUserTasks.any((task) => task.description == id))
+          .toList();
+
+      return availableTasks;
+    } catch (e) {
+      print('Error fetching tasks for category $category: $e');
+      return [];
+    }  
+  }
+
 
   void _toggleCategory(int index) {
     setState(() {
@@ -112,7 +143,7 @@ class _TemplateTasksViewState extends State<TemplateTasksView> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          category['name'],
+                          category,
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -130,17 +161,26 @@ class _TemplateTasksViewState extends State<TemplateTasksView> {
                 const Divider(height: 1),
                 // Tasks for the expanded category
                 if (isExpanded)
-                  ...List.generate(
-                    (category['tasks'] as List).length,
-                    (taskIndex) {
-                      final task = category['tasks'][taskIndex];
-                      return ListTile(
-                        contentPadding: const EdgeInsets.only(left: 16, right: 8),
-                        title: Text(task),
-                        onTap: () => _selectTask(context, task),
+                FutureBuilder<List<String>>(
+                  future: _getTasksForCategory(category),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const ListTile(
+                        title: Text('No more available tasks in this category'),
                       );
-                    },
-                  ),
+                    }
+                    return Column(
+                      children: snapshot.data!.map((taskDescription) => ListTile(
+                        contentPadding: const EdgeInsets.only(left: 16, right: 8),
+                        title: Text(taskDescription),
+                        onTap: () => _selectTask(context, taskDescription),
+                      )).toList(),
+                    );
+                  },
+                ),
                 if (index < _categories.length - 1) const SizedBox(height: 8),
               ],
             );
