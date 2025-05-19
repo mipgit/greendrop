@@ -156,7 +156,7 @@ class _GardenViewState extends State<GardenView> {
                           itemCount: displayedTrees.length,
                           itemBuilder: (context, index) {
                             final tree = displayedTrees[index];
-                            String imagePath = 'assets/images/trees/default_tree.png';
+                            String imagePath = 'assets/tree.png';
                             if (tree.levels.isNotEmpty && tree.levels.last.levelPicture.isNotEmpty) {
                                 imagePath = tree.levels.last.levelPicture;
                             } else {
