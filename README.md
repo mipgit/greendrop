@@ -78,6 +78,19 @@ Indicate an  initial/tentative list of high-level features - high-level capabili
 Optionally, indicate an initial/tentative list of assumptions that you are doing about the app and dependencies of the app to other systems.
 -->
 
+- Own new trees - where a user can buy their trees.
+
+- Virtual garden - a place where you can see all the trees you purchased and are taking care of.
+
+- Tasks's page - a place where you can see daily tasks to accomplish and also create your own, by template or simply one chosen by you.
+
+- Water virtual trees - spend water droplets on growing your plants
+
+- Groups of friends - groups where you can chat with your friends and complete tasks as a group
+
+- User profile - where a user can edit their biography and see the number of planted trees, droplets spent and current droplet count.
+
+
 ### Elevator Pitch
 <!-- 
 Draft a small text to help you quickly introduce and describe your product in a short time (lift travel time ~90 seconds) and a few words (~800 characters), a technique usually known as elevator pitch.
