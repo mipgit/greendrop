@@ -48,6 +48,54 @@ class TasksView extends StatelessWidget {
     );
   }
 
+  void _showTasksGuide (BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Task's Guide"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text('You can create, delete or reorder tasks from this page. \n'),
+              Text.rich(TextSpan(
+                children: [
+                  TextSpan(text: '• To '),
+                  TextSpan(text: 'create a task', style: TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(text: ' , click the "+" button at the bottom right corner. \n'),
+                ],
+              )),
+              Text.rich(TextSpan(
+                children: [
+                  TextSpan(text: '• To '),
+                  TextSpan(text: 'delete a personalised task', style: TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(text: ' , double tap the task card. \n'),
+                ],
+              )),
+              Text.rich(TextSpan(
+                children: [
+                  TextSpan(text: '• To '),
+                  TextSpan(text: 'reorder tasks', style: TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(text: ' , long press and drag the task card to your desired position.'),
+                ],
+              )),
+            ],
+          ),
+          
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -95,58 +143,7 @@ class TasksView extends StatelessWidget {
                           icon: const Icon(Icons.help_outline, color: Colors.grey),
                           tooltip: 'Help',
                           onPressed: () {
-                            // Show a dialog or perform an action when the icon is pressed
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: const Text("Task's Guide"),
-                                  content: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: const [
-                                      Text('You can create, delete or reorder tasks from this page. \n'),
-                                      Text.rich(TextSpan(
-                                        children: [
-                                          TextSpan(text: '• To '),
-                                          TextSpan(text: 'create a task', style: TextStyle(fontWeight: FontWeight.bold)),
-                                          TextSpan(text: ' , click the "+" button at the bottom right corner. \n'),
-                                        ],
-                                      )),
-                                      Text.rich(TextSpan(
-                                        children: [
-                                          TextSpan(text: '• To '),
-                                          TextSpan(text: 'delete a personalised task', style: TextStyle(fontWeight: FontWeight.bold)),
-                                          TextSpan(text: ' , double tap the task card. \n'),
-                                        ],
-                                      )),
-                                      Text.rich(TextSpan(
-                                        children: [
-                                          TextSpan(text: '• To '),
-                                          TextSpan(text: 'reorder tasks', style: TextStyle(fontWeight: FontWeight.bold)),
-                                          TextSpan(text: ' , long press and drag the task card to your desired position.'),
-                                        ],
-                                      )),
-                                    ],
-                                  ),
-
-                                  /*
-                                      const Text('You can create, delete or reorder tasks from this page. \n\n'
-                                      'To create a task, click the "+" button at the bottom right corner. \n\n'
-                                      'To delete a personalised task, double tap the task card. \n\n'
-                                      'To reorder tasks, long press and drag the task card to your desired position.'),
-                                  */
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop(); // Close the dialog
-                                      },
-                                      child: const Text('Close'),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
+                            _showTasksGuide(context);
                           },
                         ),
                       ),
