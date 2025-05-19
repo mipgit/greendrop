@@ -36,11 +36,14 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/sprout.png
-    - assets/tree.png
-    - assets/palms.png
-    - assets/oak.png
-    - assets/pine-tree.png
-    - assets/olive-tree.png
+    - assets/Sprout2.png
+    - assets/Oak1.png
+    - assets/Oak2.png
+    - assets/Palm1.png
+    - assets/Palm2.png
+    - assets/Olive1.png
+    - assets/Olive2.png
+    - assets/Pine1.png
+    - assets/Pine2.png
     - assets/icon/greendrop.png
     - assets/icon/google.png
