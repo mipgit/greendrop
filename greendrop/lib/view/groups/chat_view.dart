@@ -24,7 +24,7 @@ import 'package:provider/provider.dart';
    late final CollectionReference _messagesCollection;
    final CollectionReference _groupsCollection = FirebaseFirestore.instance.collection('groups');
    List<String> _memberIds = [];
-   Map<String, String> _memberNames = {};
+   final Map<String, String> _memberNames = {};
 
   
    final ValueNotifier<int> _sentTodayNotifier = ValueNotifier<int>(0);
