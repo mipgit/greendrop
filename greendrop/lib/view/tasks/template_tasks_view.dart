@@ -15,45 +15,13 @@ class _TemplateTasksViewState extends State<TemplateTasksView> {
   // Track which category is expanded
   int? _expandedCategoryIndex;
   
-  // Mock data for template tasks categories
-  final List<Map<String, dynamic>> _oldCategories = [
-    {
-      'name': 'Waste Reduction',
-      'tasks': [
-        'Useed a reusable water bottle instead of plastic bottles',
-        'Brought your own shopping bags to the grocery store',
-        'Avoided single-use plastic utensils'
-      ]
-    },
-    {
-      'name': 'Energy Conservation',
-      'tasks': [
-        'Turned off lights when leaving a room',
-        'Unpluged electronic devices when not in use',
-        'Used natural lighting instead of artificial when possible'
-      ]
-    },
-    {
-      'name': 'Sustainable Transport',
-      'tasks': [
-        'Walked or cycled for short trips instead of driving',
-        'Used public transportation',
-        'Carpooled with colleagues or friends'
-      ]
-    },
-    {
-      'name': 'Water Conservation',
-      'tasks': [
-        'Took shorter shower (under 5 minutes)',
-        'Turned off water while brushing teeth',
-        'Checked for and fixed any leaky faucets'
-      ]
-    }
-  ];
 
   final List<String> _categories = [
-    'Water',
-    'Environment'
+    'Waste Reduction',
+    'Sustainable Transport',
+    'Energy Conservation',
+    'Water Conservation',
+    'Community Service',
   ];
 
 
@@ -66,6 +34,7 @@ class _TemplateTasksViewState extends State<TemplateTasksView> {
       final docRef = await FirebaseFirestore.instance
           .collection('tasks')
           .where('category', isEqualTo: category)
+          .limit(2)
           .get();
 
       final availableTasks = docRef.docs
