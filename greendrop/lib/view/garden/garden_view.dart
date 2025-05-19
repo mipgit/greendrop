@@ -156,6 +156,7 @@ class _GardenViewState extends State<GardenView> {
                           itemCount: displayedTrees.length,
                           itemBuilder: (context, index) {
                             final tree = displayedTrees[index];
+
                             String imagePath = 'assets/images/trees/default_tree.png';
                             if (tree.levels.length >=2) {
                               imagePath = tree.levels[tree.levels.length - 2].levelPicture;
