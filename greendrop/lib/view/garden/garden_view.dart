@@ -157,9 +157,13 @@ class _GardenViewState extends State<GardenView> {
                           itemBuilder: (context, index) {
                             final tree = displayedTrees[index];
                             String imagePath = 'assets/images/trees/default_tree.png';
-                            if (tree.levels.isNotEmpty && tree.levels.last.levelPicture.isNotEmpty) {
-                                imagePath = tree.levels.last.levelPicture;
-                            } else {
+                            if (tree.levels.length >=2) {
+                              imagePath = tree.levels[tree.levels.length - 2].levelPicture;
+                            }
+                            else if (tree.levels.isNotEmpty) {
+                                imagePath = tree.levels.first.levelPicture;
+                            }
+                            else {
                                print("Warning: Using default image for ${tree.name}");
                             }
 
