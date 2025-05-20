@@ -78,17 +78,17 @@ Indicate an  initial/tentative list of high-level features - high-level capabili
 Optionally, indicate an initial/tentative list of assumptions that you are doing about the app and dependencies of the app to other systems.
 -->
 
-- Own new trees - where a user can buy their trees.
+- __Own new trees__ - where a user can buy their trees.
 
-- Virtual garden - a place where you can see all the trees you purchased and are taking care of.
+- __Virtual garden__ - a place where you can see all the trees you purchased and are taking care of.
 
-- Tasks's page - a place where you can see daily tasks to accomplish and also create your own, by template or simply one chosen by you.
+- __Tasks's page__ - a place where you can see daily tasks to accomplish and also create your own, by template or simply one chosen by you.
 
-- Water virtual trees - spend water droplets on growing your plants
+- __Water virtual trees__ - spend water droplets on growing your plants
 
-- Groups of friends - groups where you can chat with your friends and complete tasks as a group
+- __Groups of friends__ - groups where you can chat with your friends and complete tasks as a group
 
-- User profile - where a user can edit their biography and see the number of planted trees, droplets spent and current droplet count.
+- __User profile__ - where a user can edit their biography and see the number of planted trees, droplets spent and current droplet count.
 
 
 ### Elevator Pitch
@@ -260,7 +260,7 @@ Common practices of managing agile software development with Scrum are: backlog 
 You can find below information and references related with the project management: 
 
 * Backlog management: Product backlog and Sprint backlog in a [Github Projects board](https://github.com/orgs/LEIC-ES-2024-25/projects/64/views/1);
-* Release management: [v0](https://github.com/LEIC-ES-2024-25/2LEIC03T3/releases/tag/v0), [v0.1](https://github.com/LEIC-ES-2024-25/2LEIC03T3/releases)
+* Release management: [v0](https://github.com/LEIC-ES-2024-25/2LEIC03T3/releases/tag/v0), [v0.1](https://github.com/LEIC-ES-2024-25/2LEIC03T3/releases/tag/v0.1), [v0.2](https://github.com/LEIC-ES-2024-25/2LEIC03T3/releases/tag/v0.2), [v0.3](https://github.com/LEIC-ES-2024-25/2LEIC03T3/releases)
 
 <!--
 * Sprint planning and retrospectives: 
@@ -345,5 +345,35 @@ You can find below information and references related with the project managemen
 
 
 ### Sprint 3
+
+> **Goal:** Establish the core functionality of the application by implementing user account creation, personalized and dynamic tasks, profile access, and integrating Firebase for backend support, while laying the groundwork for the visual identity through initial design updates.
+
+
+#### Project Board
+
+<p align="center" justify="center">
+  <b>Start of Sprint 3</b>
+  <img src="docs/sprints/sprint3_start.png"/>
+  <b>End of Sprint 3</b>
+  <img src="docs/sprints/sprint3_end.png"/>
+</p>
+
+#### Sprint Retrospective
+
+##### What went right
+
+  - Our task distribution and overal work kept being very efficient
+  - We significantly improved comunication between members
+
+
+##### What went wrong
+
+  - We weren't able to fully organize our goals this sprint due to having many other projects to do
+
+
+##### What should start
+
+  - Last refinement before release!
+
 
 ### Final Release
