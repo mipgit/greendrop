@@ -260,7 +260,7 @@ Common practices of managing agile software development with Scrum are: backlog 
 You can find below information and references related with the project management: 
 
 * Backlog management: Product backlog and Sprint backlog in a [Github Projects board](https://github.com/orgs/LEIC-ES-2024-25/projects/64/views/1);
-* Release management: [v0](https://github.com/LEIC-ES-2024-25/2LEIC03T3/releases/tag/v0), [v0.1](https://github.com/LEIC-ES-2024-25/2LEIC03T3/releases)
+* Release management: [v0](https://github.com/LEIC-ES-2024-25/2LEIC03T3/releases/tag/v0), [v0.1](https://github.com/LEIC-ES-2024-25/2LEIC03T3/releases/tag/v0.1), [v0.2](https://github.com/LEIC-ES-2024-25/2LEIC03T3/releases/tag/v0.2), [v0.3](https://github.com/LEIC-ES-2024-25/2LEIC03T3/releases)
 
 <!--
 * Sprint planning and retrospectives: 
@@ -352,9 +352,9 @@ You can find below information and references related with the project managemen
 #### Project Board
 
 <p align="center" justify="center">
-  <b>Start of Sprint 2</b>
+  <b>Start of Sprint 3</b>
   <img src="docs/sprints/sprint3_start.png"/>
-  <b>End of Sprint 2</b>
+  <b>End of Sprint 3</b>
   <img src="docs/sprints/sprint3_end.png"/>
 </p>
 
@@ -370,6 +370,10 @@ You can find below information and references related with the project managemen
 
   - We weren't able to fully organize our goals this sprint due to having many other projects to do
 
+
+##### What should start
+
+  - Last refinement before release!
 
 
 ### Final Release
