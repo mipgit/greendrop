@@ -77,7 +77,15 @@ class TasksView extends StatelessWidget {
                 children: [
                   TextSpan(text: '• To '),
                   TextSpan(text: 'reorder tasks', style: TextStyle(fontWeight: FontWeight.bold)),
-                  TextSpan(text: ' , long press and drag the task card to your desired position.'),
+                  TextSpan(text: ' , long press and drag the task card to your desired position. \n'),
+                ],
+              )),
+              Text.rich(TextSpan(
+                children: [
+                  TextSpan(text: 'Note:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(text: ' tasks have '),
+                  TextSpan(text: 'different colours', style: TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(text: '! Given daily tasks are green and personalized tasks are grey.'),
                 ],
               )),
             ],
