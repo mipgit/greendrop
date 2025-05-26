@@ -81,10 +81,17 @@ class _TemplateTasksViewState extends State<TemplateTasksView> {
     // Show confirmation
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Added task: $taskDescription'),
-        duration: const Duration(seconds: 2),
+        content: SizedBox(
+          height: 25,
+          child: Center(
+            child: Text('Added task: $taskDescription'),
+          ),
+        ),
+        duration: Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
       ),
     );
+
   }
 
   @override

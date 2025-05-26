@@ -45,22 +45,57 @@
      }
    }
 
-   Future<void> _updateGroupBio(String newBio) async {
-     try {
-       await FirebaseFirestore.instance.collection('groups').doc(widget.groupId).update({'bio': newBio});
-       setState(() {
-         _groupBio = newBio;
-       });
-       ScaffoldMessenger.of(context).showSnackBar(
-         const SnackBar(content: Text('Group bio updated!')),
-       );
-     } catch (e) {
-       print('Error updating group bio: $e');
-       ScaffoldMessenger.of(context).showSnackBar(
-         const SnackBar(content: Text('Failed to update group bio.')),
-       );
-     }
-   }
+  Future<void> _updateGroupBio(String newBio) async {
+    //limit bio length
+    final trimmedBio = newBio.length > 150 ? newBio.substring(0, 150) : newBio;
+
+    //only update if changed
+    if (_groupBio == trimmedBio) {
+      print("Bio unchanged, skipping update.");
+      return;
+    }
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('groups')
+          .doc(widget.groupId)
+          .update({'bio': trimmedBio});
+      setState(() {
+        _groupBio = trimmedBio;
+        _bioController.text = trimmedBio;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+           content: SizedBox(
+             height: 25, 
+             child: Center(
+               child: Text('Group bio updated!'),
+             ),
+           ),
+           duration: const Duration(seconds: 2),
+           backgroundColor: Colors.green.shade600, 
+           behavior: SnackBarBehavior.floating, 
+        ),
+      );
+
+      print("Group bio updated in Firestore.");
+    } catch (e) {
+      print('Error updating group bio: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+           content: SizedBox(
+             height: 25, 
+             child: Center(
+               child: Text('Failed to update group bio.'),
+             ),
+           ),
+           duration: const Duration(seconds: 2),
+           backgroundColor: Colors.green.shade600, 
+           behavior: SnackBarBehavior.floating, 
+        ),
+      );
+    }
+  }
 
    Future<void> _leaveGroup(BuildContext context) async {
      final userId = FirebaseAuth.instance.currentUser?.uid;
@@ -89,12 +124,28 @@
    void _copyGroupId(BuildContext context) {
      Clipboard.setData(ClipboardData(text: widget.groupId));
      ScaffoldMessenger.of(context).showSnackBar(
-       const SnackBar(content: Text('Group ID copied to clipboard!')),
-     );
+        SnackBar(
+           content: SizedBox(
+             height: 25, 
+             child: Center(
+               child: Text('Group ID copied to clipboard!'),
+             ),
+           ),
+           duration: const Duration(seconds: 2),
+           behavior: SnackBarBehavior.floating, 
+        ),
+      );
    }
 
    @override
    Widget build(BuildContext context) {
+
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final BorderRadius boxBorderRadius = BorderRadius.circular(15.0);
+
+
+
      return Scaffold(
        appBar: AppBar(
          leading: IconButton(
@@ -143,17 +194,37 @@
                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
              ),
              const SizedBox(height: 8.0),
-             TextFormField(
-               controller: _bioController,
-               maxLines: 3,
-               decoration: const InputDecoration(
-                 border: OutlineInputBorder(),
-                 hintText: 'Enter group bio...',
-               ),
-               onChanged: (newBio) {
-                 _updateGroupBio(newBio);
-               },
-             ),
+             TextField(
+                controller: _bioController,
+                maxLength: 150,
+                maxLines: 4,
+                minLines: 2,
+                keyboardType: TextInputType.multiline,
+                maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                textInputAction: TextInputAction.done,
+                onSubmitted: (_) => _updateGroupBio(_bioController.text),
+                style: textTheme.bodyLarge?.copyWith(color: colorScheme.onSurfaceVariant),
+                decoration: InputDecoration(
+                  hintText: 'Enter group bio...',
+                  hintStyle: textTheme.bodyLarge?.copyWith(color: colorScheme.onSurfaceVariant.withOpacity(0.7)),
+                  filled: true,
+                  fillColor: colorScheme.secondaryContainer.withOpacity(0.3),
+                  counterStyle: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
+                  border: OutlineInputBorder(
+                    borderRadius: boxBorderRadius,
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: boxBorderRadius,
+                    borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.3), width: 1.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: boxBorderRadius,
+                    borderSide: BorderSide(color: colorScheme.primary, width: 1.5),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                ),
+              ),
              const SizedBox(height: 20.0),
              const Divider(),
              const SizedBox(height: 16.0),

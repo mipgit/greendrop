@@ -52,7 +52,16 @@ class GroupService extends ChangeNotifier {
 
       if (existingGroupsSnapshot.docs.isNotEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('A group with this name already exists. Please choose a different name.')),
+          SnackBar(
+             content: SizedBox(
+               height: 25, 
+               child: Center(
+                 child: Text('A group with this name already exists. Please choose a different name.'),
+               ),
+             ),
+             duration: const Duration(seconds: 2),
+             behavior: SnackBarBehavior.floating, 
+          ),
         );
         return null;
       }
@@ -102,20 +111,47 @@ class GroupService extends ChangeNotifier {
           return true;
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('You are already a member of this group.')),
+            SnackBar(
+               content: SizedBox(
+                 height: 25, 
+                 child: Center(
+                   child: Text('You are already a member of this group.'),
+                 ),
+               ),
+               duration: const Duration(seconds: 2),
+               behavior: SnackBarBehavior.floating, 
+            ),
           );
           return false;
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Group does not exist.')),
+          SnackBar(
+             content: SizedBox(
+               height: 25, 
+               child: Center(
+                 child: Text('Group does not exist. Please check the group ID.'),
+               ),
+             ),
+             duration: const Duration(seconds: 2),
+             behavior: SnackBarBehavior.floating, 
+          ),
         );
         return false;
       }
     } catch (e) {
       print('Error joining group: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to join group: $e')),
+        SnackBar(
+           content: SizedBox(
+             height: 25, 
+             child: Center(
+               child: Text('Failed to join group: $e'),
+             ),
+           ),
+           duration: const Duration(seconds: 2),
+           behavior: SnackBarBehavior.floating, 
+        ),
       );
       return false;
     }
@@ -153,20 +189,47 @@ class GroupService extends ChangeNotifier {
            return true;
          } else {
            ScaffoldMessenger.of(context).showSnackBar(
-             const SnackBar(content: Text('You are not a member of this group.')),
+             SnackBar(
+                content: SizedBox(
+                  height: 25, 
+                  child: Center(
+                    child: Text('You are not a member of this group.'),
+                  ),
+                ),
+                duration: const Duration(seconds: 2),
+                behavior: SnackBarBehavior.floating, 
+             ),
            );
            return false;
          }
        } else {
          ScaffoldMessenger.of(context).showSnackBar(
-           const SnackBar(content: Text('Group does not exist.')),
+           SnackBar(
+              content: SizedBox(
+                height: 25, 
+                child: Center(
+                  child: Text('Group does not exist.'),
+                ),
+              ),
+              duration: const Duration(seconds: 2),
+              behavior: SnackBarBehavior.floating, 
+           ),
          );
          return false;
        }
      } catch (e) {
        print('Error leaving group: $e');
        ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(content: Text('Failed to leave group: $e')),
+         SnackBar(
+            content: SizedBox(
+              height: 25, 
+              child: Center(
+                child: Text('Failed to leave group: $e'),
+              ),
+            ),
+            duration: const Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating, 
+         ),
        );
        return false;
      }
