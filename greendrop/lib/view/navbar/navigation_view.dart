@@ -118,8 +118,14 @@ class NavigationViewState extends State<NavigationView> {
           color: null,
           clipBehavior: Clip.antiAlias,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.only(
+              left: 8.0,
+              right: 8.0,
+              bottom: 2.0,
+              top: 13.0,
+            ),
             child: NavigationBar(
+              height: 50.0,
               backgroundColor: Colors.transparent,
               selectedIndex: _selectedIndex,
               onDestinationSelected: onItemTapped,

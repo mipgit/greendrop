@@ -19,11 +19,11 @@ class TasksView extends StatelessWidget {
               leading: const Icon(Icons.add),
               title: const Text('Create Personalized Task'),
               onTap: () {
-                Navigator.pop(context); // Close the bottom sheet
+                Navigator.pop(context); 
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    return const CreateTaskView(); // Show the existing CreateTaskView
+                    return const CreateTaskView(); 
                   },
                 );
               },
@@ -33,11 +33,11 @@ class TasksView extends StatelessWidget {
               leading: const Icon(Icons.format_list_bulleted),
               title: const Text('Create Task with Template'),
               onTap: () {
-                Navigator.pop(context); // Close the bottom sheet
+                Navigator.pop(context); 
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    return const TemplateTasksView(); // Show our new TemplateTasksView
+                    return const TemplateTasksView(); 
                   },
                 );
               },
@@ -94,7 +94,7 @@ class TasksView extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop(); 
               },
               child: const Text('Close'),
             ),
@@ -147,7 +147,7 @@ class TasksView extends StatelessWidget {
               const SizedBox(height: 10),
               Expanded(
                 child: ReorderableListView.builder(
-                  padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding + 90),
+                  padding: EdgeInsets.only(bottom: bottomNavBarHeightPadding + 125),
                   itemCount: userTasks.length,
                   onReorder: (oldIndex, newIndex) {
                     if (newIndex > oldIndex) {
@@ -158,7 +158,7 @@ class TasksView extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final task = userTasks[index];
                     return TasksCard(
-                      key: ValueKey(task.id), // Key is required for reordering
+                      key: ValueKey(task.id),
                       task: task,
                       onStateChanged: () {},
                     );

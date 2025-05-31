@@ -2,8 +2,79 @@ import 'package:flutter/material.dart';
 import 'package:greendrop/view-model/tree_provider.dart';
 import 'package:provider/provider.dart';
 
-class TreeHomeCard extends StatelessWidget {
+class TreeHomeCard extends StatefulWidget {
   const TreeHomeCard({super.key});
+
+  @override
+  State<TreeHomeCard> createState() => _TreeHomeCardState();
+}
+
+class _TreeHomeCardState extends State<TreeHomeCard> {
+  int? _lastLevel;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final prov = Provider.of<TreeProvider>(context);
+    final curLevelIndex = prov.tree.curLevel;
+
+    if (_lastLevel != null && curLevelIndex > _lastLevel!) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialog(
+          context: context,
+          builder:
+              (context) => AlertDialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                title: Column(
+                  children: [
+                    const Text('🎉', style: TextStyle(fontSize: 48)),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Level Up!',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 26,
+                        color: Colors.lightGreen,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "${prov.tree.name} has grown :)",
+                      style: const TextStyle(fontSize: 18),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+                ),
+                actionsAlignment: MainAxisAlignment.center,
+                actions: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromARGB(255, 186, 218, 153),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text(
+                      'Awesome!',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+        );
+      });
+    }
+    _lastLevel = curLevelIndex;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +85,6 @@ class TreeHomeCard extends StatelessWidget {
         curLevelIndex < tree.levels.length ? tree.levels[curLevelIndex] : null;
 
     final currentLevelNumber = curLevelIndex + 1;
-    //final totalLevels = tree.levels.length;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
