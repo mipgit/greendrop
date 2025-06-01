@@ -377,3 +377,6 @@ You can find below information and references related with the project managemen
 
 
 ### Final Release
+
+
+  Everything's ready! :)

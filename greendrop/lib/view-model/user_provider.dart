@@ -47,7 +47,7 @@ class UserProvider with ChangeNotifier {
       profilePicture: null,
       bio: null,
       ownedTrees: [],
-      droplets: 300,
+      droplets: 35,
       role: 'user',
     );
   }
@@ -158,7 +158,7 @@ class UserProvider with ChangeNotifier {
       profilePicture: highResPhotoURL,
       bio: null,
       ownedTrees: [],
-      droplets: 100,
+      droplets: 35,
       role: 'user',
     );
 

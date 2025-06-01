@@ -1,3 +1,13 @@
+import java.util.Properties
+import java.io.FileInputStream
+
+val keystorePropertiesFile = rootProject.file("key.properties")
+val keystoreProperties = Properties()
+
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
 allprojects {
     repositories {
         google()
@@ -11,9 +21,10 @@ rootProject.layout.buildDirectory.value(newBuildDir)
 subprojects {
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
     project.layout.buildDirectory.value(newSubprojectBuildDir)
-}
-subprojects {
-    project.evaluationDependsOn(":app")
+
+    // Pass keystore properties to subprojects
+    project.ext.set("keystorePropertiesFile", keystorePropertiesFile)
+    project.ext.set("keystoreProperties", keystoreProperties)
 }
 
 tasks.register<Delete>("clean") {
