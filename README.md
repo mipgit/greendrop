@@ -2,6 +2,8 @@
 
 > [!NOTE] In this file, you’ll find the structure you should follow to document your mobile app in the README.md file for LEIC-ES-2024-25. It’s a single file with guidelines. You can add more sections, but for assessment normalisation and automation, include all sections of this template. Your professors will clarify about specificities of your app.
 
+> I was not able to fork the original repository (limited permissions) but the other collaborators are specified below.
+
 # *GreenDrop* Development Report
 
 Welcome to the documentation pages of _GreenDrop_!
